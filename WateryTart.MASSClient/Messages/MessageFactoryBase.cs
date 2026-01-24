@@ -8,6 +8,7 @@ public abstract class MessageFactoryBase
     {
         return new Message(command);
     }
+
     public static string ToJson(MessageBase message)
     {
         return JsonConvert.SerializeObject(message);

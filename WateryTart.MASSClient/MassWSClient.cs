@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
-using RestSharp.Authenticators;
 using System.Collections;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Net.WebSockets;
-using System.Reactive.Subjects;
 using WateryTart.MassClient.Events;
 using WateryTart.MassClient.Messages;
 using WateryTart.MassClient.Models.Auth;
@@ -25,7 +21,6 @@ namespace WateryTart.MassClient
 
         public MassWsClient()
         {
-
         }
 
         public async Task<MassCredentials> Login(string username, string password, string baseurl)
@@ -42,13 +37,11 @@ namespace WateryTart.MassClient
                      }
                  });
 
-
                  var exitEvent = new ManualResetEvent(false);
                  using (_client = new WebsocketClient(new Uri(baseurl), factory))
                  {
                      _client.MessageReceived.Subscribe(OnNext);
                      _client.Start();
-
 
                      this.GetAuthToken(username, password, (response) =>
                     {
@@ -66,10 +59,7 @@ namespace WateryTart.MassClient
                         exitEvent.Set();
                     });
 
-
                      exitEvent.WaitOne();
-
-
                  }
                  return mc;
              });
@@ -88,7 +78,6 @@ namespace WateryTart.MassClient
                         KeepAliveInterval = TimeSpan.FromSeconds(1),
                     }
                 });
-
 
                 var exitEvent = new ManualResetEvent(false);
                 using (_client = new WebsocketClient(new Uri(credentials.BaseUrl), factory))

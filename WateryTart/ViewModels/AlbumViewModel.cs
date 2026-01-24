@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Linq;
-using ReactiveUI;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -17,12 +17,12 @@ public class AlbumViewModel : ReactiveObject, IRoutableViewModel
     public Album Album { get; set; }
 
     public ObservableCollection<Track> Tracks { get; set; }
+
     public AlbumViewModel(IMassWSClient massClient, IScreen screen, IPlayersService playersService)
     {
         _massClient = massClient;
         _playersService = playersService;
         HostScreen = screen;
-        
     }
 
     public void Load(Album album)
@@ -37,7 +37,6 @@ public class AlbumViewModel : ReactiveObject, IRoutableViewModel
     {
         foreach (var t in response.result)
             Tracks.Add(t);
-
 
         var x = Tracks.Last();
         _playersService.Play(x);

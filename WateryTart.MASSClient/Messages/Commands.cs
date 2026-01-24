@@ -13,4 +13,3 @@ public static class Commands
     public static string MusicAlbumGet = "music/albums/get";
     public static string MusicAlbumTracks = "music/albums/album_tracks";
 }
-    

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Avalonia.Data.Converters;
+using System;
 using System.Globalization;
-using System.Text;
-using Avalonia.Data.Converters;
 
 namespace WateryTart.Converters
 {
@@ -23,7 +21,6 @@ namespace WateryTart.Converters
         }
     }
 
-
     public class SecondsToMinutesConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -31,7 +28,7 @@ namespace WateryTart.Converters
             int seconds = (int)value;
 
             var span = new TimeSpan(0, 0, seconds);
-            return string.Format("{0}:{1:00}", (int)span.TotalMinutes,span.Seconds);
+            return string.Format("{0}:{1:00}", (int)span.TotalMinutes, span.Seconds);
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

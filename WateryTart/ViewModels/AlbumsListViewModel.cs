@@ -21,7 +21,6 @@ public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
 
     public AlbumsListViewModel(IMassWSClient massClient, IScreen screen)
     {
-
         _massClient = massClient;
         HostScreen = screen;
         Albums = new ObservableCollection<Album>();
@@ -37,7 +36,6 @@ public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
             }
         );
 
-        
         _massClient.MusicAlbumsLibraryItems(AlbumListHandler);
     }
 

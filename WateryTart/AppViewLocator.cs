@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
 using Splat;
 using System;
-using WateryTart.Views;
 
 namespace WateryTart
 {

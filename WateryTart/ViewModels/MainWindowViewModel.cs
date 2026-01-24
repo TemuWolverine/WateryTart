@@ -1,7 +1,7 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using System.Reactive;
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
@@ -25,11 +25,9 @@ public class MainWindowViewModel : ReactiveObject, IScreen
         _playersService = playersService;
         _settings = settings;
 
-
-        
         //Need to summon this from IOC
         GoNext = ReactiveCommand.CreateFromObservable(
-            () => 
+            () =>
 
                 Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>())
         );
@@ -40,11 +38,10 @@ public class MainWindowViewModel : ReactiveObject, IScreen
         if (string.IsNullOrEmpty(_settings.Credentials.Token))
             Router.Navigate.Execute(App.Container.GetRequiredService<LoginViewModel>());
 
-
         _massClient.Connect(_settings.Credentials);
 
         while (_massClient.IsConnected == false)
-          Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
         _playersService.GetPlayers();
     }

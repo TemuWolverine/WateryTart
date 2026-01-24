@@ -7,7 +7,6 @@ namespace WateryTart.MassClient;
 
 public static partial class ClientExtensions
 {
-
     private static Action<string> Deserialise<T>(Action<T> responseHandler)
     {
         Action<string> d = (r) =>
@@ -28,6 +27,7 @@ public static partial class ClientExtensions
     {
         c.Send<PlayerResponse>(PlayerMessages.PlayerQueuePlayMedia(queueID, t), Deserialise<PlayerQueueResponse>(responseHandler));
     }
+
     public static void PlayersAll(this IMassWSClient c, Action<PlayerResponse> responseHandler)
     {
         c.Send<PlayerResponse>(PlayerMessages.PlayersAll, Deserialise<PlayerResponse>(responseHandler));
@@ -37,6 +37,7 @@ public static partial class ClientExtensions
     {
         c.Send<PlayerResponse>(PlayerMessages.PlayerQueuesAll, Deserialise<PlayerQueueResponse>(responseHandler));
     }
+
     public static void MusicAlbumsLibraryItems(this IMassWSClient c, Action<AlbumsResponse> responseHandler)
     {
         c.Send<AlbumsResponse>(MusicMessages.MusicAlbumLibraryItems, Deserialise<AlbumsResponse>(responseHandler));
@@ -46,6 +47,4 @@ public static partial class ClientExtensions
     {
         c.Send<TracksResponse>(MusicMessages.MusicAlbumTracks(id), Deserialise<TracksResponse>(responseHandler));
     }
-
-
 }

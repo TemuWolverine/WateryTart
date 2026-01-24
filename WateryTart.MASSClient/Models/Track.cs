@@ -1,5 +1,6 @@
 ﻿namespace WateryTart.MassClient.Models
-{    public class Track
+{
+    public class Track
     {
         public string item_id { get; set; }
         public string provider { get; set; }

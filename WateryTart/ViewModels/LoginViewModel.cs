@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using WateryTart.MassClient;
 using WateryTart.Settings;
@@ -27,7 +27,6 @@ namespace WateryTart.ViewModels
             _massClient = massClient;
             _settings = settings;
             _screen = screen;
-
 
             LoginCommand = ReactiveCommand.Create(Login);
         }

@@ -3,9 +3,9 @@ using WateryTart.ViewModels;
 
 namespace WateryTart.Views;
 
-public partial class AlbumView : ReactiveUserControl<AlbumViewModel>
+public partial class HomeView : ReactiveUserControl<HomeViewModel>
 {
-    public AlbumView()
+    public HomeView()
     {
         InitializeComponent();
     }

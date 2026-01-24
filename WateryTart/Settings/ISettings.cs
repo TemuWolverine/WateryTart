@@ -2,9 +2,7 @@
 
 namespace WateryTart.Settings;
 
-
 public interface ISettings
 {
     public IMassCredentials Credentials { get; set; }
-
 }

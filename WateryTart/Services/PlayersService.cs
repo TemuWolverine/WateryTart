@@ -18,15 +18,12 @@ public class PlayersService : IPlayersService
     {
         _massClient = massClient;
 
-        Players = new ObservableCollection<Player>();   
-        Queues = new ObservableCollection<PlayerQueue>();   
-
+        Players = new ObservableCollection<Player>();
+        Queues = new ObservableCollection<PlayerQueue>();
     }
 
     public void GetPlayers()
     {
-
-
         _massClient
             .PlayersAll((a) =>
             {
@@ -44,7 +41,6 @@ public class PlayersService : IPlayersService
                 Queues.Add(y);
                 Debug.WriteLine(y.display_name);
             }
-
         });
     }
 
@@ -57,5 +53,4 @@ public class PlayersService : IPlayersService
             Debug.WriteLine(a);
         });
     }
-
 }

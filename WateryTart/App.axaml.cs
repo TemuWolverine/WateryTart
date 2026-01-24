@@ -3,11 +3,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Config.Net;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using Splat;
-using System.Reflection;
-using Config.Net;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
@@ -23,6 +21,7 @@ public class WhyAmIDumbLoader : DiskCachedWebImageLoader
 public partial class App : Application
 {
     public static ServiceProvider Container;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -44,7 +43,7 @@ public partial class App : Application
         collection.AddTransient<AlbumsListViewModel>();
         collection.AddTransient<AlbumViewModel>();
         collection.AddTransient<LoginViewModel>();
-        
+
         //settings
         var settings = new ConfigurationBuilder<ISettings>()
             .UseJsonFile("settings.json")

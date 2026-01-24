@@ -16,6 +16,7 @@ public class Streamdetails
     public string volume_normalization_mode { get; set; }
     public object volume_normalization_gain_correct { get; set; }
     public double target_loudness { get; set; }
-   // public Dsp dsp { get; set; }
+
+    // public Dsp dsp { get; set; }
     public object stream_title { get; set; }
 }
