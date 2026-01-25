@@ -9,7 +9,7 @@ using WateryTart.Services;
 
 namespace WateryTart.ViewModels
 {
-    public partial class PlaylistViewModel : ReactiveObject, IRoutableViewModel
+    public partial class PlaylistViewModel : ReactiveObject, IViewModelBase
     {
         public string? UrlPathSegment { get; }
         public IScreen HostScreen { get; }
@@ -25,6 +25,7 @@ namespace WateryTart.ViewModels
             _massClient = massClient;
             _playersService = playersService;
             HostScreen = screen;
+            Title = "";
         }
 
         public void LoadFromId(string id, string provider)
@@ -39,6 +40,7 @@ namespace WateryTart.ViewModels
         private void PlaylistHandler(PlaylistResponse response)
         {
             this.Playlist= response.Result;
+            Title = Playlist.Name;
         }
 
 
@@ -49,6 +51,7 @@ namespace WateryTart.ViewModels
 
         }
 
-        
+
+        public string Title { get; set; }
     }
 }

@@ -6,3 +6,8 @@ public class AlbumResponse : ResponseBase<Album>
 {
 
 }
+
+public class ArtistResponse : ResponseBase<Artist>
+{
+
+}

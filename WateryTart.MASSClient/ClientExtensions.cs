@@ -23,6 +23,17 @@ public static partial class ClientExtensions
         c.Send<AuthResponse>(AuthMessages.Login(username, password), Deserialise<AuthResponse>(responseHandler));
     }
 
+    public static void ArtistGet(this IMassWsClient c, string id, string provider, Action<ArtistResponse> responseHandler)
+    {
+        c.Send<ArtistResponse>(ArtistMessages.ArtistGet(id, provider), Deserialise<ArtistResponse>(responseHandler));
+    }
+
+    public static void ArtistAlbums(this IMassWsClient c, string id, string provider, Action<AlbumsResponse> responseHandler)
+    {
+        c.Send<AlbumsResponse>(ArtistMessages.ArtistAlbums(id, provider), Deserialise<AlbumsResponse>(responseHandler));
+    }
+
+
     public static void Play(this IMassWsClient c, string queueID, Item t, Action<PlayerQueueResponse> responseHandler)
     {
         c.Send<PlayerResponse>(PlayerMessages.PlayerQueuePlayMedia(queueID, t), Deserialise<PlayerQueueResponse>(responseHandler));

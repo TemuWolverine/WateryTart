@@ -10,6 +10,7 @@ using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
 using WateryTart.ViewModels;
+using WateryTart.Views;
 
 namespace WateryTart;
 

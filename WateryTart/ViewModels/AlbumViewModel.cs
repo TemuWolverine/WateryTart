@@ -9,7 +9,7 @@ using WateryTart.Services;
 
 namespace WateryTart.ViewModels;
 
-public partial class AlbumViewModel : ReactiveObject, IRoutableViewModel
+public partial class AlbumViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
@@ -17,6 +17,7 @@ public partial class AlbumViewModel : ReactiveObject, IRoutableViewModel
     public string? UrlPathSegment { get; } = "Album/ID";
     public IScreen HostScreen { get; }
 
+    [Reactive] public partial string Title { get; set; }
     [Reactive]  public partial Album Album { get; set; }
 
     public ObservableCollection<Item> Tracks { get; set; }
@@ -48,6 +49,7 @@ public partial class AlbumViewModel : ReactiveObject, IRoutableViewModel
     public void AlbumHandler(AlbumResponse response)
     {
         this.Album = response.Result;
+        Title = Album.Name;
     }
 
     public void TrackListHandler(TracksResponse response)
@@ -58,4 +60,6 @@ public partial class AlbumViewModel : ReactiveObject, IRoutableViewModel
         var x = Tracks.Last();
         _playersService.Play(x);
     }
+
+
 }

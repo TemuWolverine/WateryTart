@@ -3,7 +3,7 @@ using WateryTart.MassClient;
 
 namespace WateryTart.ViewModels;
 
-public class PlayersViewModel : ReactiveObject, IRoutableViewModel
+public class PlayersViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; }
@@ -14,4 +14,6 @@ public class PlayersViewModel : ReactiveObject, IRoutableViewModel
         _massClient = massClient;
         HostScreen = screen;
     }
+
+    public string Title { get; set; }
 }

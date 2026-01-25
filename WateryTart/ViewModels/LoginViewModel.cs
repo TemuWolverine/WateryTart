@@ -7,7 +7,7 @@ using WateryTart.Settings;
 
 namespace WateryTart.ViewModels
 {
-    public class LoginViewModel : ReactiveObject, IRoutableViewModel
+    public class LoginViewModel : ReactiveObject, IViewModelBase
     {
         private readonly IMassWsClient _massClient;
         private readonly ISettings _settings;
@@ -39,5 +39,7 @@ namespace WateryTart.ViewModels
 
             _screen.Router.NavigateBack.Execute();
         }
+
+        public string Title { get; set; }
     }
 }

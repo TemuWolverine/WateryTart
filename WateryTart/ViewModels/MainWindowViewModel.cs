@@ -8,13 +8,14 @@ using System;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading;
+using ReactiveUI.SourceGenerators;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
 
 namespace WateryTart.ViewModels;
 
-public class MainWindowViewModel : ReactiveObject, IScreen
+public partial class MainWindowViewModel : ReactiveObject, IScreen
 {
     private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
@@ -22,8 +23,13 @@ public class MainWindowViewModel : ReactiveObject, IScreen
 
     public RoutingState Router { get; } = new();
 
-    public ReactiveCommand<Unit, IRoutableViewModel> GoNext { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
+    public ReactiveCommand<Unit, IRoutableViewModel> GoHome { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> GoMusic { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> GoSearch { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> GoSettings { get; }
+
+    [Reactive] public partial string Title { get; set; }
 
     public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings)
     {
@@ -32,17 +38,25 @@ public class MainWindowViewModel : ReactiveObject, IScreen
         _settings = settings;
 
         //Need to summon this from IOC
-        GoNext = ReactiveCommand.CreateFromObservable(
-            () =>
+        GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()));
+        GoMusic = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>()));
+        GoSearch = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SearchViewModel>()));
+        GoSettings = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SettingsViewModel>()));
 
-            Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>())
-            //Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>())
-        );
+        Router.CurrentViewModel.Subscribe((vm) =>
+        {
+            if (vm is not IViewModelBase)
+                return;
+
+            var ivmb = ((IViewModelBase)vm);
+
+            ivmb.WhenAnyValue(x => x.Title)
+                .BindTo(this, v => v.Title);
+        });
     }
 
     public async void Connect()
     {
-
         if (string.IsNullOrEmpty(_settings.Credentials.Token))
         {
             Router.Navigate.Execute(App.Container.GetRequiredService<LoginViewModel>());
@@ -56,7 +70,7 @@ public class MainWindowViewModel : ReactiveObject, IScreen
 
         _playersService.GetPlayers();
 
-        GoNext.Execute();
+        GoHome.Execute();
         //ConnectSendSpinPlayer();
     }
 

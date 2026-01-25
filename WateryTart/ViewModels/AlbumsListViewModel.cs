@@ -2,33 +2,14 @@
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using ReactiveUI.SourceGenerators;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
 
 namespace WateryTart.ViewModels;
 
-public partial class SearchViewModel : ReactiveObject, IRoutableViewModel
-{
-    public string? UrlPathSegment { get; }
-    public IScreen HostScreen { get; }
-}
-public partial class SettingsViewModel : ReactiveObject, IRoutableViewModel
-{
-    public string? UrlPathSegment { get; }
-    public IScreen HostScreen { get; }
-}
-public partial class LibraryViewModel : ReactiveObject, IRoutableViewModel
-{
-    public string? UrlPathSegment { get; }
-    public IScreen HostScreen { get; }
-}
-public partial class RecommendationViewModel : ReactiveObject, IRoutableViewModel
-{
-    public string? UrlPathSegment { get; }
-    public IScreen HostScreen { get; }
-}
-public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
+public class AlbumsListViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; } = "AlbumsList";
@@ -38,6 +19,7 @@ public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
     public ObservableCollection<Album> Albums { get; set; }
     public Album SelectedAlbum { get; set; }
     public ReactiveCommand<Unit, IRoutableViewModel> SelectedItemChangedCommand { get; }
+    [Reactive] public string Title { get; set; }
 
     public AlbumsListViewModel(IMassWsClient massClient, IScreen screen)
     {

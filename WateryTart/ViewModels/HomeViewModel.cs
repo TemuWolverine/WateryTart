@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using WateryTart.MassClient;
@@ -10,7 +11,7 @@ using WateryTart.Settings;
 
 namespace WateryTart.ViewModels
 {
-    public class HomeViewModel : ReactiveObject, IRoutableViewModel
+    public class HomeViewModel : ReactiveObject, IViewModelBase
     {
         private readonly IMassWsClient _massClient;
         private readonly ISettings _settings;
@@ -21,6 +22,7 @@ namespace WateryTart.ViewModels
 
         public HomeViewModel(IScreen screen, IMassWsClient massClient, ISettings settings)
         {
+            Title = "Home";
             _massClient = massClient;
             _settings = settings;
             _screen = screen;
@@ -49,6 +51,9 @@ namespace WateryTart.ViewModels
                         break;
 
                     case MediaType.Artist:
+                        var artistViewModel = WateryTart.App.Container.GetRequiredService<ArtistViewModel>();
+                        artistViewModel.LoadFromId(item.ItemId, item.Provider);
+                        screen.Router.Navigate.Execute(artistViewModel);
                         break;
 
                     case MediaType.Genre:
@@ -80,5 +85,6 @@ namespace WateryTart.ViewModels
 
         public string? UrlPathSegment { get; }
         public IScreen HostScreen { get; }
+        public string Title { get; set; }
     }
 }

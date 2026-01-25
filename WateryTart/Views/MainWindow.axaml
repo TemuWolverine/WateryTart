@@ -5,6 +5,7 @@
 		xmlns:avalonia="http://reactiveui.net"
 		xmlns:wateryTart="clr-namespace:WateryTart"
 		xmlns:vm="clr-namespace:WateryTart.ViewModels"
+		xmlns:converters="clr-namespace:WateryTart.Converters"
 		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
 		x:Class="WateryTart.MainWindow"
 		Width="500"
@@ -12,7 +13,6 @@
 		Title="MainWindow">
     <Window.Resources>
         <x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
-        <!-- ComboBox, RadioButton, CheckBox, etc... -->
     </Window.Resources>
 
     <Window.Background>
@@ -24,11 +24,27 @@
     </Window.Background>
     <Grid Background="{x:Null}">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+			<RowDefinition Height="100" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer  Background="{x:Null}" Grid.Row="0" Margin="10">
+		<!-- Top Navigation -->
+        <StackPanel Background="{x:Null}" Grid.Row="0" Orientation="Horizontal" Margin="15,0,0,0">
+            <StackPanel.Styles>
+                <Style Selector="StackPanel > :is(Control)">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+                <Style Selector="StackPanel > TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </StackPanel.Styles>
+            <Button Content="Go back" Command="{Binding GoBack}" />
+			<TextBlock Text="{Binding Title}" />
+        </StackPanel>
+
+		<!-- Content -->
+		<ScrollViewer  Background="{x:Null}" Grid.Row="1" Margin="10">
 			<avalonia:RoutedViewHost  Router="{Binding Router}"  Background="{x:Null}">
 				<avalonia:RoutedViewHost.DefaultContent  >
 					<TextBlock Text="Default content"
@@ -40,7 +56,9 @@
 				</avalonia:RoutedViewHost.ViewLocator>
 			</avalonia:RoutedViewHost>
 		</ScrollViewer>
-		<StackPanel Background="{x:Null}" Grid.Row="1" Orientation="Horizontal" Margin="15">
+
+		<!-- Bottom Nav -->
+		<StackPanel Background="{x:Null}" Grid.Row="2" Orientation="Horizontal" Margin="15">
 			<StackPanel.Styles>
 				<Style Selector="StackPanel > :is(Control)">
 					<Setter Property="Margin" Value="2"/>
@@ -49,12 +67,10 @@
 					<Setter Property="VerticalAlignment" Value="Center"/>
 				</Style>
 			</StackPanel.Styles>
-			<Button Content="Go next" Command="{Binding GoNext}" />
-			<Button Content="Go back" Command="{Binding GoBack}" />
-			<Button>🏚️</Button>
-			<Button>🎵</Button>
-            <Button>🔍</Button>
-            <Button>⚙️</Button>
+			<Button  Command="{Binding GoHome}">🏚️</Button>
+			<Button  Command="{Binding GoMusic}">🎵</Button>
+            <Button  Command="{Binding GoSearch}">🔍</Button>
+            <Button  Command="{Binding GoSettings}">⚙️</Button>
 		</StackPanel>
 	</Grid>
 </Window>
