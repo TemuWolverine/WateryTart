@@ -6,7 +6,6 @@ using Avalonia.Markup.Xaml;
 using Config.Net;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using System.Runtime;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
@@ -14,22 +13,13 @@ using WateryTart.ViewModels;
 
 namespace WateryTart;
 
-public class WhyAmIDumbLoader : DiskCachedWebImageLoader
-{
-    public static WhyAmIDumbLoader Instance { get; } = new WhyAmIDumbLoader();
-}
-
 public partial class App : Application
 {
     public static ServiceProvider Container;
 
-    public static string BaseUrl
-    {
-        get
-        {
-            return App.Container.GetRequiredService<ISettings>().Credentials.BaseUrl;
-        }
-    }
+    public static string BaseUrl => Container.GetRequiredService<ISettings>().Credentials.BaseUrl;
+
+    public static DiskCachedWebImageLoader ImageLoaderInstance { get; } = new DiskCachedWebImageLoader();
 
     public override void Initialize()
     {
@@ -56,6 +46,12 @@ public partial class App : Application
         collection.AddTransient<HomeViewModel>();
         collection.AddTransient<PlaylistViewModel>();
         collection.AddTransient<ArtistViewModel>();
+
+        collection.AddTransient<SearchViewModel>();
+        collection.AddSingleton<SettingsViewModel>();
+        collection.AddTransient<LibraryViewModel>();
+        collection.AddTransient<RecommendationViewModel>();
+
 
         //settings
         var settings = new ConfigurationBuilder<ISettings>()

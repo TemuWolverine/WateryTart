@@ -8,6 +8,26 @@ using WateryTart.MassClient.Responses;
 
 namespace WateryTart.ViewModels;
 
+public partial class SearchViewModel : ReactiveObject, IRoutableViewModel
+{
+    public string? UrlPathSegment { get; }
+    public IScreen HostScreen { get; }
+}
+public partial class SettingsViewModel : ReactiveObject, IRoutableViewModel
+{
+    public string? UrlPathSegment { get; }
+    public IScreen HostScreen { get; }
+}
+public partial class LibraryViewModel : ReactiveObject, IRoutableViewModel
+{
+    public string? UrlPathSegment { get; }
+    public IScreen HostScreen { get; }
+}
+public partial class RecommendationViewModel : ReactiveObject, IRoutableViewModel
+{
+    public string? UrlPathSegment { get; }
+    public IScreen HostScreen { get; }
+}
 public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
 {
     private readonly IMassWsClient _massClient;

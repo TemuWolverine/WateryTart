@@ -45,7 +45,7 @@
 											CornerRadius="5"
 											Grid.Column="0">
 										<asyncImageLoader:AdvancedImage
-										Loader="{x:Static app:WhyAmIDumbLoader.Instance}"
+                                            Loader="{x:Static app:App.ImageLoaderInstance}"
 										Height="50" Width="50" Source="{Binding Path=., Converter={StaticResource MetadataImageConverter}}">
 
 										</asyncImageLoader:AdvancedImage>

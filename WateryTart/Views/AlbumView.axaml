@@ -29,7 +29,7 @@
 				<Border ClipToBounds ="True"
                         CornerRadius="5">
 					<asyncImageLoader1:AdvancedImage 
-                        Loader="{x:Static app:WhyAmIDumbLoader.Instance}" 
+                        Loader="{x:Static app:App.ImageLoaderInstance}"
                         Source="{Binding Album, Converter={StaticResource MetadataImageConverter}}"
                         />
 				</Border>

@@ -42,6 +42,18 @@
     <Compile Update="Views\AlbumsListView.axaml.cs">
       <DependentUpon>AlbumsListView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\LibraryView.axaml.cs">
+      <DependentUpon>LibraryView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\RecommendationView.axaml.cs">
+      <DependentUpon>RecommendationView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SettingsView.axaml.cs">
+      <DependentUpon>SettingsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SearchView.axaml.cs">
+      <DependentUpon>SearchView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

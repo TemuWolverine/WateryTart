@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
-using WateryTart.MassClient.Models;
 
 namespace WateryTart.MassClient.Messages;
 
