@@ -16,7 +16,7 @@ namespace WateryTart.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject, IScreen
 {
-    private readonly IMassWSClient _massClient;
+    private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
     private readonly ISettings _settings;
 
@@ -25,7 +25,7 @@ public class MainWindowViewModel : ReactiveObject, IScreen
     public ReactiveCommand<Unit, IRoutableViewModel> GoNext { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
 
-    public MainWindowViewModel(IMassWSClient massClient, IPlayersService playersService, ISettings settings)
+    public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings)
     {
         _massClient = massClient;
         _playersService = playersService;
@@ -35,7 +35,8 @@ public class MainWindowViewModel : ReactiveObject, IScreen
         GoNext = ReactiveCommand.CreateFromObservable(
             () =>
 
-                Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>())
+            Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>())
+            //Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>())
         );
     }
 
@@ -54,6 +55,8 @@ public class MainWindowViewModel : ReactiveObject, IScreen
             Thread.Sleep(1000);
 
         _playersService.GetPlayers();
+
+        GoNext.Execute();
         //ConnectSendSpinPlayer();
     }
 

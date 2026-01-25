@@ -9,12 +9,12 @@ namespace WateryTart.Services;
 
 public class PlayersService : IPlayersService
 {
-    private readonly IMassWSClient _massClient;
+    private readonly IMassWsClient _massClient;
     public ObservableCollection<Player> Players { get; set; }
 
     public ObservableCollection<PlayerQueue> Queues { get; set; }
 
-    public PlayersService(IMassWSClient massClient)
+    public PlayersService(IMassWsClient massClient)
     {
         _massClient = massClient;
 
@@ -28,7 +28,7 @@ public class PlayersService : IPlayersService
             .PlayersAll((a) =>
             {
                 PlayerResponse x = (PlayerResponse)a;
-                foreach (var y in x.result)
+                foreach (var y in x.Result)
                 {
                     Debug.WriteLine(y.display_name);
                 }
@@ -36,7 +36,7 @@ public class PlayersService : IPlayersService
 
         _massClient.PlayerQueuesAll(a =>
         {
-            foreach (var y in a.result)
+            foreach (var y in a.Result)
             {
                 Queues.Add(y);
                 Debug.WriteLine(y.display_name);
@@ -46,11 +46,12 @@ public class PlayersService : IPlayersService
 
     public void Play(Item t)
     {
+        /*
         var q = Queues.FirstOrDefault(pq => pq.display_name == "Web (Firefox on Windows)");
 
         _massClient.Play(q.queue_id, t, (a) =>
         {
             Debug.WriteLine(a);
-        });
+        });*/
     }
 }

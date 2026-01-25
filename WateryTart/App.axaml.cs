@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Config.Net;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using System.Runtime;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
@@ -22,6 +23,14 @@ public partial class App : Application
 {
     public static ServiceProvider Container;
 
+    public static string BaseUrl
+    {
+        get
+        {
+            return App.Container.GetRequiredService<ISettings>().Credentials.BaseUrl;
+        }
+    }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -29,6 +38,7 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+
         // If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
@@ -36,13 +46,16 @@ public partial class App : Application
         // Register all the services needed for the application to run
         var collection = new ServiceCollection();
 
-        collection.AddSingleton<IMassWSClient, MassWsClient>();
+        collection.AddSingleton<IMassWsClient, MassWsClient>();
         collection.AddSingleton<IScreen, MainWindowViewModel>();
         collection.AddSingleton<IPlayersService, PlayersService>();
 
         collection.AddTransient<AlbumsListViewModel>();
         collection.AddTransient<AlbumViewModel>();
         collection.AddTransient<LoginViewModel>();
+        collection.AddTransient<HomeViewModel>();
+        collection.AddTransient<PlaylistViewModel>();
+        collection.AddTransient<ArtistViewModel>();
 
         //settings
         var settings = new ConfigurationBuilder<ISettings>()

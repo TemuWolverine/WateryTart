@@ -12,7 +12,7 @@
 			 x:Class="WateryTart.Views.AlbumsListView"
 			 x:DataType="vm:AlbumsListViewModel">
 	<UserControl.Resources>
-		<converters:ImagePathConverter x:Key="ImagePathConverter" />
+		<converters:MetadataImageConverter x:Key="MetadataImageConverter" />
 		<converters:ArtistsToStringConverter x:Key="ArtistsToStringConverter" />
 	</UserControl.Resources>
 	<ListBox x:Name="albumsListBox" Background="{x:Null}" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" >
@@ -43,7 +43,7 @@
                                 CornerRadius="5">
 							<asyncImageLoader:AdvancedImage
 							Loader="{x:Static app:WhyAmIDumbLoader.Instance}"
-							Height="195" Width="195" Source="{Binding Metadata.images[0].path, Converter={StaticResource ImagePathConverter}}" />
+							Height="195" Width="195" Source="{Binding Path=., Converter={StaticResource MetadataImageConverter}}" />
 						</Border>
 					</Border>
 					<TextBlock Margin="-10,0,0,0" Text="{Binding Name}"  TextTrimming="CharacterEllipsis" ></TextBlock>

@@ -10,7 +10,7 @@ namespace WateryTart.ViewModels;
 
 public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
 {
-    private readonly IMassWSClient _massClient;
+    private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; } = "AlbumsList";
     public IScreen HostScreen { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoNext { get; }
@@ -19,7 +19,7 @@ public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
     public Album SelectedAlbum { get; set; }
     public ReactiveCommand<Unit, IRoutableViewModel> SelectedItemChangedCommand { get; }
 
-    public AlbumsListViewModel(IMassWSClient massClient, IScreen screen)
+    public AlbumsListViewModel(IMassWsClient massClient, IScreen screen)
     {
         _massClient = massClient;
         HostScreen = screen;
@@ -41,7 +41,7 @@ public class AlbumsListViewModel : ReactiveObject, IRoutableViewModel
 
     public void AlbumListHandler(AlbumsResponse response)
     {
-        foreach (var a in response.result)
+        foreach (var a in response.Result)
             Albums.Add(a);
     }
 }

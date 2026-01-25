@@ -5,7 +5,7 @@ public class Metadata
     public string description { get; set; }
     public string review { get; set; }
     public bool? @explicit { get; set; }
-    public List<Image> images { get; set; }
+    public List<Image>? images { get; set; }
     public object grouping { get; set; }
     public List<string> genres { get; set; }
     public string mood { get; set; }

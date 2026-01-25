@@ -9,7 +9,7 @@ namespace WateryTart.ViewModels
 {
     public class LoginViewModel : ReactiveObject, IRoutableViewModel
     {
-        private readonly IMassWSClient _massClient;
+        private readonly IMassWsClient _massClient;
         private readonly ISettings _settings;
         private readonly IScreen _screen;
         public string? UrlPathSegment { get; }
@@ -22,7 +22,7 @@ namespace WateryTart.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public LoginViewModel(IScreen screen, IMassWSClient massClient, ISettings settings)
+        public LoginViewModel(IScreen screen, IMassWsClient massClient, ISettings settings)
         {
             _massClient = massClient;
             _settings = settings;

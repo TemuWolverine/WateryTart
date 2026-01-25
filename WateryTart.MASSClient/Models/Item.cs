@@ -6,7 +6,7 @@
         public string owner { get; set; }
         public bool? is_editable { get; set; }
         public bool? available { get; set; }
-        public Image image { get; set; }
+        
         public int? duration { get; set; }
         public List<Artist> artists { get; set; }
         public int? last_played { get; set; }

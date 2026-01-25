@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
-using RestSharp;
 using System.Collections;
 using System.Diagnostics;
 using System.Net.WebSockets;
-using System.Reactive;
 using WateryTart.MassClient.Events;
 using WateryTart.MassClient.Messages;
 using WateryTart.MassClient.Models.Auth;
@@ -12,17 +10,12 @@ using Websocket.Client;
 
 namespace WateryTart.MassClient
 {
-    public class MassWsClient : IMassWSClient
+    public class MassWsClient : IMassWsClient
     {
         private string _baseUrl;
         internal WebsocketClient _client;
 
         internal Dictionary<string, Action<string>> _routing = new(); // Can this be converted to something with types?
-        internal Dictionary<string, Action<ResponseBase>> _routing2 = new();
-
-        public MassWsClient()
-        {
-        }
 
         public async Task<MassCredentials> Login(string username, string password, string baseurl)
         {
@@ -48,12 +41,12 @@ namespace WateryTart.MassClient
                     {
                         var x = response;
 
-                        if (!response.result.success)
+                        if (!response.Result.success)
                             return;
 
                         mc = new MassCredentials()
                         {
-                            Token = response.result.access_token,
+                            Token = response.Result.access_token,
                             BaseUrl = baseurl
                         };
 
@@ -122,12 +115,6 @@ namespace WateryTart.MassClient
             _client.Send(message.ToJson());
         }
 
-        public void Send<T>(MessageBase message, Action<ResponseBase> responseHandler)
-        {
-            _routing2.Add(message.message_id, responseHandler);
-            _client.Send(message.ToJson());
-        }
-
         public bool IsConnected => (_client != null && _client.IsRunning);
 
         private void OnNext(ResponseMessage response)
@@ -137,7 +124,7 @@ namespace WateryTart.MassClient
 
             //Responses from messages
             TempResponse y = JsonConvert.DeserializeObject<TempResponse>(response.Text);
-            if (y.message_id != null && _routing.ContainsKey(y.message_id))
+            if (y?.message_id != null && _routing.ContainsKey(y.message_id))
             {
                 _routing[y.message_id].Invoke(response.Text);
                 return;

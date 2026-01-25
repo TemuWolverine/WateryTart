@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ReactiveUI.SourceGenerators;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -8,21 +9,32 @@ using WateryTart.Services;
 
 namespace WateryTart.ViewModels;
 
-public class AlbumViewModel : ReactiveObject, IRoutableViewModel
+public partial class AlbumViewModel : ReactiveObject, IRoutableViewModel
 {
-    private readonly IMassWSClient _massClient;
+    private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
+    private Album _album;
     public string? UrlPathSegment { get; } = "Album/ID";
     public IScreen HostScreen { get; }
-    public Album Album { get; set; }
+
+    [Reactive]  public partial Album Album { get; set; }
 
     public ObservableCollection<Item> Tracks { get; set; }
 
-    public AlbumViewModel(IMassWSClient massClient, IScreen screen, IPlayersService playersService)
+    public AlbumViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService)
     {
         _massClient = massClient;
         _playersService = playersService;
         HostScreen = screen;
+    }
+
+    public void LoadFromId(string id, string provider)
+    {
+        Tracks = new ObservableCollection<Item>();
+
+        _massClient.MusicAlbumTracks(id, provider, TrackListHandler);
+        _massClient.MusicAlbumGet(id, provider, AlbumHandler);
+
     }
 
     public void Load(Album album)
@@ -30,12 +42,17 @@ public class AlbumViewModel : ReactiveObject, IRoutableViewModel
         Album = album;
         Tracks = new ObservableCollection<Item>();
 
-        _massClient.MusicAlbumGet(album.ItemId, TrackListHandler);
+        _massClient.MusicAlbumTracks(album.ItemId, TrackListHandler);
+    }
+
+    public void AlbumHandler(AlbumResponse response)
+    {
+        this.Album = response.Result;
     }
 
     public void TrackListHandler(TracksResponse response)
     {
-        foreach (var t in response.result)
+        foreach (var t in response.Result)
             Tracks.Add(t);
 
         var x = Tracks.Last();

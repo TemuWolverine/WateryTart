@@ -11,7 +11,7 @@
 			 x:Class="WateryTart.Views.AlbumView"
 			 x:DataType="vm:AlbumViewModel">
 	<UserControl.Resources>
-		<converters:ImagePathConverter x:Key="ImagePathConverter" />
+        <converters:MetadataImageConverter x:Key="MetadataImageConverter" />
 		<converters:SecondsToMinutesConverter x:Key="SecondsToMinutesConverter" />
 		
 	</UserControl.Resources>
@@ -30,7 +30,7 @@
                         CornerRadius="5">
 					<asyncImageLoader1:AdvancedImage 
                         Loader="{x:Static app:WhyAmIDumbLoader.Instance}" 
-                        Source="{Binding Album.Metadata.images[0].path, Converter={StaticResource ImagePathConverter}}"
+                        Source="{Binding Album, Converter={StaticResource MetadataImageConverter}}"
                         />
 				</Border>
 			</Border>
