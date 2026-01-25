@@ -17,6 +17,7 @@ namespace WateryTart.ViewModels
         private readonly IPlayersService _playersService;
 
         [Reactive] public partial Playlist Playlist { get; set; }
+        [Reactive] public partial string Title { get; set; }
 
         public ObservableCollection<Item> Tracks { get; set; }
 
@@ -52,6 +53,6 @@ namespace WateryTart.ViewModels
         }
 
 
-        public string Title { get; set; }
+        
     }
 }

@@ -16,6 +16,7 @@ namespace WateryTart.MassClient
         internal WebsocketClient _client;
 
         internal Dictionary<string, Action<string>> _routing = new(); // Can this be converted to something with types?
+        private IMassCredentials creds;
 
         public async Task<MassCredentials> Login(string username, string password, string baseurl)
         {
@@ -63,6 +64,7 @@ namespace WateryTart.MassClient
 
         public async Task Connect(IMassCredentials credentials)
         {
+            creds = credentials;
             _ = Task.Run(() =>
             {
                 var factory = new Func<ClientWebSocket>(() => new ClientWebSocket
@@ -110,7 +112,7 @@ namespace WateryTart.MassClient
 
             if (!_client.IsRunning)
             {
-                _client.Reconnect();
+                Connect(this.creds);
             }
             _client.Send(message.ToJson());
         }

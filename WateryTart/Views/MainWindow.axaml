@@ -7,12 +7,16 @@
 		xmlns:vm="clr-namespace:WateryTart.ViewModels"
 		xmlns:converters="clr-namespace:WateryTart.Converters"
 		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
 		x:Class="WateryTart.MainWindow"
+		
 		Width="500"
 		x:DataType="vm:MainWindowViewModel"
 		Title="MainWindow">
     <Window.Resources>
         <x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
+        <converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
     </Window.Resources>
 
     <Window.Background>
@@ -39,8 +43,9 @@
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </StackPanel.Styles>
-            <Button Content="Go back" Command="{Binding GoBack}" />
-			<TextBlock Text="{Binding Title}" />
+            <Button Content="⬅️" Command="{Binding GoBack}" />
+
+            <TextBlock Text="{Binding Title, Converter={StaticResource ToUpperValueConverter}}" FontWeight="Bold" FontSize="18"/>
         </StackPanel>
 
 		<!-- Content -->
@@ -58,19 +63,19 @@
 		</ScrollViewer>
 
 		<!-- Bottom Nav -->
-		<StackPanel Background="{x:Null}" Grid.Row="2" Orientation="Horizontal" Margin="15">
-			<StackPanel.Styles>
-				<Style Selector="StackPanel > :is(Control)">
-					<Setter Property="Margin" Value="2"/>
-				</Style>
-				<Style Selector="StackPanel > TextBlock">
-					<Setter Property="VerticalAlignment" Value="Center"/>
-				</Style>
-			</StackPanel.Styles>
-			<Button  Command="{Binding GoHome}">🏚️</Button>
-			<Button  Command="{Binding GoMusic}">🎵</Button>
-            <Button  Command="{Binding GoSearch}">🔍</Button>
-            <Button  Command="{Binding GoSettings}">⚙️</Button>
-		</StackPanel>
+		<Grid Grid.Row="2" Margin="25,10,0,0" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Command="{Binding GoHome}">🛖</Button>
+            <Button Grid.Column="1" Command="{Binding GoMusic}">🎵</Button>
+            <Button Grid.Column="2" Command="{Binding GoSearch}">🔍</Button>
+            <Button Grid.Column="3" Command="{Binding GoPlayers}">🔊</Button>
+            <Button Grid.Column="4" Command="{Binding GoSettings}">⚙️</Button>
+        </Grid>
 	</Grid>
 </Window>

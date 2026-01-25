@@ -30,7 +30,13 @@ public class PlayersService : IPlayersService
                 PlayerResponse x = (PlayerResponse)a;
                 foreach (var y in x.Result)
                 {
-                    Debug.WriteLine(y.display_name);
+                    Players.Add(y);
+                    Debug.WriteLine(y.DisplayName);
+
+                    if (y.CurrentMedia != null)
+                    {
+                        Debug.WriteLine(y.CurrentMedia);
+                    }
                 }
             });
 
@@ -47,7 +53,7 @@ public class PlayersService : IPlayersService
     public void Play(Item t)
     {
         /*
-        var q = Queues.FirstOrDefault(pq => pq.display_name == "Web (Firefox on Windows)");
+        var q = Queues.FirstOrDefault(pq => pq.DisplayName == "Web (Firefox on Windows)");
 
         _massClient.Play(q.queue_id, t, (a) =>
         {

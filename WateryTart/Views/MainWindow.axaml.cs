@@ -15,5 +15,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             vm.Connect();
         });
         AvaloniaXamlLoader.Load(this);
+
+
     }
+
 }

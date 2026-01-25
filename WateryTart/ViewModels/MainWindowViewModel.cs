@@ -28,8 +28,10 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
     public ReactiveCommand<Unit, IRoutableViewModel> GoMusic { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoSearch { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoSettings { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> GoPlayers { get; }
 
     [Reactive] public partial string Title { get; set; }
+
 
     public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings)
     {
@@ -37,12 +39,11 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
         _playersService = playersService;
         _settings = settings;
 
-        //Need to summon this from IOC
         GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()));
         GoMusic = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<AlbumsListViewModel>()));
         GoSearch = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SearchViewModel>()));
         GoSettings = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SettingsViewModel>()));
-
+        GoPlayers = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<PlayersViewModel>()));
         Router.CurrentViewModel.Subscribe((vm) =>
         {
             if (vm is not IViewModelBase)

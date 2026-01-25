@@ -7,5 +7,7 @@ public partial class SettingsViewModel : ReactiveObject, IViewModelBase
 {
     public string? UrlPathSegment { get; }
     public IScreen HostScreen { get; }
-    [Reactive] public string Title { get; set; }
+    [Reactive] public string Title
+    {
+        get { return "Settings";} set; }
 }
