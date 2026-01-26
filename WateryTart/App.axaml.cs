@@ -6,6 +6,8 @@ using Avalonia.Markup.Xaml;
 using Config.Net;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using Splat;
+using System.Reflection;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
@@ -29,6 +31,7 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        
 
         // If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
@@ -54,6 +57,8 @@ public partial class App : Application
         collection.AddTransient<ArtistsViewModel>();
         collection.AddTransient<LibraryViewModel>();
         collection.AddTransient<RecommendationViewModel>();
+
+        AppLocator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
 
 
         //settings
