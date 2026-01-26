@@ -47,15 +47,21 @@ namespace WateryTart.ViewModels
 
         }
 
-        private void PlaylistHandler(PlaylistResponse response)
+        private void PlaylistHandler(PlaylistResponse? response)
         {
+            if (response.Result == null)
+                return;
+
             this.Playlist = response.Result;
             Title = Playlist.Name;
         }
 
 
-        public void TrackListHandler(TracksResponse response)
+        public void TrackListHandler(TracksResponse? response)
         {
+            if (response.Result == null)
+                return;
+
             foreach (var t in response.Result)
                 Tracks.Add(t);
 

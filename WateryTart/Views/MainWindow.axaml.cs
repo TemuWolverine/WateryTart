@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -17,7 +18,12 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             var vm = DataContext as MainWindowViewModel;
             vm.Connect();
-
+            vm.Router.CurrentViewModel.Subscribe((_) =>
+            {
+                var sv = this.Find<ScrollViewer>("sv");
+                if (sv != null)
+                    sv.ScrollToHome();
+            });
 
         });
         AvaloniaXamlLoader.Load(this);

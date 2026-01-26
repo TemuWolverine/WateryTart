@@ -47,8 +47,8 @@
 		</Grid>
 
 		<!-- Content -->
-		<ScrollViewer  Background="{x:Null}" Grid.Row="1" Margin="10">
-			<avalonia:RoutedViewHost  Router="{Binding Router}"  Background="{x:Null}" > <!-- Effect="blur(10)"-->
+		<ScrollViewer x:Name="sv"  Background="{x:Null}" Grid.Row="1" Margin="10">
+			<avalonia:RoutedViewHost x:Name="Router" Router="{Binding Router}"  Background="{x:Null}">
 			<avalonia:RoutedViewHost.DefaultContent  >
 				<TextBlock Text="Default content"
 						   HorizontalAlignment="Center"
