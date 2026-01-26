@@ -36,16 +36,23 @@
 			<StackPanel Grid.Column="1" Margin="10,0,0,0">
 				<TextBlock Text="{Binding Album.Artists[0].Name}"  />
 				<TextBlock Text="{Binding Album.Year}" Opacity="0.7" />
-				<Button>Play</Button>
+				<Button Command="{Binding PlayAlbumCommand}">Play</Button>
 			</StackPanel>
 		</Grid>
 
 		<!-- Tracks -->
-		<ListBox ItemsSource="{Binding Tracks}" Background="{x:Null}" >
+		<ListBox x:Name="lbTracks" ItemsSource="{Binding Tracks}" Background="{x:Null}" >
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid>
-						<Grid.ColumnDefinitions>
+					<Grid Background="Transparent">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="DoubleTapped">
+                                <InvokeCommandAction
+                                    Command="{Binding #lbTracks.((vm:AlbumViewModel)DataContext).TrackTappedCommand }"
+                                    CommandParameter="{Binding Path=.}"/>
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                        <Grid.ColumnDefinitions>
 							<ColumnDefinition Width="20" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>

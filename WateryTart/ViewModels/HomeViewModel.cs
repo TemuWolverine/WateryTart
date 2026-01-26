@@ -78,7 +78,8 @@ namespace WateryTart.ViewModels
 
             foreach (var n in nonEmptyRecommendations)
             {
-                n.items = n.items.GetRange(0, 4);
+                if (n.items.Count > 4)
+                    n.items = n.items.GetRange(0, 4);
                 Recommendations.Add(n);
             }
         }

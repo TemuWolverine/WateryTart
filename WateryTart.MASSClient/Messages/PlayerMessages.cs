@@ -9,14 +9,15 @@ public class PlayerMessages : MessageFactoryBase
 
     public static MessageBase PlayerQueuesAll => JustCommand(Commands.PlayerQueuesAll);
 
-    public static MessageBase PlayerQueuePlayMedia(string queue_id, Item media)
+    public static MessageBase PlayerQueuePlayMedia(string queue_id, MediaItemBase media)
     {
         var m = new Message(Commands.PlayerQueuePlayMedia)
         {
             args = new Hashtable
             {
                 { "queue_id", queue_id },
-                { "media", media }
+                { "media", media},
+                { "option", "play"}
             }
         };
 

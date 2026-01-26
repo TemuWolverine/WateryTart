@@ -1,7 +1,10 @@
-﻿using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
+using System.Linq;
+using System.Reactive;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -21,12 +24,17 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     [Reactive]  public partial Album Album { get; set; }
 
     public ObservableCollection<Item> Tracks { get; set; }
+    public ReactiveCommand<Unit, Unit> PlayAlbumCommand { get; }
+    public ReactiveCommand<Item, Unit> TrackTappedCommand { get; }
 
     public AlbumViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService)
     {
         _massClient = massClient;
         _playersService = playersService;
         HostScreen = screen;
+
+        PlayAlbumCommand = ReactiveCommand.Create(() => _playersService.PlayItem(Album));
+        TrackTappedCommand = ReactiveCommand.Create<Item>((t) => _playersService.PlayItem(t));
     }
 
     public void LoadFromId(string id, string provider)
@@ -57,9 +65,5 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
         foreach (var t in response.Result)
             Tracks.Add(t);
 
-        var x = Tracks.Last();
-        _playersService.Play(x);
     }
-
-
 }

@@ -4,5 +4,5 @@ namespace WateryTart.MassClient.Responses;
 
 public class PlayerQueueResponse : ResponseBase<List<PlayerQueue>>
 {
-  //  public List<PlayerQueue> result { get; set; }
+
 }

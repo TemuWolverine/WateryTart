@@ -5,5 +5,5 @@ namespace WateryTart.ViewModels;
 
 public interface IViewModelBase : IRoutableViewModel
 {
-    [Reactive] public string Title { get; set; }
+    public string Title { get; set; }
 }

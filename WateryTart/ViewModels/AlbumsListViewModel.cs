@@ -9,7 +9,7 @@ using WateryTart.MassClient.Responses;
 
 namespace WateryTart.ViewModels;
 
-public class AlbumsListViewModel : ReactiveObject, IViewModelBase
+public partial class AlbumsListViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; } = "AlbumsList";
@@ -19,7 +19,7 @@ public class AlbumsListViewModel : ReactiveObject, IViewModelBase
     public ObservableCollection<Album> Albums { get; set; }
     public Album SelectedAlbum { get; set; }
     public ReactiveCommand<Unit, IRoutableViewModel> SelectedItemChangedCommand { get; }
-    [Reactive] public string Title { get; set; }
+    [Reactive] public partial string Title { get; set; }
 
     public AlbumsListViewModel(IMassWsClient massClient, IScreen screen)
     {

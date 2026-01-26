@@ -7,5 +7,5 @@ public partial class RecommendationViewModel : ReactiveObject, IViewModelBase
 {
     public string? UrlPathSegment { get; }
     public IScreen HostScreen { get; }
-    [Reactive] public string Title { get; set; }
+    [Reactive] public partial string Title { get; set; }
 }

@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Diagnostics;
 using System.Net.WebSockets;
+using System.Reactive.Subjects;
 using WateryTart.MassClient.Events;
 using WateryTart.MassClient.Messages;
+using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Models.Auth;
 using WateryTart.MassClient.Responses;
 using Websocket.Client;
@@ -18,6 +21,16 @@ namespace WateryTart.MassClient
         internal Dictionary<string, Action<string>> _routing = new(); // Can this be converted to something with types?
         private IMassCredentials creds;
 
+        public MassWsClient()
+        {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new LowercaseNamingPolicy()
+                }
+            };
+        }
         public async Task<MassCredentials> Login(string username, string password, string baseurl)
         {
             var result = await Task.Run(() =>
@@ -35,7 +48,10 @@ namespace WateryTart.MassClient
                  var exitEvent = new ManualResetEvent(false);
                  using (_client = new WebsocketClient(new Uri($"ws://{baseurl}/ws"), factory))
                  {
-                     _client.MessageReceived.Subscribe(OnNext);
+                     _client
+                         .MessageReceived
+                         .Subscribe(OnNext);
+
                      _client.Start();
 
                      this.GetAuthToken(username, password, (response) =>
@@ -112,7 +128,7 @@ namespace WateryTart.MassClient
 
             if (!_client.IsRunning)
             {
-                Connect(this.creds);
+                Connect(creds);
             }
             _client.Send(message.ToJson());
         }
@@ -124,6 +140,14 @@ namespace WateryTart.MassClient
             if (string.IsNullOrEmpty(response.Text))
                 return;
 
+            if (response.Text.Contains("\"server_id\""))
+                //this would be the initial startup server details
+                return;
+
+            if (response.Text.Contains("\"auth-123\""))
+                //this would be the initial startup authorisation details
+                return;
+
             //Responses from messages
             TempResponse y = JsonConvert.DeserializeObject<TempResponse>(response.Text);
             if (y?.message_id != null && _routing.ContainsKey(y.message_id))
@@ -132,9 +156,36 @@ namespace WateryTart.MassClient
                 return;
             }
 
+
             //Event handling
-            var e = JsonConvert.DeserializeObject<EventResponse>(response.Text);
-            Debug.WriteLine(e.EventName);
+            var e = JsonConvert.DeserializeObject<BaseEventResponse>(response.Text);
+
+            switch (e.EventName)
+            {
+                case EventType.PlayerAdded:
+                case EventType.PlayerUpdated:
+                case EventType.PlayerRemoved:
+                case EventType.PlayerConfigUpdated:
+                    subject.OnNext(JsonConvert.DeserializeObject<PlayerEventResponse>(response.Text));
+                    Debug.WriteLine(response.Text);
+                    break;
+
+                case EventType.QueueAdded:
+                case EventType.QueueUpdated:
+                case EventType.QueueItemsUpdated:
+                case EventType.QueueTimeUpdated:
+                    subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueEventResponse>(response.Text));
+                    break;
+                default:
+                    subject.OnNext(e);
+                    break;
+            }
+        }
+        private readonly Subject<BaseEventResponse> subject = new Subject<BaseEventResponse>();
+
+        public IObservable<BaseEventResponse> Events
+        {
+            get { return subject; }
         }
     }
 }

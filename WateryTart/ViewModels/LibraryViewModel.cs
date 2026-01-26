@@ -14,7 +14,7 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
     private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; }
     public IScreen HostScreen { get; }
-    [Reactive] public string Title { get; set; }
+    public string Title { get; set; }
     [Reactive] public partial ObservableCollection<LibraryItem> Items { get; set; }
 
     public LibraryViewModel(IMassWsClient massClient, IScreen screen)

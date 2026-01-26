@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WateryTart.MassClient;
@@ -7,7 +6,7 @@ using WateryTart.Settings;
 
 namespace WateryTart.ViewModels
 {
-    public class LoginViewModel : ReactiveObject, IViewModelBase
+    public partial class LoginViewModel : ReactiveObject, IViewModelBase
     {
         private readonly IMassWsClient _massClient;
         private readonly ISettings _settings;
@@ -17,8 +16,7 @@ namespace WateryTart.ViewModels
 
         public string Server { get; set; }
         public string Username { get; set; }
-
-        [Reactive] public string Password { get; set; }
+        public string Password { get; set; }
 
         public ICommand LoginCommand { get; }
 

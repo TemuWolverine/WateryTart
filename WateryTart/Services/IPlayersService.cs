@@ -5,9 +5,10 @@ namespace WateryTart.Services;
 
 public interface IPlayersService
 {
-    public ObservableCollection<Player> Players { get; }
-
-    public void GetPlayers();
-
-    public void Play(Item t);
+    ObservableCollection<Player> Players { get; }
+    void GetPlayers();
+    void PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null);
+    void PlayerVolumeDown(Player p);
+    void PlayerVolumeUp(Player p);
+    void PlayerPlayPause(Player p);
 }

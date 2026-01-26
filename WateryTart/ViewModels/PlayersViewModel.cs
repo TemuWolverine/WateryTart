@@ -26,5 +26,6 @@ public partial class PlayersViewModel : ReactiveObject, IViewModelBase
 
     public string Title
     {
-        get { return "Players";} set; }
+        get => "Players";
+        set; }
 }

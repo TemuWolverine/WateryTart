@@ -27,10 +27,3 @@ public abstract class MediaItemBase
 
     public Image? image { get; set; }
 }
-
-
-
-[JsonConverter(typeof(StringEnumConverter))]
-public enum MediaType { Artist, Album, Track, Radio, Playlist, Audiobook, Podcast, PodcastEpisode, Genre, Folder }
-
-
