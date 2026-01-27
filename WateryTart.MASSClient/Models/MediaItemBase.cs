@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Reflection;
 
 namespace WateryTart.MassClient.Models;
 
@@ -10,7 +9,7 @@ public abstract class MediaItemBase
     public string Provider { get; set; }
     public string Name { get; set; }
     public string Version { get; set; }
-    [JsonProperty("sort_name")]  public string SortName { get; set; }
+    [JsonProperty("sort_name")] public string SortName { get; set; }
     public string Uri { get; set; }
     [JsonProperty("external_ids")] public List<List<string>> ExternalIds { get; set; }
     [JsonProperty("is_playable")] public bool IsPlayable { get; set; }

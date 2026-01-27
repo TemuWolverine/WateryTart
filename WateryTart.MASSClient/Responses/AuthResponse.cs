@@ -4,7 +4,7 @@ namespace WateryTart.MassClient.Responses;
 
 public class AuthResponse : ResponseBase<AuthUser>
 {
-   // public AuthUser result { get; set; }
+    // public AuthUser result { get; set; }
 }
 
 public class AuthUser

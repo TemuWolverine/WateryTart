@@ -1,11 +1,7 @@
-﻿using Avalonia.Input;
-using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Linq;
 using System.Reactive;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Messages;
@@ -24,13 +20,12 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     public IScreen HostScreen { get; }
 
     [Reactive] public partial string Title { get; set; }
-    [Reactive]  public partial Album Album { get; set; }
+    [Reactive] public partial Album Album { get; set; }
 
     public ObservableCollection<Item> Tracks { get; set; }
     public ReactiveCommand<Unit, Unit> PlayAlbumCommand { get; }
     public ReactiveCommand<Item, Unit> TrackTappedCommand { get; }
     public ReactiveCommand<Item, Unit> TrackAltMenuCommand { get; }
-    
 
     public MenuViewModel MenuViewModel { get; set; }
 
@@ -94,7 +89,6 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
 
         _massClient.MusicAlbumTracks(id, provider, TrackListHandler);
         _massClient.MusicAlbumGet(id, provider, AlbumHandler);
-
     }
 
     public void Load(Album album)
@@ -115,6 +109,5 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     {
         foreach (var t in response.Result)
             Tracks.Add(t);
-
     }
 }

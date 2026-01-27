@@ -9,6 +9,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
     private readonly IMassWsClient _massClient;
     public string? UrlPathSegment { get; }
     public IScreen HostScreen { get; }
+
     public string Title
     {
         get => "Search";

@@ -34,7 +34,6 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
                 Artists.Add(a);
         });
 
-
         ClickedCommand = ReactiveCommand.Create<Artist>(item =>
         {
             var artistViewModel = WateryTart.App.Container.GetRequiredService<ArtistViewModel>();

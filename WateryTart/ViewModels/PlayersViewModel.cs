@@ -1,9 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Subjects;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.Services;
@@ -36,10 +33,11 @@ public partial class PlayersViewModel : ReactiveObject, IViewModelBase
         HostScreen = screen;
         Players = playersService.Players;
         SelectedPlayer = playersService.SelectedPlayer;
-
     }
+
     public string Title
     {
         get => "Players";
-        set; }
+        set;
+    }
 }

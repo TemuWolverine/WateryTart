@@ -25,7 +25,6 @@ public partial class RecommendationViewModel : ReactiveObject, IViewModelBase
         _settings = settings;
         _screen = screen;
 
-
         ClickedCommand = ReactiveCommand.Create<Item>(item =>
         {
             var i = item; //navigate to whatever

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using ReactiveUI.SourceGenerators;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;

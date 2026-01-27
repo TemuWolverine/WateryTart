@@ -14,5 +14,5 @@ public interface IMassWsClient
 
     bool IsConnected { get; }
 
-    IObservable<BaseEventResponse> Events { get;  }
+    IObservable<BaseEventResponse> Events { get; }
 }

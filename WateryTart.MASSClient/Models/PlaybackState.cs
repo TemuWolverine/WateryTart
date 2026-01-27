@@ -2,8 +2,8 @@
 
 public enum PlaybackState
 {
-    idle, 
-    paused, 
-    playing, 
+    idle,
+    paused,
+    playing,
     unknown
 }

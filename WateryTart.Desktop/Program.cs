@@ -2,9 +2,9 @@
 using ReactiveUI.Avalonia;
 using System;
 
-namespace WateryTart;
+namespace WateryTart.Desktop;
 
-internal class Program
+sealed class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -14,9 +14,10 @@ internal class Program
         .StartWithClassicDesktopLifetime(args);
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<App>()
-            .UseReactiveUI()
+    public static AppBuilder BuildAvaloniaApp()
+        => AppBuilder.Configure<App>()
             .UsePlatformDetect()
+            .WithInterFont()
+            .UseReactiveUI()
             .LogToTrace();
 }

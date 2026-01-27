@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Reactive.Linq;
-using ReactiveUI;
 
 namespace WateryTart.Extensions;
 

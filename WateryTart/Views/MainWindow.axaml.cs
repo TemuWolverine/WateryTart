@@ -1,11 +1,8 @@
-using System;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
+using System;
 using WateryTart.ViewModels;
 
 namespace WateryTart;

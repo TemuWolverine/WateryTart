@@ -2,7 +2,6 @@
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
@@ -112,7 +111,7 @@ namespace WateryTart.ViewModels
                     case MediaType.Track: break;
 
                     case MediaType.Audiobook: break;
-                    case MediaType.Folder:break;
+                    case MediaType.Folder: break;
                     case MediaType.Podcast: break;
                     case MediaType.PodcastEpisode: break;
                 }
@@ -127,13 +126,13 @@ namespace WateryTart.ViewModels
 
             foreach (var n in nonEmptyRecommendations)
             {
-                 SourceRecommendations.Add(n); //C# is byref, not byval, so would have to clone it.
+                SourceRecommendations.Add(n); //C# is byref, not byval, so would have to clone it.
                 // https://docs.avaloniaui.net/docs/concepts/reactiveui/binding-to-sorted-filtered-list
                 // Theoretically dynamicdata should be used with a SourceList, but a copied list of view models may be better suited.
 
                 Recommendation x = (Recommendation)CustomMemberwiseClone(n);
                 if (x.items.Count > 4)
-                      x.items = x.items.GetRange(0, 4);
+                    x.items = x.items.GetRange(0, 4);
 
                 Recommendations.Add(x);
             }
@@ -155,5 +154,4 @@ namespace WateryTart.ViewModels
             return clone;
         }
     }
-
 }

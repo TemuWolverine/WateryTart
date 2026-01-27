@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ReactiveUI;
+﻿using ReactiveUI;
+using System.Collections.Generic;
 using WateryTart.MassClient;
 using WateryTart.Services;
 

@@ -1,11 +1,13 @@
 <Application xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:wateryTart="clr-namespace:WateryTart"
-			 x:Class="WateryTart.App"
-			 RequestedThemeVariant="Default">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:WateryTart"
+             x:Class="WateryTart.App"
+             RequestedThemeVariant="Dark">
+
     <Application.DataTemplates>
-        <wateryTart:ViewLocator/>
+        <local:ViewLocator/>
     </Application.DataTemplates>
+
     <Application.Styles>
 		<FluentTheme />
         <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />

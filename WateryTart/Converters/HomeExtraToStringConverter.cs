@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Avalonia.Data.Converters;
+using System;
 using System.Globalization;
-using Avalonia.Data.Converters;
 using WateryTart.MassClient.Models;
 
 namespace WateryTart.Converters;
@@ -13,16 +13,16 @@ public class HomeExtraToStringConverter : IValueConverter
             return null;
 
         var item = (Item)value;
-        
+
         switch (item.MediaType)
         {
             case MediaType.Playlist: return item.owner;
             case MediaType.Album: return null;
             case MediaType.Track:
-            {
-                if (item.artists != null) return item.artists[0].Name ?? string.Empty;
-                break;
-            }
+                {
+                    if (item.artists != null) return item.artists[0].Name ?? string.Empty;
+                    break;
+                }
         }
 
         return null;

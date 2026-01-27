@@ -84,7 +84,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService
 
                 var player = Players.FirstOrDefault(p => p.PlayerId == e.data.PlayerId);
                 if (player != null)
-                player.PlaybackState = e.data.PlaybackState;
+                    player.PlaybackState = e.data.PlaybackState;
 
                 break;
             case EventType.PlayerRemoved:

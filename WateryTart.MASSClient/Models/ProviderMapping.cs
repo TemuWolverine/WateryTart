@@ -4,7 +4,7 @@ namespace WateryTart.MassClient.Models;
 
 public class ProviderMapping
 {
-    [JsonProperty("item_id")]  public string ItemId { get; set; }
+    [JsonProperty("item_id")] public string ItemId { get; set; }
     [JsonProperty("provider_domain")] public string ProviderDomain { get; set; }
     [JsonProperty("provider_instance")] public string ProviderInstance { get; set; }
     public bool? Available { get; set; }

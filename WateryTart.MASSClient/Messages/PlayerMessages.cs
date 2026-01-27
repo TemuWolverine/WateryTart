@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections;
-using System.Security.Cryptography;
+﻿using System.Collections;
 using WateryTart.MassClient.Models;
 
 namespace WateryTart.MassClient.Messages;
@@ -27,7 +24,7 @@ public class PlayerMessages : MessageFactoryBase
 
     public static MessageBase PlayerQueuePlayMedia(string queue_id, MediaItemBase media, PlayMode mode = PlayMode.Play)
     {
-        
+
         /* Unsure why this didn't serialise the enum, perhaps because it was in a hashtable */
         var modestr = "";
         switch (mode)

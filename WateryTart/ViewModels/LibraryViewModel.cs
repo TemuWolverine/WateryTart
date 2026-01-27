@@ -3,9 +3,7 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Windows.Input;
 using WateryTart.MassClient;
-using WateryTart.MassClient.Models;
 
 namespace WateryTart.ViewModels;
 
@@ -22,7 +20,6 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
         _massClient = massClient;
         HostScreen = screen;
         Title = "Library";
-      
 
         var artists = new LibraryItem()
         {
@@ -32,13 +29,11 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
                 var vm = WateryTart.App.Container.GetRequiredService<ArtistsViewModel>();
                 screen.Router.Navigate.Execute(vm);
             })
-
         };
         massClient.ArtistCount((a) =>
         {
             artists.Count = a.Result;
         });
-
 
         var albums = new LibraryItem()
         {
@@ -60,8 +55,6 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
             tracks.Count = a.Result;
         });
 
-
-
         Items =
         [
             artists,
@@ -78,7 +71,6 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
                "album_artists_only": true
              }
            }
-
 
          {
              "command": "music/albums/count",
@@ -108,10 +100,12 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
 public partial class LibraryItem : ReactiveObject
 {
     public string Title { get; set; }
+
     public string LowerTitle
     {
         get { return Title.ToLowerInvariant(); }
     }
+
     [Reactive] public partial int Count { get; set; }
     public ReactiveCommand<Unit, Unit> ClickedCommand { get; set; }
 }

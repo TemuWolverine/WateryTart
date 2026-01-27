@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Avalonia.Data.Converters;
+using System;
 using System.Globalization;
 using System.Linq;
-using Avalonia.Data.Converters;
 using WateryTart.MassClient.Models;
 
 namespace WateryTart.Converters;
@@ -14,13 +13,13 @@ public class MetadataImageConverter : IValueConverter
         var item = (MediaItemBase?)value;
 
         //If it's not an item, return
-        if (item == null) 
+        if (item == null)
             return null;
 
         //If it is an item, but has a "image" field set, use that
-        if (item.image != null && !string.IsNullOrEmpty(item.image.path)) 
+        if (item.image != null && !string.IsNullOrEmpty(item.image.path))
             //If the image field starts with http, use that
-            return item.image.path.StartsWith(("http")) ? 
+            return item.image.path.StartsWith(("http")) ?
                 item.image.path : ProxyString(item.image.path, item.image.provider);
 
         //If there is no image field set, use metadata, make sure its not null

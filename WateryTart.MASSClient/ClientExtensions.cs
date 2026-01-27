@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 using WateryTart.MassClient.Messages;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -77,7 +76,7 @@ public static class ClientExtensions
             c.Send<PlayerQueueResponse>(PlayerMessages.PlayerActiveQueue(id), Deserialise<PlayerQueueResponse>(responseHandler));
         }
 
-        
+
 
         public void PlaylistGet(string id, string provider, Action<PlaylistResponse> responseHandler)
         {

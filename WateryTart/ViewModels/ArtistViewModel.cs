@@ -48,10 +48,6 @@ namespace WateryTart.ViewModels
         {
             foreach (var r in response.Result.OrderByDescending(a => a.Year).ThenBy(a => a.Name))
                 Albums.Add(r);
-
-
         }
-
-
     }
 }

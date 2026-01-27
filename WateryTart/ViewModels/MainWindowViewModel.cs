@@ -1,26 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using ReactiveUI;
-using Sendspin.SDK.Client;
-using Sendspin.SDK.Connection;
-using Sendspin.SDK.Synchronization;
+using ReactiveUI.SourceGenerators;
 using System;
-using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
-using ReactiveUI.SourceGenerators;
 using WateryTart.MassClient;
+using WateryTart.Messages;
 using WateryTart.Services;
 using WateryTart.Settings;
-using WateryTart.Messages;
 
 namespace WateryTart.ViewModels;
 
 public partial class MainWindowViewModel : ReactiveObject, IScreen
 {
     private readonly IMassWsClient _massClient;
-    
+
     private readonly ISettings _settings;
 
     public RoutingState Router { get; } = new();
@@ -36,9 +31,12 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
     [Reactive] public partial IPlayersService PlayersService { get; set; }
 
     [Reactive] public partial ReactiveObject SlideupMenu { get; set; }
-    [Reactive] public ReactiveCommand<Unit, Unit>  CloseSlideupCommand { get; set; }
-    
+    [Reactive] public ReactiveCommand<Unit, Unit> CloseSlideupCommand { get; set; }
+
     [Reactive] public partial bool ShowSlideupMenu { get; set; }
+
+    [Reactive]
+    public partial IViewModelBase CurrentViewModel { get; set; }
 
     public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings)
     {
@@ -63,8 +61,9 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
 
             ivmb.WhenAnyValue(x => x.Title)
                 .BindTo(this, v => v.Title);
-        });
 
+            CurrentViewModel = ivmb;
+        });
 
         MessageBus.Current.Listen<MenuViewModel>()
             .Subscribe(x =>
@@ -102,43 +101,5 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
 
         GoHome.Execute();
         //ConnectSendSpinPlayer();
-    }
-
-    public async void ConnectSendSpinPlayer()
-    {
-        // Create dependencies
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-        var connection = new SendspinConnection(loggerFactory.CreateLogger<SendspinConnection>());
-        var clockSync = new KalmanClockSynchronizer(loggerFactory.CreateLogger<KalmanClockSynchronizer>());
-
-        // Create client with device info
-        var capabilities = new ClientCapabilities
-        {
-            ClientName = "My Player",
-            ProductName = "Watery Tart",
-            Manufacturer = "TemuWolverine",
-            SoftwareVersion = "1.0.0"
-        };
-
-        var client = new SendspinClientService(
-            loggerFactory.CreateLogger<SendspinClientService>(),
-            connection,
-            clockSync,
-            capabilities
-        );
-
-        // Connect to server
-        await client.ConnectAsync(new Uri("ws://10.0.1.20:8927/sendspin"));
-
-
-        // Handle events
-        client.GroupStateChanged += (sender, group) =>
-        {
-            Debug.WriteLine($"Now playing: {group.Metadata?.Title}");
-        };
-
-        // Send commands
-        await client.SendCommandAsync("play");
-        await client.SetVolumeAsync(75);
     }
 }

@@ -28,12 +28,12 @@
 							<ColumnDefinition Width="50" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<!--                      <Interaction.Behaviors>
-						<EventTriggerBehavior EventName="Tapped">
-						<InvokeCommandAction
-						Command="{Binding #lbRecommendations.((vm:HomeViewModel)DataContext).ClickedCommand }"
-						CommandParameter="{Binding Path=.}"/>
-						</EventTriggerBehavior>
+<!--						<Interaction.Behaviors>
+							<EventTriggerBehavior EventName="Tapped">
+								<InvokeCommandAction
+								Command="{Binding #lbRecommendations.((vm:HomeViewModel)DataContext).ClickedCommand }"
+								CommandParameter="{Binding Path=.}"/>
+							</EventTriggerBehavior>
 						</Interaction.Behaviors>-->
 						<Border ClipToBounds ="True"
 								Margin="-10,0,0,0"

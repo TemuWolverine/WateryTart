@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reactive;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System;
+using System.Reactive;
 using WateryTart.Extensions;
 using WateryTart.Messages;
 
@@ -28,6 +28,4 @@ public partial class MenuItemViewModel : ReactiveObject, IViewModelBase
             MessageBus.Current.SendMessage(new CloseMenuMessage());
         });
     }
-
-
 }
