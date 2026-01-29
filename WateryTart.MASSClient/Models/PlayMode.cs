@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace WateryTart.MassClient.Messages;
+namespace WateryTart.MassClient.Models;
 
 public enum PlayMode
 {
