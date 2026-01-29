@@ -1,11 +1,33 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="ARMRELEASE" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="X64Debug" />
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+  </Configurations>
   <Folder Name="/Solution Items/">
     <File Path="Directory.Packages.props" />
   </Folder>
   <Project Path="WateryTart.Android/WateryTart.Android.csproj">
-    <Deploy Solution="Debug|*" />
+    <BuildType Solution="ARMRELEASE|*" Project="Release" />
+    <BuildType Solution="X64Debug|*" Project="Release" />
+    <Build Solution="*|ARM64" Project="false" />
+    <Build Solution="ARMRELEASE|Any CPU" Project="false" />
+    <Build Solution="X64Debug|Any CPU" Project="false" />
+    <Deploy Solution="Debug|Any CPU" />
   </Project>
-  <Project Path="WateryTart.Desktop/WateryTart.Desktop.csproj" />
-  <Project Path="WateryTart.MASSClient/WateryTart.MassClient.csproj" />
-  <Project Path="WateryTart/WateryTart.csproj" />
+  <Project Path="WateryTart.Desktop/WateryTart.Desktop.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+  </Project>
+  <Project Path="WateryTart.MASSClient/WateryTart.MassClient.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+  </Project>
+  <Project Path="WateryTart/WateryTart.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+  </Project>
 </Solution>
