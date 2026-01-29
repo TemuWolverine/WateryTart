@@ -5,6 +5,7 @@
 			 xmlns:converters="using:WateryTart.Converters"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialIcons="using:Material.Icons.Avalonia"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:players="using:WateryTart.ViewModels.Players"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -46,9 +47,9 @@
 			</StackPanel>
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
-				<Button Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0">⏮️</Button>
-				<Button Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">⏸️</Button>
-				<Button Command="{Binding PlayNextCommand}" Margin="3,0,20,0">⏭️</Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="PlayPause" Width="25" Height="25" /></Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 			</StackPanel>
 		</Grid>
 	</StackPanel>

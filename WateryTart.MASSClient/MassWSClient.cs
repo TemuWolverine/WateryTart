@@ -98,7 +98,9 @@ namespace WateryTart.MassClient
                 using (_client = new WebsocketClient(new Uri($"ws://{credentials.BaseUrl}/ws"), factory))
                 {
                     _client.ReconnectionHappened.Subscribe(info =>
-                        Debug.WriteLine($"Reconnection happened, type: {info.Type}"));
+                    {
+                        Login(credentials);
+                    });
 
                     _client.MessageReceived.Subscribe(OnNext);
                     _client.Start();

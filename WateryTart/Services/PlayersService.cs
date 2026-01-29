@@ -12,14 +12,12 @@ using System.Reactive.Linq;
 using WateryTart.Extensions;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Events;
-using WateryTart.MassClient.Messages;
 using WateryTart.MassClient.Models;
 using WateryTart.Settings;
 using WateryTart.ViewModels;
 using WateryTart.ViewModels.Menus;
 
 namespace WateryTart.Services;
-
 public partial class PlayersService : ReactiveObject, IPlayersService
 {
     private readonly IMassWsClient _massClient;
@@ -86,12 +84,14 @@ public partial class PlayersService : ReactiveObject, IPlayersService
         /* This takes care of filtering the two lists, though unsure on INPC */
         QueuedItems
                 .Connect()
-                .Filter(i => i.sort_index > SelectedQueue.current_index)
+                .Sort(SortExpressionComparer<QueuedItem>.Ascending(t => t.sort_index))
+                .Filter(i => i.sort_index > SelectedQueue.current_index)  //There is a "race condition" when new tracks are prepended to a queue I think
                 .Bind(out currentQueue)
                 .Subscribe();
 
         QueuedItems
                 .Connect()
+                .Sort(SortExpressionComparer<QueuedItem>.Descending(t => t.sort_index))
                 .Filter(i => i.sort_index <= SelectedQueue.current_index)
                 .Bind(out playedQueue)
                 .Subscribe();
@@ -109,7 +109,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService
             case EventType.QueueUpdated: //replacing a queue is just 'updated'
                 Debug.WriteLine($"{e.data.items} items now in the queue");
                 //It seems like when a queue is updated, the best thing is to clear/refetch
-                SelectedQueue.current_index = e.data.current_index;
+                if (SelectedQueue != null)
+                    SelectedQueue.current_index = e.data.current_index;
                 FetchQueueContents();
                 break;
 
@@ -186,10 +187,22 @@ public partial class PlayersService : ReactiveObject, IPlayersService
 
     public void PlayerVolumeDown(Player p)
     {
+        p ??= SelectedPlayer;
+
+        if (p != null)
+        {
+            _massClient.PlayerGroupVolumeDown(p.PlayerId, (r) => { });
+        }
     }
 
     public void PlayerVolumeUp(Player p)
     {
+        p ??= SelectedPlayer;
+
+        if (p != null)
+        {
+            _massClient.PlayerGroupVolumeUp(p.PlayerId, (r) => { });
+        }
     }
 
     public void PlayerPlayPause(Player p)

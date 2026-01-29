@@ -17,9 +17,7 @@
 	</UserControl.Resources>
 	<ListBox x:Name="albumsListBox" Background="{x:Null}" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" >
 		<ListBox.Styles>
-			<Style Selector="ListBoxItem">
-				<Setter Property="Background" Value="{x:Null}" />
-		</Style>
+		
 		</ListBox.Styles>
 		<Interaction.Behaviors>
 			<EventTriggerBehavior SourceObject="albumsListBox"

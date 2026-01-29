@@ -17,10 +17,19 @@
 		<converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
 	</UserControl.Resources>
 	<StackPanel HorizontalAlignment="Stretch" >
-		<asyncImageLoader:AdvancedImage Margin="20"
+		<Border  Margin="20,0,20,0" BoxShadow="0 0 20 0 Black"
+						
+						MaxHeight="300" MaxWidth="300">
+					<Border ClipToBounds ="True"
+							CornerRadius="5">
+						<!-- any larger and artifacts are more visible, see: https://github.com/AvaloniaUI/Avalonia/issues/16010 -->
+
+		<asyncImageLoader:AdvancedImage 
 										Loader="{x:Static app:App.ImageLoaderInstance}"
-										MaxHeight="300" MaxWidth="300" Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" >
+										 Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" >
 		</asyncImageLoader:AdvancedImage>
+						</Border>
+							</Border>
 		<Grid  Margin="20" MaxWidth="400" >
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />

@@ -1,6 +1,5 @@
 ﻿using DynamicData;
 using System.Collections.ObjectModel;
-using WateryTart.MassClient.Messages;
 using WateryTart.MassClient.Models;
 using WateryTart.ViewModels;
 
@@ -19,7 +18,6 @@ public interface IPlayersService
     void PlayerVolumeDown(Player? p = null);
     void PlayerVolumeUp(Player? p = null);
     void PlayerPlayPause(Player? p = null);
-
     void PlayerNext(Player? p = null);
     void PlayerPrevious(Player? p = null);
 }

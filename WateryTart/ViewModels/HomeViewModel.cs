@@ -51,23 +51,13 @@ namespace WateryTart.ViewModels
 
             AltMenuCommand = ReactiveCommand.Create<Item>(i =>
             {
-                var menu = new MenuViewModel();
-                menu.AddMenuItem(new MenuItemViewModel("Add to library", string.Empty, ReactiveCommand.Create<Unit>(r =>
-                {
-                    Debug.WriteLine("got here");
-                })));
-                menu.AddMenuItem(new MenuItemViewModel("Add to favourites", string.Empty, ReactiveCommand.Create<Unit>(r =>
-                {
-                    Debug.WriteLine("got here");
-                })));
-                menu.AddMenuItem(new MenuItemViewModel("Add to playlist", string.Empty, ReactiveCommand.Create<Unit>(r =>
-                {
-                    Debug.WriteLine("got here");
-                })));
-                menu.AddMenuItem(new MenuItemViewModel("Play", string.Empty, ReactiveCommand.Create<Unit>(r =>
-                {
-                    Debug.WriteLine("got here");
-                })));
+                var menu = new MenuViewModel(
+                    [
+                    new MenuItemViewModel("Add to library", string.Empty, ReactiveCommand.Create<Unit>(r => {})),
+                    new MenuItemViewModel("Add to favourites", string.Empty, ReactiveCommand.Create<Unit>(r => { })),
+                    new MenuItemViewModel("Add to playlist", string.Empty, ReactiveCommand.Create<Unit>(r => { })),
+                    new MenuItemViewModel("Play", string.Empty, ReactiveCommand.Create<Unit>(r => { }))
+                    ]);
 
                 foreach (var p in _playersService.Players)
                 {
@@ -118,6 +108,13 @@ namespace WateryTart.ViewModels
                     case MediaType.PodcastEpisode: break;
                 }
             });
+
+
+            var wvs = new WindowsVolumeService(_playersService);
+
+#if ARMRELEASE
+            var gpiovs = new GpioVolumeService(settings, _playersService);
+#endif
         }
 
         public void RecommendationHandler(RecommendationResponse response)

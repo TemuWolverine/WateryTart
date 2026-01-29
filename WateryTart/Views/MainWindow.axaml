@@ -3,6 +3,7 @@
 		xmlns:asyncImageLoader="using:AsyncImageLoader"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:materialIcons="using:Material.Icons.Avalonia"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:avalonia="http://reactiveui.net"
 		xmlns:wateryTart="clr-namespace:WateryTart"
@@ -48,12 +49,14 @@
 				<ColumnDefinition Width="50" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Content="⬅️" Command="{Binding GoBack}" />
+			<Button Grid.Column="0"  Classes="iconButton" Command="{Binding GoBack}">
+				<materialIcons:MaterialIcon Kind="ArrowBack" Width="25" Height="25" />
+			</Button>
 			<TextBlock Grid.Column="1" Text="{Binding Title, Converter={StaticResource ToUpperValueConverter}}" TextTrimming="CharacterEllipsis" FontWeight="Bold" FontSize="18"/>
 		</Grid>
 
 		<!-- Content -->
-		<ScrollViewer x:Name="sv"  Background="{x:Null}" Grid.Row="1" Margin="10">
+		<ScrollViewer x:Name="sv"  Background="{x:Null}" Grid.Row="1" Margin="10,0,10,0">
 			<avalonia:RoutedViewHost x:Name="Router" Router="{Binding Router}"  Background="{x:Null}">
 				<avalonia:RoutedViewHost.DefaultContent  >
 					<TextBlock Text="Default content"
@@ -67,12 +70,12 @@
 		</ScrollViewer>
 
 		<StackPanel Grid.Row="2">
-		<!-- Player Nav -->
-		<players:MiniPlayerView DataContext="{Binding MiniPlayer}" IsVisible="{Binding  #window.((vm:MainWindowViewModel)DataContext).CurrentViewModel.ShowMiniPlayer}" />
+			<!-- Player Nav -->
+			<players:MiniPlayerView DataContext="{Binding MiniPlayer}" IsVisible="{Binding #window.((vm:MainWindowViewModel)DataContext).CurrentViewModel.ShowMiniPlayer}" />
 
 			<!-- Bottom Nav -->
 			<Grid Background="#66000000" IsVisible="{Binding  #window.((vm:MainWindowViewModel)DataContext).CurrentViewModel.ShowNavigation}">
-				<Grid Margin="100,0,0,0">
+				<Grid Margin="10,0,0,0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*" />
 						<ColumnDefinition Width="*" />
@@ -80,11 +83,11 @@
 						<ColumnDefinition Width="*" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Button Grid.Column="0" Command="{Binding GoHome}">🛖</Button>
-					<Button Grid.Column="1" Command="{Binding GoMusic}">🎵</Button>
-					<Button Grid.Column="2" Command="{Binding GoSearch}">🔍</Button>
-					<Button Grid.Column="3" Command="{Binding GoPlayers}">🔊</Button>
-					<Button Grid.Column="4" Command="{Binding GoSettings}">⚙️</Button>
+					<Button Grid.Column="0"  Height="45" Classes="iconButton navButton" Command="{Binding GoHome}"><materialIcons:MaterialIcon Kind="Home"			Width="25" Height="25" /></Button>
+					<Button Grid.Column="1"  Height="45" Classes="iconButton navButton" Command="{Binding GoMusic}"    ><materialIcons:MaterialIcon Kind="Music"    Width="25" Height="25" /></Button>
+					<Button Grid.Column="2"  Height="45" Classes="iconButton navButton" Command="{Binding GoSearch}"   ><materialIcons:MaterialIcon Kind="Search"   Width="25" Height="25" /></Button>
+					<Button Grid.Column="3"  Height="45" Classes="iconButton navButton" Command="{Binding GoPlayers}"  ><materialIcons:MaterialIcon Kind="Speaker"  Width="25" Height="25" /></Button>
+					<Button Grid.Column="4"  Height="45" Classes="iconButton navButton" Command="{Binding GoSettings}" ><materialIcons:MaterialIcon Kind="Settings" Width="25" Height="25" /></Button>
 				</Grid>
 			</Grid>
 		</StackPanel>

@@ -8,6 +8,7 @@ using ReactiveUI;
 using Splat;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using WateryTart.MassClient;
 using WateryTart.Services;
@@ -42,11 +43,13 @@ public partial class App : Application
         collection.AddSingleton<PlayersViewModel>();
         collection.AddSingleton<MiniPlayerViewModel>();
         collection.AddSingleton<BigPlayerViewModel>();
+        collection.AddSingleton<HomeViewModel>();
+
+        collection.AddSingleton<WindowsVolumeService>();
 
         collection.AddTransient<AlbumsListViewModel>();
         collection.AddTransient<AlbumViewModel>();
         collection.AddTransient<LoginViewModel>();
-        collection.AddTransient<HomeViewModel>();
         collection.AddTransient<PlaylistViewModel>();
         collection.AddTransient<ArtistViewModel>();
         collection.AddTransient<SearchViewModel>();
@@ -54,7 +57,7 @@ public partial class App : Application
         collection.AddTransient<LibraryViewModel>();
         collection.AddTransient<RecommendationViewModel>();
 
-        AppLocator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
+        //AppLocator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
         //settings
         var settings = new ConfigurationBuilder<ISettings>()
                .UseJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Library", "WateryTart"))
@@ -69,11 +72,16 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-
-
             desktop.MainWindow = new MainWindow
             {
                 DataContext = vm
+            };
+
+            //Shutdown
+            ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).ShutdownRequested += (s, e) =>
+            {
+                var x = App.Container.GetServices<IHandleShutdown>();
+                // This is where each thing would do their IDispose or whatever.
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)

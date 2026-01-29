@@ -18,6 +18,9 @@
     <PackageVersion Include="Avalonia.Android" Version="11.3.11" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.1.1" />
     <PackageVersion Include="Config.Net" Version="5.2.1" />
+    <PackageVersion Include="HotkeyListener" Version="1.9.0" />
+    <PackageVersion Include="Iot.Device.Bindings" Version="4.1.0" />
+    <PackageVersion Include="Material.Icons.Avalonia" Version="2.4.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.2" />
@@ -28,6 +31,10 @@
     <PackageVersion Include="ReactiveUI.Avalonia" Version="11.3.8" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.6.1" />
     <PackageVersion Include="Sendspin.SDK" Version="6.0.0" />
+    <PackageVersion Include="SharpHook" Version="7.1.1" />
+    <PackageVersion Include="SharpHook.R3" Version="7.1.1" />
+    <PackageVersion Include="SharpHook.Reactive" Version="7.1.1" />
+    <PackageVersion Include="System.Device.Gpio" Version="4.1.0" />
     <PackageVersion Include="System.Reactive" Version="6.1.0" />
     <PackageVersion Include="Websocket.Client" Version="5.3.0" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.1" />

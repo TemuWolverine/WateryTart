@@ -25,12 +25,16 @@
     </PackageReference>
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
     <PackageReference Include="Config.Net" />
+    <PackageReference Include="Iot.Device.Bindings" />
+    <PackageReference Include="Material.Icons.Avalonia" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="ReactiveUI.SourceGenerators">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SharpHook" />
+    <PackageReference Include="System.Device.Gpio" />
     <PackageReference Include="Xaml.Behaviors.Avalonia" />
     <PackageReference Include="Xaml.Behaviors.Interactivity" />
   </ItemGroup>

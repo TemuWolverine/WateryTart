@@ -86,9 +86,14 @@ public static partial class MassClientExtensions
             c.Send<PlayerQueueItemsResponse>(JustId(Commands.PlayerQueueItems, id, "queue_id"), Deserialise<PlayerQueueItemsResponse>(responseHandler));
         }
 
-        public void PlayerVolumeUp(string playerId, Action<PlayersQueuesResponse> responseHandler)
+        public void PlayerGroupVolumeUp(string playerId, Action<PlayersQueuesResponse> responseHandler)
         {
             c.Send<PlayerResponse>(JustId(Commands.PlayerGroupVolumeUp, playerId, "player_id"), Deserialise<PlayersQueuesResponse>(responseHandler));
+        }
+
+        public void PlayerGroupVolumeDown(string playerId, Action<PlayersQueuesResponse> responseHandler)
+        {
+            c.Send<PlayerResponse>(JustId(Commands.PlayerGroupVolumeDown, playerId, "player_id"), Deserialise<PlayersQueuesResponse>(responseHandler));
         }
     }
 }

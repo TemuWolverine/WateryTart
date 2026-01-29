@@ -17,13 +17,19 @@ public partial class MenuViewModel : ReactiveObject, IViewModelBase
     public bool ShowNavigation => false;
     public List<MenuItemViewModel> MenuItems { get; set; }
 
-    public MenuViewModel()
+    public MenuViewModel(IEnumerable<MenuItemViewModel> menuItems = null)
     {
         MenuItems = [];
+        MenuItems.AddRange(menuItems);  
     }
 
     public void AddMenuItem(MenuItemViewModel menuItem)
     {
         MenuItems.Add(menuItem);
+    }
+
+    public void AddMenuItem(IEnumerable<MenuItemViewModel> menuItems)
+    {
+        MenuItems.AddRange(menuItems);
     }
 }
