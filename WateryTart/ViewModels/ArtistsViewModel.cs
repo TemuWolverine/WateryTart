@@ -3,6 +3,7 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.Services;
@@ -28,18 +29,20 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
         HostScreen = screen;
         Title = "Artists";
 
-        massClient.ArtistsGet((response) =>
-
-        {
-            foreach (var a in response.Result)
-                Artists.Add(a);
-        });
-
         ClickedCommand = ReactiveCommand.Create<Artist>(item =>
         {
             var artistViewModel = WateryTart.App.Container.GetRequiredService<ArtistViewModel>();
             artistViewModel.LoadFromId(item.ItemId, item.Provider);
             screen.Router.Navigate.Execute(artistViewModel);
         });
+
+        Load();
+    }
+
+    private async Task Load()
+    { 
+        var response = await _massClient.ArtistsGetAsync();
+        foreach (var a in response.Result)
+            Artists.Add(a);
     }
 }

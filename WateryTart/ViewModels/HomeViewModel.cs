@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -40,7 +41,6 @@ namespace WateryTart.ViewModels
 
             Recommendations = new ObservableCollection<Recommendation>();
             SourceRecommendations = new List<Recommendation>();
-            _massClient.MusicRecommendations(RecommendationHandler);
 
             RecommendationListCommand = ReactiveCommand.Create<Recommendation>(r =>
             {
@@ -115,11 +115,15 @@ namespace WateryTart.ViewModels
 #if ARMRELEASE
             var gpiovs = new GpioVolumeService(settings, _playersService);
 #endif
+
+            Load();
         }
 
-        public void RecommendationHandler(RecommendationResponse response)
+        private async Task Load()
         {
-            var nonEmptyRecommendations = response
+            var recommendationResponse = await _massClient.MusicRecommendationsAsync();
+
+            var nonEmptyRecommendations = recommendationResponse
                 .Result
                 .Where(r => r.items.Any());
 

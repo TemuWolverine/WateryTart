@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
-using WateryTart.MassClient.Responses;
 
 namespace WateryTart.ViewModels;
 
@@ -40,11 +39,13 @@ public partial class AlbumsListViewModel : ReactiveObject, IViewModelBase
             }
         );
 
-        _massClient.MusicAlbumsLibraryItems(AlbumListHandler);
+        Load();
     }
 
-    public void AlbumListHandler(AlbumsResponse response)
+    public async Task Load()     
     {
+        Albums.Clear();
+        var response = await _massClient.MusicAlbumsLibraryItemsAsync();
         foreach (var a in response.Result)
             Albums.Add(a);
     }

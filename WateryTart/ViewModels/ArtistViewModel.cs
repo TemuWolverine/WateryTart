@@ -2,6 +2,7 @@
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -35,19 +36,22 @@ namespace WateryTart.ViewModels
         {
             Tracks = new ObservableCollection<Item>();
 
-            _massClient.ArtistAlbums(id, provider, ArtistAlbumHandler);
-            _massClient.ArtistGet(id, provider, ArtistHandler);
+            LoadArtistAlbum(id, provider);
+            LoadArtist(id, provider);
         }
 
-        private void ArtistHandler(ArtistResponse response)
+        private async Task LoadArtist(string id, string provider)
         {
-            Artist = response.Result;
+            var artistResponse = await _massClient.ArtistGetAsync(id, provider);
+
+            Artist = artistResponse.Result;
             Title = Artist.Name;
         }
 
-        private void ArtistAlbumHandler(AlbumsResponse response)
+        private async Task LoadArtistAlbum(string id, string provider)
         {
-            foreach (var r in response.Result.OrderByDescending(a => a.Year).ThenBy(a => a.Name))
+            var albumArtistResponse = await _massClient.ArtistAlbumsAsync(id, provider);
+            foreach (var r in albumArtistResponse.Result.OrderByDescending(a => a.Year).ThenBy(a => a.Name))
                 Albums.Add(r);
         }
     }
