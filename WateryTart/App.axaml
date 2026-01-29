@@ -1,15 +1,39 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:WateryTart"
-             x:Class="WateryTart.App"
-             RequestedThemeVariant="Dark">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="using:WateryTart"
+			 xmlns:materialIcons="using:Material.Icons.Avalonia"
+			 x:Class="WateryTart.App"
+			 RequestedThemeVariant="Dark">
 
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+	<Application.DataTemplates>
+		<local:ViewLocator/>
+	</Application.DataTemplates>
 
-    <Application.Styles>
+	<Application.Styles>
 		<FluentTheme />
-        <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+		<materialIcons:MaterialIconStyles />
+		<StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+
+		<Style Selector="Button.iconButton">
+			<Setter Property="Background" Value="Transparent" /> <!-- Transparent is still a touch/click target, but x:x:Null is not -->
+		</Style>
+		<Style Selector="Button.iconButton:disabled">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="Button.navButton">
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+		</Style>
+
+
+		<Style Selector="ListBoxItem">
+			<Setter Property="Background" Value="{x:Null}" />
+		</Style>
+
+		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+			<Setter Property="Background" Value="#33FFFFFF" />
+		</Style>
+
+
 	</Application.Styles>
 </Application>
