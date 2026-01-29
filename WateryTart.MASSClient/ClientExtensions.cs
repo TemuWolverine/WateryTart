@@ -9,6 +9,31 @@ namespace WateryTart.MassClient;
 
 public static partial class MassClientExtensions
 {
+    internal static Task<T> SendAsync<T>(IMassWsClient client, MessageBase message)
+    {
+        var tcs = new TaskCompletionSource<T>();
+        try
+        {
+            client.Send<T>(message, (response) =>
+            {
+                try
+                {
+                    var result = JsonConvert.DeserializeObject<T>(response);
+                    tcs.TrySetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            tcs.TrySetException(ex);
+        }
+        return tcs.Task;
+    }
+
     private static MessageBase JustCommand(string command)
     {
         return new Message(command);

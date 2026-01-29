@@ -1,8 +1,10 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -87,28 +89,52 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     public void LoadFromId(string id, string provider)
     {
         Tracks = new ObservableCollection<Item>();
-
-        _massClient.MusicAlbumTracks(id, provider, TrackListHandler);
-        _massClient.MusicAlbumGet(id, provider, AlbumHandler);
+        _ = LoadAlbumDataAsync(id, provider);
     }
 
     public void Load(Album album)
     {
         Album = album;
         Tracks = new ObservableCollection<Item>();
-
-        _massClient.MusicAlbumTracks(album.ItemId, TrackListHandler);
+        _ = LoadTracksAsync(album.ItemId, "library");
     }
 
-    public void AlbumHandler(AlbumResponse response)
+    private async Task LoadAlbumDataAsync(string id, string provider)
     {
-        this.Album = response.Result;
-        Title = Album.Name;
+        try
+        {
+            var albumResponse = await _massClient.MusicAlbumGetAsync(id, provider);
+            Album = albumResponse.Result;
+            Title = Album.Name;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading album: {ex.Message}");
+        }
+
+        try
+        {
+            var tracksResponse = await _massClient.MusicAlbumTracksAsync(id, provider);
+            foreach (var t in tracksResponse.Result)
+                Tracks.Add(t);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading tracks: {ex.Message}");
+        }
     }
 
-    public void TrackListHandler(TracksResponse response)
+    private async Task LoadTracksAsync(string id, string provider)
     {
-        foreach (var t in response.Result)
-            Tracks.Add(t);
+        try
+        {
+            var tracksResponse = await _massClient.MusicAlbumTracksAsync(id, provider);
+            foreach (var t in tracksResponse.Result)
+                Tracks.Add(t);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading tracks: {ex.Message}");
+        }
     }
 }

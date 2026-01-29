@@ -1,7 +1,10 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Models;
 using WateryTart.MassClient.Responses;
@@ -17,7 +20,7 @@ namespace WateryTart.ViewModels
         private readonly IPlayersService _playersService;
         public bool ShowMiniPlayer { get => true; }
         public bool ShowNavigation => true;
-        [Reactive] public partial Playlist Playlist { get; set; }
+        [Reactive] public partial PlaylistResponse Playlist { get; set; }
         [Reactive] public partial string Title { get; set; }
 
         public ObservableCollection<Item> Tracks { get; set; }
@@ -32,34 +35,47 @@ namespace WateryTart.ViewModels
 
             PlayCommand = ReactiveCommand.Create<Item>((i) =>
             {
-                _playersService.PlayItem(Playlist);
+                if (Playlist?.Result != null)
+                    _playersService.PlayItem(Playlist.Result as MediaItemBase);
             });
         }
 
         public void LoadFromId(string id, string provider)
         {
             Tracks = new ObservableCollection<Item>();
-
-            _massClient.PlaylistTracksGet(id, provider, TrackListHandler);
-            _massClient.PlaylistGet(id, provider, PlaylistHandler);
+            _ = LoadPlaylistDataAsync(id, provider);
         }
 
-        private void PlaylistHandler(PlaylistResponse? response)
+        private async Task LoadPlaylistDataAsync(string id, string provider)
         {
-            if (response.Result == null)
-                return;
+            try
+            {
+                var playlistResponse = await _massClient.PlaylistGetAsync(id, provider);
+                if (playlistResponse?.Result != null)
+                {
+                    Playlist = playlistResponse;
+                    Title = playlistResponse.Result.Name;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading playlist: {ex.Message}");
+            }
 
-            this.Playlist = response.Result;
-            Title = Playlist.Name;
-        }
-
-        public void TrackListHandler(TracksResponse? response)
-        {
-            if (response.Result == null)
-                return;
-
-            foreach (var t in response.Result)
-                Tracks.Add(t);
+            try
+            {
+                var tracksResponse = await _massClient.PlaylistTracksGetAsync(id, provider);
+                if (tracksResponse?.Result != null)
+                {
+                    foreach (var t in tracksResponse.Result)
+                        Tracks.Add(t);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading playlist tracks: {ex.Message}");
+            }
         }
     }
 }
+

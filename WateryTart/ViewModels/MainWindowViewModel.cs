@@ -4,7 +4,7 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.Messages;
 using WateryTart.Services;
@@ -29,11 +29,6 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
     public ReactiveCommand<Unit, IRoutableViewModel> GoSettings { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoPlayers { get; }
 
-    
-    public ReactiveCommand<Unit, Unit> PlayNextCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayerPlayPauseCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayerPreviousCommand { get; }
-
     [Reactive] public partial string Title { get; set; }
     [Reactive] public partial IPlayersService PlayersService { get; set; }
 
@@ -54,11 +49,6 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
         _settings = settings;
         ShowSlideupMenu = false;
 
-       
-        //PlayNextCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerNext());
-        //PlayerPlayPauseCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPlayPause());
-        //PlayerPreviousCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPrevious());
-
         GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()));
         GoMusic = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<LibraryViewModel>()));
         GoSearch = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SearchViewModel>()));
@@ -68,17 +58,15 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
 
         Router.CurrentViewModel.Subscribe((vm) =>
         {
-            if (vm is not IViewModelBase)
-                return;
+            if (vm is IViewModelBase ivmb)
+            {
+                ivmb.WhenAnyValue(x => x.Title)
+                    .BindTo(this, v => v.Title);
 
-            var ivmb = ((IViewModelBase)vm);
+                CurrentViewModel = ivmb;
 
-            ivmb.WhenAnyValue(x => x.Title)
-                .BindTo(this, v => v.Title);
-
-            CurrentViewModel = ivmb;
-
-            MiniPlayer = App.Container.GetRequiredService<MiniPlayerViewModel>();
+                MiniPlayer = App.Container.GetRequiredService<MiniPlayerViewModel>();
+            }
         });
 
         MessageBus.Current.Listen<MenuViewModel>()
@@ -95,7 +83,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
             });
     }
 
-    public async void Connect()
+    public async Task Connect()
     {
         /* This shouldn't be set too early otherwise the UI hangs
             Needs to be tied to a message to open/close the menu
@@ -111,11 +99,10 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
         _massClient.Connect(_settings.Credentials);
 
         while (_massClient.IsConnected == false)
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
 
         PlayersService.GetPlayers();
 
         GoHome.Execute();
-        //ConnectSendSpinPlayer();
     }
 }

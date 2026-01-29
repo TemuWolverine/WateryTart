@@ -20,7 +20,8 @@ public partial class MenuViewModel : ReactiveObject, IViewModelBase
     public MenuViewModel(IEnumerable<MenuItemViewModel> menuItems = null)
     {
         MenuItems = [];
-        MenuItems.AddRange(menuItems);  
+        if (menuItems != null)
+            MenuItems.AddRange(menuItems);
     }
 
     public void AddMenuItem(MenuItemViewModel menuItem)

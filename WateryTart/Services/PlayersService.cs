@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using WateryTart.Extensions;
 using WateryTart.MassClient;
 using WateryTart.MassClient.Events;
@@ -41,30 +42,26 @@ public partial class PlayersService : ReactiveObject, IPlayersService
             if (value != null)
             {
                 _settings.LastSelectedPlayerId = value.PlayerId;
-                FetchPlayerQueue(value.PlayerId);
+                _ = FetchPlayerQueueAsync(value.PlayerId);
             }
 
             this.RaiseAndSetIfChanged(ref field, value);
         }
     }
 
-    private void FetchPlayerQueue(string id)
+    private async Task FetchPlayerQueueAsync(string id)
     {
-        _massClient.PlayerActiveQueue(id, (pq) =>
-        {
-            SelectedPlayerQueueId = pq.Result.queue_id;
-            SelectedQueue = pq.Result;
-            FetchQueueContents();
-        });
+        var pq = await _massClient.PlayerActiveQueueAsync(id);
+        SelectedPlayerQueueId = pq.Result.queue_id;
+        SelectedQueue = pq.Result;
+        await FetchQueueContentsAsync();
     }
 
-    private void FetchQueueContents()
+    private async Task FetchQueueContentsAsync()
     {
-        _massClient.PlayerQueueItems(SelectedPlayerQueueId, (items) =>
-        {
-            QueuedItems.Clear();
-            QueuedItems.AddRange(items.Result);
-        });
+        var items = await _massClient.PlayerQueueItemsAsync(SelectedPlayerQueueId);
+        QueuedItems.Clear();
+        QueuedItems.AddRange(items.Result);
     }
 
     public PlayersService(IMassWsClient massClient, ISettings settings)
@@ -97,13 +94,12 @@ public partial class PlayersService : ReactiveObject, IPlayersService
                 .Subscribe();
     }
 
-    public void OnPlayerQueueEvents(PlayerQueueEventResponse e)
+    public async void OnPlayerQueueEvents(PlayerQueueEventResponse e)
     {
         Debug.WriteLine(e.EventName);
         switch (e.EventName)
         {
             case EventType.QueueAdded:
-
                 break;
 
             case EventType.QueueUpdated: //replacing a queue is just 'updated'
@@ -111,7 +107,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService
                 //It seems like when a queue is updated, the best thing is to clear/refetch
                 if (SelectedQueue != null)
                     SelectedQueue.current_index = e.data.current_index;
-                FetchQueueContents();
+                await FetchQueueContentsAsync();
                 break;
 
             case EventType.QueueItemsUpdated:
@@ -119,7 +115,6 @@ public partial class PlayersService : ReactiveObject, IPlayersService
                 break;
 
             default:
-
                 break;
         }
     }
@@ -158,60 +153,83 @@ public partial class PlayersService : ReactiveObject, IPlayersService
         }
     }
 
-    public void GetPlayers()
+    public async void GetPlayers()
     {
-        _massClient
-            .PlayersAll((a) =>
-            {
-                foreach (var y in a.Result)
-                {
-                    Players.Add(y);
-                }
-
-                if (!string.IsNullOrEmpty(_settings.LastSelectedPlayerId))
-                {
-                    SelectedPlayer =
-                        Players.SingleOrDefault(player => player.PlayerId == _settings.LastSelectedPlayerId);
-                }
-            });
-
-        _massClient.PlayerQueuesAll(a =>
+        try
         {
-            foreach (var y in a.Result)
+            var playersResponse = await _massClient.PlayersAllAsync();
+            foreach (var y in playersResponse.Result)
+            {
+                Players.Add(y);
+            }
+
+            var queuesResponse = await _massClient.PlayerQueuesAllAsync();
+            foreach (var y in queuesResponse.Result)
             {
                 Queues.Add(y);
                 Debug.WriteLine(y.display_name);
             }
-        });
+
+            if (!string.IsNullOrEmpty(_settings.LastSelectedPlayerId))
+            {
+                SelectedPlayer =
+                    Players.SingleOrDefault(player => player.PlayerId == _settings.LastSelectedPlayerId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading players: {ex.Message}");
+        }
     }
 
-    public void PlayerVolumeDown(Player p)
+    public async void PlayerVolumeDown(Player p)
     {
         p ??= SelectedPlayer;
 
         if (p != null)
         {
-            _massClient.PlayerGroupVolumeDown(p.PlayerId, (r) => { });
+            try
+            {
+                await _massClient.PlayerGroupVolumeDownAsync(p.PlayerId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error adjusting volume: {ex.Message}");
+            }
         }
     }
 
-    public void PlayerVolumeUp(Player p)
+    public async void PlayerVolumeUp(Player p)
     {
         p ??= SelectedPlayer;
 
         if (p != null)
         {
-            _massClient.PlayerGroupVolumeUp(p.PlayerId, (r) => { });
+            try
+            {
+                await _massClient.PlayerGroupVolumeUpAsync(p.PlayerId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error adjusting volume: {ex.Message}");
+            }
         }
     }
 
-    public void PlayerPlayPause(Player p)
+    public async void PlayerPlayPause(Player p)
     {
         p ??= SelectedPlayer;
-        _massClient.PlayerPlayPause(p.PlayerId, (a) => { });
+        try
+        {
+            await _massClient.PlayerPlayPauseAsync(p.PlayerId);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error toggling playback: {ex.Message}");
+        }
     }
 
-    public void PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace)
+    public async void PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace)
     {
         p ??= SelectedPlayer;
 
@@ -221,41 +239,60 @@ public partial class PlayersService : ReactiveObject, IPlayersService
             var menu = new MenuViewModel();
             foreach (var player in Players)
             {
-                menu.AddMenuItem(new MenuItemViewModel($"\tPlay on {player.DisplayName}", string.Empty, ReactiveCommand.Create<Unit>(r =>
+                var capturedPlayer = player;
+                menu.AddMenuItem(new MenuItemViewModel($"\tPlay on {player.DisplayName}", string.Empty, ReactiveCommand.Create<Unit>(async _ =>
                 {
-                    _massClient.PlayerActiveQueue(player.PlayerId, (pq) =>
+                    try
                     {
-                        SelectedPlayer = player;
-                        _massClient.Play(pq.Result.queue_id, t, mode, (a) =>
-                        {
-                            Debug.WriteLine(a);
-                        });
-                    });
+                        SelectedPlayer = capturedPlayer;
+                        var pq = await _massClient.PlayerActiveQueueAsync(capturedPlayer.PlayerId);
+                        await _massClient.PlayAsync(pq.Result.queue_id, t, mode);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error playing item: {ex.Message}");
+                    }
                 })));
             }
             MessageBus.Current.SendMessage(menu);
         }
         else
         {
-            _massClient.PlayerActiveQueue(p.PlayerId, (pq) =>
+            try
             {
-                _massClient.Play(pq.Result.queue_id, t, mode, (a) =>
-                {
-                    //Should events be raised here?
-                });
-            });
+                var pq = await _massClient.PlayerActiveQueueAsync(p.PlayerId);
+                await _massClient.PlayAsync(pq.Result.queue_id, t, mode);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error playing item: {ex.Message}");
+            }
         }
     }
 
-    public void PlayerNext(Player p = null)
+    public async void PlayerNext(Player p = null)
     {
         p ??= SelectedPlayer;
-        _massClient.PlayerNext(p.PlayerId, (a) => { });
+        try
+        {
+            await _massClient.PlayerNextAsync(p.PlayerId);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error playing next: {ex.Message}");
+        }
     }
 
-    public void PlayerPrevious(Player p)
+    public async void PlayerPrevious(Player p)
     {
         p ??= SelectedPlayer;
-        _massClient.PlayerPrevious(p.PlayerId, (a) => { });
+        try
+        {
+            await _massClient.PlayerPreviousAsync(p.PlayerId);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error playing previous: {ex.Message}");
+        }
     }
 }

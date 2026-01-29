@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 
 namespace WateryTart.ViewModels;
@@ -31,10 +32,6 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
                 screen.Router.Navigate.Execute(vm);
             })
         };
-        massClient.ArtistCount((a) =>
-        {
-            artists.Count = a.Result;
-        });
 
         var albums = new LibraryItem()
         {
@@ -45,16 +42,8 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
                 screen.Router.Navigate.Execute(vm);
             })
         };
-        massClient.AlbumsCount((a) =>
-        {
-            albums.Count = a.Result;
-        });
 
         var tracks = new LibraryItem() { Title = "Tracks" };
-        massClient.TrackCount((a) =>
-        {
-            tracks.Count = a.Result;
-        });
 
         Items =
         [
@@ -65,48 +54,40 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
             new() { Title = "Genres" }
         ];
 
-        /*{
-             "command": "music/artists/count",
-             "args": {
-               "favorite_only": false,
-               "album_artists_only": true
-             }
-           }
-
-         {
-             "command": "music/albums/count",
-             "args": {
-               "favorite_only": false,
-               "album_types": ["album", "single", "live", "soundtrack", "compilation", "ep", "unknown"]
-             }
-           }
-
-         {
-             "command": "music/playlists/count",
-             "args": {
-               "favorite_only": false
-             }
-           }
-
-{
-             "command": "music/tracks/count",
-             "args": {
-               "favorite_only": false
-             }
-           }
-         */
+        // Load counts asynchronously in the background
+        _ = LoadLibraryCountsAsync(artists, albums, tracks);
     }
-}
 
-public partial class LibraryItem : ReactiveObject
-{
-    public string Title { get; set; }
-
-    public string LowerTitle
+    private async Task LoadLibraryCountsAsync(LibraryItem artists, LibraryItem albums, LibraryItem tracks)
     {
-        get { return Title.ToLowerInvariant(); }
-    }
+        try
+        {
+            var artistCountResponse = await _massClient.ArtistCountAsync();
+            artists.Count = artistCountResponse.Result;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading artist count: {ex.Message}");
+        }
 
-    [Reactive] public partial int Count { get; set; }
-    public ReactiveCommand<Unit, Unit> ClickedCommand { get; set; }
+        try
+        {
+            var albumCountResponse = await _massClient.AlbumsCountAsync();
+            albums.Count = albumCountResponse.Result;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading album count: {ex.Message}");
+        }
+
+        try
+        {
+            var trackCountResponse = await _massClient.TrackCountAsync();
+            tracks.Count = trackCountResponse.Result;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading track count: {ex.Message}");
+        }
+    }
 }

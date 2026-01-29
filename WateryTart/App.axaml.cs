@@ -26,10 +26,25 @@ public static class AntipatternExtensionsYesIKnowItsBad
 }
 public partial class App : Application
 {
-    public static IContainer Container;
-    public static string BaseUrl => Container.GetRequiredService<ISettings>().Credentials.BaseUrl;
+    private static readonly string AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Library", "WateryTart");
+    private static readonly Lazy<DiskCachedWebImageLoader> LazyImageLoader = new(() => new DiskCachedWebImageLoader(AppDataPath));
+    private static string _cachedBaseUrl;
+    private static IEnumerable<IReaper> _reapers;
 
-    public static DiskCachedWebImageLoader ImageLoaderInstance { get; } = new DiskCachedWebImageLoader(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Library", "WateryTart"));
+    public static IContainer Container;
+    public static string BaseUrl
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_cachedBaseUrl))
+            {
+                _cachedBaseUrl = Container.Resolve<ISettings>().Credentials.BaseUrl;
+            }
+            return _cachedBaseUrl;
+        }
+    }
+
+    public static DiskCachedWebImageLoader ImageLoaderInstance => LazyImageLoader.Value;
 
     public override void Initialize()
     {
@@ -75,7 +90,13 @@ public partial class App : Application
 
         Container = builder.Build();
 
-        var vm = Container.GetRequiredService<IScreen>();
+        // Cache BaseUrl immediately after container is built
+        _cachedBaseUrl = Container.Resolve<ISettings>().Credentials.BaseUrl;
+        
+        // Cache reapers for shutdown
+        _reapers = Container.Resolve<IEnumerable<IReaper>>();
+
+        var vm = Container.Resolve<IScreen>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -87,8 +108,7 @@ public partial class App : Application
             //Shutdown
             ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).ShutdownRequested += (s, e) =>
             {
-                var reapers = Container.Resolve<IEnumerable<IReaper>>();
-                foreach (var reaper in reapers)
+                foreach (var reaper in _reapers)
                 {
                     reaper.Reap();
                 }

@@ -36,80 +36,75 @@ namespace WateryTart.MassClient
         }
         public async Task<MassCredentials> Login(string username, string password, string baseurl)
         {
-            var result = await Task.Run(() =>
-             {
-                 MassCredentials mc = new MassCredentials();
+            MassCredentials mc = new MassCredentials();
 
-                 var factory = new Func<ClientWebSocket>(() => new ClientWebSocket
-                 {
-                     Options =
-                     {
-                        KeepAliveInterval = TimeSpan.FromSeconds(1),
-                     }
-                 });
+            var factory = new Func<ClientWebSocket>(() => new ClientWebSocket
+            {
+                Options =
+                {
+                   KeepAliveInterval = TimeSpan.FromSeconds(1),
+                }
+            });
 
-                 var exitEvent = new ManualResetEvent(false);
-                 using (_client = new WebsocketClient(new Uri($"ws://{baseurl}/ws"), factory))
-                 {
-                     _client
-                         .MessageReceived
-                         .Subscribe(OnNext);
+            var tcs = new TaskCompletionSource<MassCredentials>();
+            using (_client = new WebsocketClient(new Uri($"ws://{baseurl}/ws"), factory))
+            {
+                _client
+                    .MessageReceived
+                    .Subscribe(OnNext);
 
-                     _client.Start();
+                _client.Start();
 
-                     this.GetAuthToken(username, password, (response) =>
-                    {
-                        var x = response;
+                this.GetAuthToken(username, password, (response) =>
+               {
+                   var x = response;
 
-                        if (!response.Result.success)
-                            return;
+                   if (!response.Result.success)
+                   {
+                       tcs.TrySetResult(new MassCredentials());
+                       return;
+                   }
 
-                        mc = new MassCredentials()
-                        {
-                            Token = response.Result.access_token,
-                            BaseUrl = baseurl
-                        };
+                   mc = new MassCredentials()
+                   {
+                       Token = response.Result.access_token,
+                       BaseUrl = baseurl
+                   };
 
-                        exitEvent.Set();
-                    });
+                   tcs.TrySetResult(mc);
+               });
 
-                     exitEvent.WaitOne();
-                 }
-                 return mc;
-             });
-
-            return result;
+                return await tcs.Task;
+            }
         }
 
         public async Task Connect(IMassCredentials credentials)
         {
             creds = credentials;
-            _ = Task.Run(() =>
+            var factory = new Func<ClientWebSocket>(() => new ClientWebSocket
             {
-                var factory = new Func<ClientWebSocket>(() => new ClientWebSocket
+                Options =
                 {
-                    Options =
-                    {
-                        KeepAliveInterval = TimeSpan.FromSeconds(1),
-                    }
-                });
-
-                var exitEvent = new ManualResetEvent(false);
-                using (_client = new WebsocketClient(new Uri($"ws://{credentials.BaseUrl}/ws"), factory))
-                {
-                    _client.ReconnectionHappened.Subscribe(info =>
-                    {
-                        Login(credentials);
-                    });
-
-                    _client.MessageReceived.Subscribe(OnNext);
-                    _client.Start();
-
-                    Login(credentials);
-
-                    exitEvent.WaitOne();
+                    KeepAliveInterval = TimeSpan.FromSeconds(1),
                 }
             });
+
+            var tcs = new TaskCompletionSource<bool>();
+            using (_client = new WebsocketClient(new Uri($"ws://{credentials.BaseUrl}/ws"), factory))
+            {
+                _client.ReconnectionHappened.Subscribe(info =>
+                {
+                    Login(credentials);
+                });
+
+                _client.MessageReceived.Subscribe(OnNext);
+                _client.Start();
+
+                Login(credentials);
+
+                // Keep connection alive indefinitely
+                await tcs.Task.ConfigureAwait(false);
+            }
         }
 
         private void Login(IMassCredentials credentials)
