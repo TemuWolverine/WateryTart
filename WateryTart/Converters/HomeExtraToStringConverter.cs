@@ -1,5 +1,7 @@
 ﻿using Avalonia.Data.Converters;
+using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using WateryTart.MassClient.Models;
 
@@ -13,19 +15,29 @@ public class HomeExtraToStringConverter : IValueConverter
             return null;
 
         var item = (Item)value;
-
+        string output = string.Empty;
         switch (item.MediaType)
         {
-            case MediaType.Playlist: return item.owner;
-            case MediaType.Album: return null;
+            case MediaType.Artist:
+                output = item.owner;
+                break;
+            case MediaType.Playlist:
+                output = item.owner;
+                break;
+            case MediaType.Album:
             case MediaType.Track:
                 {
-                    if (item.artists != null) return item.artists[0].Name ?? string.Empty;
+                    //if (item.artists != null) 
+                        output = item?.artists?[0].Name ?? string.Empty;
                     break;
                 }
+            default:
+                output = "wtf";
+                break;
         }
 
-        return null;
+        Debug.WriteLine($"{item.MediaType} - {output} - " + JsonConvert.SerializeObject(item));
+        return output;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

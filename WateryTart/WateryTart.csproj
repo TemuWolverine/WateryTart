@@ -42,6 +42,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\ResponsiveColumnPanel.axaml.cs">
+      <DependentUpon>ResponsiveColumnPanel.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -28,7 +28,7 @@
                         CornerRadius="5">
                     <asyncImageLoader:AdvancedImage 
                         Loader="{x:Static app:App.ImageLoaderInstance}"
-                        Source="{Binding Playlist, Converter={StaticResource MetadataImageConverter}}"
+                        Source="{Binding Playlist.Result, Converter={StaticResource MetadataImageConverter}}"
                     />
                 </Border>
             </Border>
@@ -50,7 +50,7 @@
                         </Grid.ColumnDefinitions>
                         <asyncImageLoader:AdvancedImage Grid.Column="0" 
                             Loader="{x:Static app:App.ImageLoaderInstance}"
-                            Source="{Binding ., Converter={StaticResource MetadataImageConverter}}"
+                            Source="{Binding , Converter={StaticResource MetadataImageConverter}}"
                         />
 
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">

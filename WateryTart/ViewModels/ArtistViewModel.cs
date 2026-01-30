@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WateryTart.MassClient;
@@ -21,6 +22,9 @@ namespace WateryTart.ViewModels
         [Reactive] public partial string Title { get; set; }
         [Reactive] public partial Artist Artist { get; set; }
         [Reactive] public partial ObservableCollection<Album> Albums { get; set; } = new();
+        public Image ArtistLogo { get { return Artist?.Metadata?.images?.FirstOrDefault(i => i.type == "logo"); } }
+
+        public Image ArtistThumb { get { return Artist?.Metadata?.images?.FirstOrDefault(i => i.type == "thumb"); } }
 
         public ObservableCollection<Item> Tracks { get; set; }
 
@@ -46,6 +50,8 @@ namespace WateryTart.ViewModels
 
             Artist = artistResponse.Result;
             Title = Artist.Name;
+            this.RaisePropertyChanged("ArtistLogo");
+            this.RaisePropertyChanged("ArtistThumb");
         }
 
         private async Task LoadArtistAlbum(string id, string provider)

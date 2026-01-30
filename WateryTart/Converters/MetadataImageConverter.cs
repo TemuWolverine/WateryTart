@@ -6,6 +6,31 @@ using WateryTart.MassClient.Models;
 
 namespace WateryTart.Converters;
 
+public class LibraryImageConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value == null)
+            return value;
+
+        Image image = value as Image;
+
+        if (!image.remotely_accessible)
+            return ProxyString(image.path, image.provider);
+
+        return image.path;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static string ProxyString(string path, string provider)
+    {
+        return string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(path), provider);
+    }
+}
 public class MetadataImageConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
