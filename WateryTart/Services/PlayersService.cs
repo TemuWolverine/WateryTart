@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using WateryTart.Extensions;
@@ -19,12 +20,13 @@ using WateryTart.ViewModels;
 using WateryTart.ViewModels.Menus;
 
 namespace WateryTart.Services;
-public partial class PlayersService : ReactiveObject, IPlayersService
+public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncReaper
 {
     private readonly IMassWsClient _massClient;
     private readonly ISettings _settings;
     private ReadOnlyObservableCollection<QueuedItem> currentQueue;
     private ReadOnlyObservableCollection<QueuedItem> playedQueue;
+    private CompositeDisposable _subscriptions = new CompositeDisposable();
 
     [Reactive] public partial SourceList<QueuedItem> QueuedItems { get; set; } = new SourceList<QueuedItem>();
     [Reactive] public partial ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
@@ -70,28 +72,28 @@ public partial class PlayersService : ReactiveObject, IPlayersService
         _settings = settings;
 
         /* Subscribe to the relevant websocket events from MASS */
-        _massClient.Events
+        _subscriptions.Add(_massClient.Events
             .Where(e => e is PlayerEventResponse)
-            .Subscribe((e) => OnPlayerEvents((PlayerEventResponse)e));
+            .Subscribe((e) => OnPlayerEvents((PlayerEventResponse)e)));
 
-        _massClient.Events
+        _subscriptions.Add(_massClient.Events
             .Where(e => e is PlayerQueueEventResponse)
-            .Subscribe((e) => OnPlayerQueueEvents((PlayerQueueEventResponse)e));
+            .Subscribe((e) => OnPlayerQueueEvents((PlayerQueueEventResponse)e)));
 
         /* This takes care of filtering the two lists, though unsure on INPC */
-        QueuedItems
+        _subscriptions.Add(QueuedItems
                 .Connect()
                 .Sort(SortExpressionComparer<QueuedItem>.Ascending(t => t.sort_index))
                 .Filter(i => i.sort_index > SelectedQueue.current_index)  //There is a "race condition" when new tracks are prepended to a queue I think
                 .Bind(out currentQueue)
-                .Subscribe();
+                .Subscribe());
 
-        QueuedItems
+        _subscriptions.Add(QueuedItems
                 .Connect()
                 .Sort(SortExpressionComparer<QueuedItem>.Descending(t => t.sort_index))
                 .Filter(i => i.sort_index <= SelectedQueue.current_index)
                 .Bind(out playedQueue)
-                .Subscribe();
+                .Subscribe());
     }
 
     public async void OnPlayerQueueEvents(PlayerQueueEventResponse e)
@@ -293,6 +295,37 @@ public partial class PlayersService : ReactiveObject, IPlayersService
         catch (Exception ex)
         {
             Debug.WriteLine($"Error playing previous: {ex.Message}");
+        }
+    }
+
+    public async Task ReapAsync()
+    {
+        QueuedItems?.Dispose();
+        _subscriptions?.Dispose();
+        try
+        {
+            await _massClient.DisconnectAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error during disconnect: {ex}");
+        }
+    }
+
+    public void Reap()
+    {
+        QueuedItems?.Dispose();
+        _subscriptions?.Dispose();
+        
+        try
+        {
+            // Synchronously wait for the disconnect to complete
+            var disconnectTask = _massClient.DisconnectAsync();
+            disconnectTask.Wait(TimeSpan.FromSeconds(10));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error during disconnect: {ex}");
         }
     }
 }

@@ -7,13 +7,14 @@ using Config.Net;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using WateryTart.MassClient;
 using WateryTart.Services;
 using WateryTart.Settings;
 using WateryTart.ViewModels;
 using WateryTart.ViewModels.Players;
-
 
 namespace WateryTart;
 
@@ -56,9 +57,9 @@ public partial class App : Application
         var builder = new ContainerBuilder();
 
         //Services
-        builder.RegisterType<MainWindowViewModel>().As<IScreen>().SingleInstance();
-        builder.RegisterType<MassWsClient>().As<IMassWsClient>().SingleInstance();
-        builder.RegisterType<PlayersService>().As<IPlayersService>().SingleInstance();
+        builder.RegisterType<MainWindowViewModel>().AsImplementedInterfaces().SingleInstance();
+        builder.RegisterType<MassWsClient>().As<IMassWsClient>().AsImplementedInterfaces().SingleInstance();
+        builder.RegisterType<PlayersService>().AsImplementedInterfaces().SingleInstance();
 
         //Settings
         var settings = new ConfigurationBuilder<ISettings>().UseJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Library", "WateryTart")).Build();
@@ -67,8 +68,8 @@ public partial class App : Application
         //View models that are singleton
         builder.RegisterType<SettingsViewModel>().SingleInstance();
         builder.RegisterType<PlayersViewModel>().SingleInstance();
-        builder.RegisterType<MiniPlayerViewModel>().SingleInstance();
-        builder.RegisterType<BigPlayerViewModel>().SingleInstance();
+        builder.RegisterType<MiniPlayerViewModel>().AsSelf().AsImplementedInterfaces().SingleInstance();
+        builder.RegisterType<BigPlayerViewModel>().AsSelf().AsImplementedInterfaces().SingleInstance();
         builder.RegisterType<HomeViewModel>().SingleInstance();
 
         //Volume controllers
@@ -87,13 +88,13 @@ public partial class App : Application
         builder.RegisterType<ArtistsViewModel>();
         builder.RegisterType<LibraryViewModel>();
         builder.RegisterType<RecommendationViewModel>();
-
+        Debug.WriteLine("got here");
         Container = builder.Build();
 
         // Cache BaseUrl immediately after container is built
         _cachedBaseUrl = Container.Resolve<ISettings>().Credentials.BaseUrl;
-        
-        // Cache reapers for shutdown
+
+        // Cache ALL reapers - including from singleton ViewModels
         _reapers = Container.Resolve<IEnumerable<IReaper>>();
 
         var vm = Container.Resolve<IScreen>();
@@ -105,12 +106,53 @@ public partial class App : Application
                 DataContext = vm
             };
 
-            //Shutdown
-            ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).ShutdownRequested += (s, e) =>
+            desktop.ShutdownRequested += (s, e) =>
             {
+                Debug.WriteLine("=== SHUTDOWN STARTED ===");
+                e.Cancel = true;
+
                 foreach (var reaper in _reapers)
                 {
-                    reaper.Reap();
+                    try
+                    {
+                        Debug.WriteLine($"Reaping {reaper.GetType().Name}");
+                        reaper.Reap();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error reaping {reaper.GetType().Name}: {ex}");
+                    }
+                }
+
+                LazyImageLoader.Value?.Dispose();
+
+                System.Threading.Thread.Sleep(2000);
+
+                Debug.WriteLine("=== REQUESTING SHUTDOWN ===");
+
+                var process = System.Diagnostics.Process.GetCurrentProcess();
+                Debug.WriteLine($"Total OS threads: {process.Threads.Count}");
+                
+                // Sample first 10 threads
+                int count = 0;
+                foreach (ProcessThread thread in process.Threads)
+                {
+                    if (count < 10)
+                    {
+                        Debug.WriteLine($"  Thread {thread.Id}: State={thread.ThreadState}");
+                        count++;
+                    }
+                }
+
+                // If too many threads, force exit instead of normal shutdown
+                if (process.Threads.Count > 50)
+                {
+                    Debug.WriteLine($"Too many threads ({process.Threads.Count}) still running, forcing exit...");
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    desktop.Shutdown(0);
                 }
             };
         }
@@ -124,5 +166,4 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
-
 }

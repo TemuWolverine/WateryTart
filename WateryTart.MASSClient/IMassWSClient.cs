@@ -8,9 +8,10 @@ public interface IMassWsClient
 {
     Task<MassCredentials> Login(string username, string password, string baseurl);
 
-    Task Connect(IMassCredentials credentials);
+    Task<bool> Connect(IMassCredentials credentials);
 
     void Send<T>(MessageBase message, Action<string> ResponseHandler, bool ignoreConnection = false);
+    Task DisconnectAsync();
 
     bool IsConnected { get; }
 

@@ -8,7 +8,7 @@ using WateryTart.Settings;
 
 namespace WateryTart.ViewModels.Players
 {
-    public partial class MiniPlayerViewModel : ReactiveObject, IViewModelBase
+    public partial class MiniPlayerViewModel : ReactiveObject, IViewModelBase, IReaper
     {
         public string? UrlPathSegment { get; } = "MiniPlayerViewModel";
         public IScreen HostScreen { get; }
@@ -22,6 +22,8 @@ namespace WateryTart.ViewModels.Players
 
         [Reactive] public partial IPlayersService PlayersService { get; set; }
         public IScreen Screen { get; }
+        
+        private DispatcherTimer _timer;
 
         public MiniPlayerViewModel(IPlayersService playersService, IScreen screen)
         {
@@ -37,16 +39,23 @@ namespace WateryTart.ViewModels.Players
                 Screen.Router.Navigate.Execute(vm);
             }
             );
-            DispatcherTimer t = new DispatcherTimer();
-            t.Interval = new System.TimeSpan(0, 0, 1);
-            t.Tick += T_Tick;
-            t.Start();
+            
+            _timer = new DispatcherTimer();
+            _timer.Interval = new System.TimeSpan(0, 0, 1);
+            _timer.Tick += T_Tick;
+            _timer.Start();
         }
 
         private void T_Tick(object? sender, System.EventArgs e)
         {
             if (PlayersService.SelectedPlayer?.PlaybackState == MassClient.Models.PlaybackState.playing)
                 PlayersService.SelectedPlayer?.CurrentMedia.elapsed_time += 1;
+        }
+
+        public void Reap()
+        {
+            _timer?.Stop();
+            _timer = null;
         }
     }
 }

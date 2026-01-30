@@ -17,11 +17,8 @@ namespace WateryTart.ViewModels;
 public partial class MainWindowViewModel : ReactiveObject, IScreen
 {
     private readonly IMassWsClient _massClient;
-
     private readonly ISettings _settings;
-
     public RoutingState Router { get; } = new();
-
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
     public ReactiveCommand<Unit, IRoutableViewModel> GoHome { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoMusic { get; }
