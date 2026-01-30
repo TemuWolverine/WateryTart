@@ -7,27 +7,40 @@
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;X64Debug;ARMRELEASE</Configurations>
 		<Platforms>AnyCPU;ARM64</Platforms>
-		<!--<PublishReadyToRun>true</PublishReadyToRun>
-		<PublishAot>true</PublishAot>-->
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<BuiltInComInteropSupport>false</BuiltInComInteropSupport>
 		<EventSourceSupport>true</EventSourceSupport>
-		<IsAotCompatible>true</IsAotCompatible>
-		<TrimMode>partial</TrimMode>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<StripSymbols>false</StripSymbols>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
+	
+	<!-- AOT stuff -->
+	<PropertyGroup>
+		
+		<TrimMode>partial</TrimMode>
+		<!--<PublishAot>true</PublishAot>
+		<IsAotCompatible>true</IsAotCompatible>-->
+		<EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+	</PropertyGroup>
 
+	
 	<PropertyGroup>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AssemblyName>WateryTartDesktop</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<TrimmerRootAssembly Include="Avalonia.Controls" />
 		<TrimmerRootAssembly Include="Avalonia.Base" />
 		<TrimmerRootAssembly Include="Avalonia.Markup.Xaml" />
+		
 	</ItemGroup>
-
+	<!--<ItemGroup>
+		<RdXmlFile Include="Avalonia.rd.xml" />
+	</ItemGroup>-->
+	
 	<ItemGroup>
 		<PackageReference Include="Avalonia.Desktop" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
