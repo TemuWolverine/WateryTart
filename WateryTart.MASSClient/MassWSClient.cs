@@ -201,7 +201,7 @@ namespace WateryTart.MassClient
                 case EventType.PlayerRemoved:
                 case EventType.PlayerConfigUpdated:
                     subject.OnNext(JsonConvert.DeserializeObject<PlayerEventResponse>(response.Text));
-                    Debug.WriteLine(response.Text);
+                    
                     break;
 
                 case EventType.QueueAdded:
@@ -209,7 +209,7 @@ namespace WateryTart.MassClient
                 case EventType.QueueItemsUpdated:
                 case EventType.QueueTimeUpdated:
                     subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueEventResponse>(response.Text));
-                    Debug.WriteLine(response.Text);
+                    
                     break;
 
                 default:

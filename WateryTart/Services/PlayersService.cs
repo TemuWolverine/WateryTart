@@ -98,14 +98,14 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     public async void OnPlayerQueueEvents(PlayerQueueEventResponse e)
     {
-        Debug.WriteLine(e.EventName);
+        
         switch (e.EventName)
         {
             case EventType.QueueAdded:
                 break;
 
             case EventType.QueueUpdated: //replacing a queue is just 'updated'
-                Debug.WriteLine($"{e.data.items} items now in the queue");
+                
                 //It seems like when a queue is updated, the best thing is to clear/refetch
                 if (SelectedQueue != null)
                     SelectedQueue.current_index = e.data.current_index;
@@ -113,7 +113,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                 break;
 
             case EventType.QueueItemsUpdated:
-                Debug.WriteLine($"{e.data.items} items now in the queue");
+                
                 break;
 
             default:
@@ -123,8 +123,6 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     public void OnPlayerEvents(PlayerEventResponse e)
     {
-        Debug.WriteLine(e.EventName);
-
         switch (e.EventName)
         {
             case EventType.PlayerAdded:
@@ -169,7 +167,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             foreach (var y in queuesResponse.Result)
             {
                 Queues.Add(y);
-                Debug.WriteLine(y.display_name);
+                
             }
 
             if (!string.IsNullOrEmpty(_settings.LastSelectedPlayerId))

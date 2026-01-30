@@ -88,7 +88,7 @@ public partial class App : Application
         builder.RegisterType<ArtistsViewModel>();
         builder.RegisterType<LibraryViewModel>();
         builder.RegisterType<RecommendationViewModel>();
-        Debug.WriteLine("got here");
+        
         Container = builder.Build();
 
         // Cache BaseUrl immediately after container is built

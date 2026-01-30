@@ -46,31 +46,31 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
             var menu = new MenuViewModel();
             menu.AddMenuItem(new MenuItemViewModel("Show Info", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Go To Artist", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Go To Album", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Remove from library", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Add to favourites", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Add to playlist", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
             menu.AddMenuItem(new MenuItemViewModel("Play", string.Empty, ReactiveCommand.Create<Unit>(r =>
             {
-                Debug.WriteLine("got here");
+                
             })));
 
             foreach (var p in playersService.Players)
