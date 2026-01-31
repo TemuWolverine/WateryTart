@@ -30,8 +30,8 @@
 
 	<Window.Background>
 		<RadialGradientBrush Center="50%, 50%" GradientOrigin="100%, -15%" RadiusX="125%" RadiusY="125%"  >
-			<GradientStop Color="#FF5B4272" Offset="0.142"/>
-			<GradientStop Color="#FF6C191E" Offset="1"/>
+			<GradientStop Color="{Binding ColourService.ColourA}" Offset="0.142"/>
+			<GradientStop Color="{Binding ColourService.ColourB}" Offset="1"/>
 		</RadialGradientBrush>
 	</Window.Background>
 
@@ -55,8 +55,11 @@
 		</Grid>
 
 		<!-- Content -->
-		<ScrollViewer x:Name="sv"  Background="{x:Null}" Grid.Row="1" Margin="10,0,10,0">
-			<avalonia:RoutedViewHost x:Name="Router" Router="{Binding Router}" Background="{x:Null}">
+		<ScrollViewer x:Name="sv"  Background="Transparent" Grid.Row="1" Margin="10,0,10,0">
+			<ScrollViewer.GestureRecognizers>
+				    <ScrollGestureRecognizer  CanVerticallyScroll="True"/>
+			</ScrollViewer.GestureRecognizers>
+			<avalonia:RoutedViewHost x:Name="Router" Router="{Binding Router}" Background="Transparent">
 				<avalonia:RoutedViewHost.ViewLocator>
 					<wateryTart:AppViewLocator />
 				</avalonia:RoutedViewHost.ViewLocator>

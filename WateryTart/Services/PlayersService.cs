@@ -1,6 +1,5 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
-using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
@@ -24,6 +23,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 {
     private readonly IMassWsClient _massClient;
     private readonly ISettings _settings;
+    private readonly IColourService colourService;
     private ReadOnlyObservableCollection<QueuedItem> currentQueue;
     private ReadOnlyObservableCollection<QueuedItem> playedQueue;
     private CompositeDisposable _subscriptions = new CompositeDisposable();
@@ -66,10 +66,11 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         QueuedItems.AddRange(items.Result);
     }
 
-    public PlayersService(IMassWsClient massClient, ISettings settings)
+    public PlayersService(IMassWsClient massClient, ISettings settings, IColourService colourService)
     {
         _massClient = massClient;
         _settings = settings;
+        this.colourService = colourService;
 
         /* Subscribe to the relevant websocket events from MASS */
         _subscriptions.Add(_massClient.Events
@@ -94,26 +95,41 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                 .Filter(i => i.sort_index <= SelectedQueue.current_index)
                 .Bind(out playedQueue)
                 .Subscribe());
-    }
 
+    }
     public async void OnPlayerQueueEvents(PlayerQueueEventResponse e)
     {
-        
+
         switch (e.EventName)
         {
             case EventType.QueueAdded:
                 break;
 
             case EventType.QueueUpdated: //replacing a queue is just 'updated'
-                
+
                 //It seems like when a queue is updated, the best thing is to clear/refetch
                 if (SelectedQueue != null)
+                {
                     SelectedQueue.current_index = e.data.current_index;
+                    SelectedQueue.current_item = e.data.current_item;
+
+                    var currentItem = SelectedQueue.current_item;
+                    if (currentItem == null)
+                        break;
+                    if (currentItem.image.remotely_accessible)
+                        colourService.Update(currentItem.media_item.ItemId, currentItem.image.path);
+                    else
+                    {
+                        var url = string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(currentItem.image.path), currentItem.image.provider);
+                        colourService.Update(currentItem.media_item.ItemId, url);
+                    }
+                }
+
                 await FetchQueueContentsAsync();
                 break;
 
             case EventType.QueueItemsUpdated:
-                
+
                 break;
 
             default:
@@ -141,6 +157,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                     player.VolumeLevel = e.data.VolumeLevel;
                 }
 
+              
+
                 break;
 
             case EventType.PlayerRemoved:
@@ -167,7 +185,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             foreach (var y in queuesResponse.Result)
             {
                 Queues.Add(y);
-                
+
             }
 
             if (!string.IsNullOrEmpty(_settings.LastSelectedPlayerId))
@@ -314,7 +332,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     {
         QueuedItems?.Dispose();
         _subscriptions?.Dispose();
-        
+
         try
         {
             // Synchronously wait for the disconnect to complete

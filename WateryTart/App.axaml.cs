@@ -60,6 +60,7 @@ public partial class App : Application
         builder.RegisterType<MainWindowViewModel>().AsImplementedInterfaces().SingleInstance();
         builder.RegisterType<MassWsClient>().As<IMassWsClient>().AsImplementedInterfaces().SingleInstance();
         builder.RegisterType<PlayersService>().AsImplementedInterfaces().SingleInstance();
+        builder.RegisterType<ColourService>().As<IColourService>().SingleInstance();
 
         //Settings
         var x = Path.Combine(baseAppDataPath, "settings.json");

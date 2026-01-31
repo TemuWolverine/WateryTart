@@ -34,6 +34,7 @@
     <PackageVersion Include="SharpHook" Version="7.1.1" />
     <PackageVersion Include="SharpHook.R3" Version="7.1.1" />
     <PackageVersion Include="SharpHook.Reactive" Version="7.1.1" />
+    <PackageVersion Include="SkiaSharp" Version="2.88.9" />
     <PackageVersion Include="Splat.Autofac" Version="19.2.1" />
     <PackageVersion Include="Splat.Avalonia.Autofac" Version="15.5.3" />
     <PackageVersion Include="System.Device.Gpio" Version="4.1.0" />

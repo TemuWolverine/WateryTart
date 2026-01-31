@@ -31,12 +31,14 @@
 		</Style>
 	</UserControl.Styles>
 
-	<ListBox
+	<ItemsControl
 	x:Name="lbRecommendations"
 	ItemsSource="{Binding Recommendations}"
 	Background="{x:Null}">
-
-		<ListBox.ItemTemplate>
+		<ItemsControl.GestureRecognizers>
+			<ScrollGestureRecognizer  CanVerticallyScroll="True"/>
+		</ItemsControl.GestureRecognizers>
+		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<StackPanel>
 					<Border
@@ -52,17 +54,17 @@
 						<TextBlock Text="{Binding Name, Converter={StaticResource ToUpperValueConverter}}" FontWeight="Bold" FontSize="16"  />
 					</Border>
 
-					<ListBox Background="{x:Null}"
-							 ItemsSource="{Binding items}"
-							 Classes="hoverable"
-							 Padding="0"
-							 >
-						<ListBox.ItemsPanel>
+					<ItemsControl Background="{x:Null}"
+								  ItemsSource="{Binding items}"
+								  Classes="hoverable"
+								  Padding="0"
+								  >
+						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>
 								<VirtualizingStackPanel/>
 							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
 							<DataTemplate>
 								<Grid>
 									<Grid.ColumnDefinitions>
@@ -103,13 +105,13 @@
 											Classes="iconButton navButton"
 											Command="{Binding #lbRecommendations.((vm:HomeViewModel)DataContext).AltMenuCommand }"
 											CommandParameter="{Binding Path=.}"><materialIcons:MaterialIcon Kind="MoreVert" Width="25" Height="25" /></Button>
-							</Grid>
+								</Grid>
 							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
 
 				</StackPanel>
 			</DataTemplate>
-		</ListBox.ItemTemplate>
-	</ListBox>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
 </UserControl>

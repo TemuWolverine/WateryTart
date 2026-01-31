@@ -5,6 +5,7 @@
 			 xmlns:converters="using:WateryTart.Converters"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:materialIcons="using:Material.Icons.Avalonia"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:controls="clr-namespace:WateryTart.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -27,8 +28,9 @@
 						MaxWidth="300">
 					<Border ClipToBounds="True" CornerRadius="5">
 						<asyncImageLoader:AdvancedImage
-							Loader="{x:Static app:App.ImageLoaderInstance}"
-							Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" />
+						Name="imgAlbumArt"
+						Loader="{x:Static app:App.ImageLoaderInstance}"
+						Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" />
 					</Border>
 				</Border>
 
@@ -50,9 +52,9 @@
 				</StackPanel>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<Button Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0">⏮️</Button>
-					<Button Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">⏸️</Button>
-					<Button Command="{Binding PlayNextCommand}" Margin="3,0,20,0">⏭️</Button>
+					<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
+					<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="PlayPause" Width="25" Height="25" /></Button>
+					<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 				</StackPanel>
 
 				<Grid MaxWidth="400">

@@ -29,7 +29,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
 
     [Reactive] public partial string Title { get; set; }
     [Reactive] public partial IPlayersService PlayersService { get; set; }
-
+    public IColourService ColourService { get; }
     [Reactive] public partial ReactiveObject SlideupMenu { get; set; }
     [Reactive] public ReactiveCommand<Unit, Unit> CloseSlideupCommand { get; set; }
 
@@ -40,11 +40,12 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen
     [Reactive]
     public partial IViewModelBase CurrentViewModel { get; set; }
 
-    public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings)
+    public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService)
     {
         _massClient = massClient;
         PlayersService = playersService;
         _settings = settings;
+        ColourService = colourService;
         ShowSlideupMenu = false;
 
         GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()));
