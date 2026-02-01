@@ -45,5 +45,11 @@
 		<ProjectReference Include="..\WateryTart.Service.MassClient\WateryTart.Service.MassClient.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\GpioVolumeSettingsView.axaml.cs">
+	    <DependentUpon>GpioVolumeSettingsView.axaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
 
 </Project>

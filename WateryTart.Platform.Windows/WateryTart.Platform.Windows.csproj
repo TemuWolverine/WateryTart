@@ -39,5 +39,11 @@
 	  <ProjectReference Include="..\WateryTart.Core\WateryTart.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\SimpleWasapiPlayerSettingsView.axaml.cs">
+	    <DependentUpon>SimpleWasapiPlayerSettingsView.axaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
 
 </Project>

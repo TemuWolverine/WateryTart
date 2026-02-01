@@ -1,9 +1,10 @@
 ﻿using Avalonia;
 using ReactiveUI.Avalonia;
 using System;
+using System.Reflection;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
-using WateryTart.Platform.Windows.Playback;
+using WateryTart.Platform.Windows.ViewModels;
 
 namespace WateryTart.Platform.Windows;
 
@@ -23,7 +24,8 @@ sealed class Program
             var x = new App(
             [
                 new InstancePlatformSpecificRegistration(new WindowsAudioPlayerFactory()),
-            ]);
+                new TypePlatformSpecificRegistration<SimpleWasapiPlayerSettingsViewModel>(),
+            ], Assembly.GetExecutingAssembly());
             return x;
         })
             .UsePlatformDetect()

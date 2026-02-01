@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using ReactiveUI.Avalonia;
 using System;
+using System.Reflection;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
+using WateryTart.Platform.Linux.ViewModels;
 
 namespace WateryTart.Platform.Linux;
 
@@ -23,7 +25,8 @@ sealed class Program
                 [
                     new InstancePlatformSpecificRegistration(new LinuxAudioPlayerFactory()),
                     new TypePlatformSpecificRegistration<GpioVolumeService>(),
-                ]);
+                    new TypePlatformSpecificRegistration<GpioVolumeSettingsViewModel>(),
+                ], Assembly.GetExecutingAssembly());
 
             return x;
         })

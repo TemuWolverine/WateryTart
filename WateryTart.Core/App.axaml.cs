@@ -4,10 +4,12 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using WateryTart.Core.Playback;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
@@ -55,9 +57,12 @@ public partial class App : Application
 
     private IEnumerable<IPlatformSpecificRegistration> PlatformSpecificRegistrations { get; }
 
-    public App(IEnumerable<IPlatformSpecificRegistration> platformSpecificRegistrations)
+    public App(IEnumerable<IPlatformSpecificRegistration> platformSpecificRegistrations, Assembly AssemblyToLoad = null)
     {
         PlatformSpecificRegistrations = platformSpecificRegistrations;
+
+        if (AssemblyToLoad != null)
+            ViewLocator.RegisterAssembly(AssemblyToLoad);
     }
     public override void Initialize()
     {
@@ -87,7 +92,7 @@ public partial class App : Application
         builder.RegisterType<HomeViewModel>().SingleInstance();
 
 
-
+        //Platform specific registrations from Platform.Linux, Platform.Windows projects
         foreach (var platformSpecificRegistration in PlatformSpecificRegistrations)
         {
             platformSpecificRegistration.Register(builder);
