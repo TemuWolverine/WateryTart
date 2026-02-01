@@ -41,5 +41,6 @@ public class GpioVolumeSettingsViewModel : ReactiveObject, IViewModelBase, IHave
         set => this.RaiseAndSetIfChanged(ref _pulsesPerTurn, value);
     }
 
+    public string Icon => "DeveloperBoard";
 }
         

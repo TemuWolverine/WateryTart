@@ -3,10 +3,6 @@ using SharpHook.Providers;
 
 namespace WateryTart.Core.Services;
 
-public interface IReaper
-{
-    void Reap();
-}
 public class WindowsVolumeService : IVolumeService, IReaper
 {
     private readonly IPlayersService playerService;

@@ -11,5 +11,6 @@ namespace WateryTart.Platform.Windows.ViewModels
         public string Title { get; set; }
         public bool ShowMiniPlayer { get; }
         public bool ShowNavigation { get; }
+        public string Icon => "Speaker";
     }
 }
