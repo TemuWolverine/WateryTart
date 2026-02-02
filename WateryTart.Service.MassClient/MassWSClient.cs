@@ -203,6 +203,9 @@ namespace WateryTart.Service.MassClient
 
             switch (e.EventName)
             {
+                case EventType.MediaItemPlayed:
+                    subject.OnNext(JsonConvert.DeserializeObject<MediaItemEventResponse>(response.Text));
+                    break;
                 case EventType.PlayerAdded:
                 case EventType.PlayerUpdated:
                 case EventType.PlayerRemoved:

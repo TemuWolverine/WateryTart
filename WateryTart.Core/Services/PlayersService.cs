@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.Threading;
+using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -10,13 +11,13 @@ using System.Numerics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using WateryTart.Core.Extensions;
 using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Events;
 using WateryTart.Service.MassClient.Models;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace WateryTart.Core.Services;
 
@@ -86,16 +87,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
         /* Subscribe to the relevant websocket events from MASS */
         _subscriptions.Add(_massClient.Events
-            .Where(e => e is PlayerEventResponse)
-            .Subscribe((e) => OnPlayerEvents((PlayerEventResponse)e)));
+            .Subscribe((e) => OnEvents(e)));
 
-        _subscriptions.Add(_massClient.Events
-            .Where(e => e is PlayerQueueTimeUpdatedEventResponse)
-            .Subscribe((e) => OnPlayerQueueEvents((PlayerQueueTimeUpdatedEventResponse)e)));
-
-        _subscriptions.Add(_massClient.Events
-            .Where(e => e is PlayerQueueEventResponse)
-            .Subscribe((e) => OnPlayerQueueEvents((PlayerQueueEventResponse)e)));
 
         /* This takes care of filtering the two lists, though unsure on INPC */
         _subscriptions.Add(QueuedItems
@@ -120,37 +113,70 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     private void T_Tick(object? sender, EventArgs e)
     {
-        if (SelectedPlayer?.PlaybackState != PlaybackState.playing) 
+        if (SelectedPlayer?.PlaybackState != PlaybackState.playing)
             return;
 
         Progress = SelectedQueue.current_item.media_item.progress;
         SelectedQueue?.current_item.media_item.elapsed_time += 1;
     }
 
-    public async Task OnPlayerQueueEvents(PlayerQueueTimeUpdatedEventResponse e)
+    public async Task OnEvents(BaseEventResponse e)
     {
-        if (SelectedQueue != null && e.object_id == SelectedQueue.queue_id)
-        {
-            SelectedQueue.current_item.media_item.elapsed_time = e.data;
-        }
-
-    }
-
-    public async Task OnPlayerQueueEvents(PlayerQueueEventResponse e)
-    {
-
+        PlayerEventResponse playerEvent;
+        PlayerQueueEventResponse queueEvent;
+        PlayerQueueTimeUpdatedEventResponse timeEvent;
+        MediaItemEventResponse mediaEvent;
         switch (e.EventName)
         {
+            case EventType.MediaItemPlayed:
+                mediaEvent = (MediaItemEventResponse)e;
+                if (mediaEvent.object_id == SelectedQueue.current_item.media_item.Uri)
+                    SelectedQueue.current_item.media_item.elapsed_time = mediaEvent.data.seconds_played;
+                break;
+            case EventType.QueueTimeUpdated:
+                timeEvent = (PlayerQueueTimeUpdatedEventResponse)e;
+                if (SelectedQueue != null && e.object_id == SelectedQueue.queue_id)
+                {
+                    SelectedQueue.current_item.media_item.elapsed_time = timeEvent.data;
+                }
+                break;
+
+            case EventType.PlayerAdded:
+                playerEvent = (PlayerEventResponse)e;
+                if (!Players.Contains((playerEvent.data))) //Any?
+                    Players.Add(playerEvent.data);
+
+                break;
+
+            case EventType.PlayerUpdated:
+                playerEvent = (PlayerEventResponse)e;
+                var player = Players.FirstOrDefault(p => p.PlayerId == playerEvent.data.PlayerId);
+
+                if (player != null)
+                {
+                    player.PlaybackState = playerEvent.data.PlaybackState;
+                    player.CurrentMedia = playerEvent.data.CurrentMedia; // this should probably be more of a clone
+                    player.VolumeLevel = playerEvent.data.VolumeLevel;
+
+                }
+                break;
+
+            case EventType.PlayerRemoved:
+                playerEvent = (PlayerEventResponse)e;
+                Players.RemoveAll(p => p.PlayerId == playerEvent.data.PlayerId);
+                break;
+
             case EventType.QueueAdded:
                 break;
 
             case EventType.QueueUpdated: //replacing a queue is just 'updated'
 
+                queueEvent = (PlayerQueueEventResponse)e;
                 //It seems like when a queue is updated, the best thing is to clear/refetch
-                if (SelectedQueue != null && e.data.queue_id == SelectedQueue.queue_id)
+                if (SelectedQueue != null && queueEvent.data.queue_id == SelectedQueue.queue_id)
                 {
-                    SelectedQueue.current_index = e.data.current_index;
-                    SelectedQueue.current_item = e.data.current_item;
+                    SelectedQueue.current_index = queueEvent.data.current_index;
+                    SelectedQueue.current_item = queueEvent.data.current_item;
 
                     var currentItem = SelectedQueue.current_item;
                     if (currentItem == null)
@@ -167,52 +193,88 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                 await FetchQueueContentsAsync();
                 break;
 
-            case EventType.QueueTimeUpdated:
-
-                break;
-            case EventType.QueueItemsUpdated:
-
-                break;
-
             default:
                 break;
         }
     }
 
-    public void OnPlayerEvents(PlayerEventResponse e)
-    {
-        switch (e.EventName)
-        {
-            case EventType.PlayerAdded:
-                if (!Players.Contains((e.data))) //Any?
-                    Players.Add(e.data);
+    //public async Task OnPlayerQueueEvents(PlayerQueueEventResponse e)
+    //{
 
-                break;
+    //    switch (e.EventName)
+    //    {
+    //        case EventType.QueueAdded:
+    //            break;
 
-            case EventType.PlayerUpdated:
-                var player = Players.FirstOrDefault(p => p.PlayerId == e.data.PlayerId);
+    //        case EventType.QueueUpdated: //replacing a queue is just 'updated'
 
-                if (player != null)
-                {
-                    player.PlaybackState = e.data.PlaybackState;
-                    player.CurrentMedia = e.data.CurrentMedia; // this should probably be more of a clone
-                    player.VolumeLevel = e.data.VolumeLevel;
+    //            //It seems like when a queue is updated, the best thing is to clear/refetch
+    //            if (SelectedQueue != null && e.data.queue_id == SelectedQueue.queue_id)
+    //            {
+    //                SelectedQueue.current_index = e.data.current_index;
+    //                SelectedQueue.current_item = e.data.current_item;
 
-                }
+    //                var currentItem = SelectedQueue.current_item;
+    //                if (currentItem == null)
+    //                    break;
+    //                if (currentItem.image.remotely_accessible)
+    //                    colourService.Update(currentItem.media_item.ItemId, currentItem.image.path);
+    //                else
+    //                {
+    //                    var url = string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(currentItem.image.path), currentItem.image.provider);
+    //                    colourService.Update(currentItem.media_item.ItemId, url);
+    //                }
+    //            }
+
+    //            await FetchQueueContentsAsync();
+    //            break;
+
+    //        case EventType.QueueTimeUpdated:
+
+    //            break;
+    //        case EventType.QueueItemsUpdated:
+
+    //            break;
+
+    //        default:
+    //            break;
+    //    }
+    //}
+
+    //public void OnPlayerEvents(PlayerEventResponse e)
+    //{
+    //    switch (e.EventName)
+    //    {
+    //        case EventType.PlayerAdded:
+    //            if (!Players.Contains((e.data))) //Any?
+    //                Players.Add(e.data);
+
+    //            break;
+
+    //        case EventType.PlayerUpdated:
+    //            var player = Players.FirstOrDefault(p => p.PlayerId == e.data.PlayerId);
+
+    //            if (player != null)
+    //            {
+    //                player.PlaybackState = e.data.PlaybackState;
+    //                player.CurrentMedia = e.data.CurrentMedia; // this should probably be more of a clone
+    //                player.VolumeLevel = e.data.VolumeLevel;
+
+    //            }
 
 
 
-                break;
+    //            break;
 
-            case EventType.PlayerRemoved:
-                Players.RemoveAll(p => p.PlayerId == e.data.PlayerId);
-                break;
+    //        case EventType.PlayerRemoved:
+    //            Players.RemoveAll(p => p.PlayerId == e.data.PlayerId);
+    //            break;
 
-            default:
+    //        default:
 
-                break;
-        }
-    }
+    //            break;
+    //    }
+    //}
 
     public async Task GetPlayers()
     {
