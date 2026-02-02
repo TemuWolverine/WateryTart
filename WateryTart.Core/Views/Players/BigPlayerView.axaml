@@ -31,7 +31,7 @@
 						<asyncImageLoader:AdvancedImage
 						Name="imgAlbumArt"
 						Loader="{x:Static app:App.ImageLoaderInstance}"
-						Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" />
+                        Source="{Binding Path=PlayersService.SelectedQueue.current_item.image, Converter={StaticResource MassImageImageConverter}}" />
 					</Border>
 				</Border>
 
@@ -42,14 +42,14 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 					<TextBlock Grid.Column="0" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.elapsed_time, Converter={StaticResource FriendlyTimeConverter}}" />
-					<ProgressBar Grid.Column="1" Margin="10,0,10,0" Foreground="Red" Height="15" Value="{Binding PlayersService.SelectedPlayer.CurrentMedia.progress}" Minimum="0" Maximum="100" />
+					<ProgressBar Grid.Column="1" Margin="10,0,10,0" Foreground="Red" Height="15" Value="{Binding PlayersService.Progress}" Minimum="0" Maximum="100" />
 					<TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.duration, Converter={StaticResource FriendlyTimeConverter}}" />
 				</Grid>
 
 				<StackPanel Margin="15,5,5,5">
-					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.artist}" FontSize="18"/>
-					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.title}" FontSize="20" FontWeight="Bold" />
-					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.album}" />
+					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.artists[0].Name}" FontSize="18"/>
+					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.Name}" FontSize="20" FontWeight="Bold" />
+					<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.album.Name}" />
 				</StackPanel>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

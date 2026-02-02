@@ -6,18 +6,17 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
+using System.Numerics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using WateryTart.Core.Extensions;
 using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels;
-using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Events;
 using WateryTart.Service.MassClient.Models;
-using MenuItemViewModel = WateryTart.Core.ViewModels.Menus.MenuItemViewModel;
 
 namespace WateryTart.Core.Services;
 
@@ -38,6 +37,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     public ReadOnlyObservableCollection<QueuedItem> CurrentQueue { get => currentQueue; }
     public ReadOnlyObservableCollection<QueuedItem> PlayedQueue { get => playedQueue; }
 
+    [Reactive] public partial double Progress { get; set; }
     public Player SelectedPlayer
     {
         get => field;
@@ -76,6 +76,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
     }
 
+    private DispatcherTimer _timer;
+
     public PlayersService(IMassWsClient massClient, ISettings settings, IColourService colourService)
     {
         _massClient = massClient;
@@ -86,6 +88,10 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         _subscriptions.Add(_massClient.Events
             .Where(e => e is PlayerEventResponse)
             .Subscribe((e) => OnPlayerEvents((PlayerEventResponse)e)));
+
+        _subscriptions.Add(_massClient.Events
+            .Where(e => e is PlayerQueueTimeUpdatedEventResponse)
+            .Subscribe((e) => OnPlayerQueueEvents((PlayerQueueTimeUpdatedEventResponse)e)));
 
         _subscriptions.Add(_massClient.Events
             .Where(e => e is PlayerQueueEventResponse)
@@ -106,8 +112,31 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                 .Bind(out playedQueue)
                 .Subscribe());
 
+        _timer = new DispatcherTimer();
+        _timer.Interval = new TimeSpan(0, 0, 1);
+        _timer.Tick += T_Tick;
+        _timer.Start();
     }
-    public async void OnPlayerQueueEvents(PlayerQueueEventResponse e)
+
+    private void T_Tick(object? sender, EventArgs e)
+    {
+        if (SelectedPlayer?.PlaybackState != PlaybackState.playing) 
+            return;
+
+        Progress = SelectedQueue.current_item.media_item.progress;
+        SelectedQueue?.current_item.media_item.elapsed_time += 1;
+    }
+
+    public async Task OnPlayerQueueEvents(PlayerQueueTimeUpdatedEventResponse e)
+    {
+        if (SelectedQueue != null && e.object_id == SelectedQueue.queue_id)
+        {
+            SelectedQueue.current_item.media_item.elapsed_time = e.data;
+        }
+
+    }
+
+    public async Task OnPlayerQueueEvents(PlayerQueueEventResponse e)
     {
 
         switch (e.EventName)
@@ -138,6 +167,9 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                 await FetchQueueContentsAsync();
                 break;
 
+            case EventType.QueueTimeUpdated:
+
+                break;
             case EventType.QueueItemsUpdated:
 
                 break;
@@ -165,6 +197,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                     player.PlaybackState = e.data.PlaybackState;
                     player.CurrentMedia = e.data.CurrentMedia; // this should probably be more of a clone
                     player.VolumeLevel = e.data.VolumeLevel;
+
                 }
 
 
@@ -313,6 +346,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     public async Task ReapAsync()
     {
+        _timer?.Stop();
+        _timer = null;
         QueuedItems?.Dispose();
         _subscriptions?.Dispose();
         try
@@ -327,6 +362,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     public void Reap()
     {
+        _timer?.Stop();
+        _timer = null;
         QueuedItems?.Dispose();
         _subscriptions?.Dispose();
 

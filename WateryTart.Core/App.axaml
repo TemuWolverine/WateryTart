@@ -10,7 +10,7 @@
 	<Application.Resources>
 
 		<ResourceDictionary>
-			<converters:LibraryImageConverter x:Key="LibraryImageConverter" />
+            <converters:MassImageImageConverter x:Key="MassImageImageConverter" />
 			<converters:MetadataImageConverter x:Key="MetadataImageConverter" />
 			<converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
 			<converters:HomeExtraToStringConverter x:Key="HomeExtraToStringConverter" />

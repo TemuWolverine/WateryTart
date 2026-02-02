@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Diagnostics;
+using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Reactive;
@@ -7,7 +8,7 @@ using WateryTart.Service.MassClient.Models;
 
 namespace WateryTart.Core.ViewModels.Players
 {
-    public partial class MiniPlayerViewModel : ReactiveObject, IViewModelBase, IReaper
+    public partial class MiniPlayerViewModel : ReactiveObject, IViewModelBase
     {
         public string? UrlPathSegment { get; } = "MiniPlayerViewModel";
         public IScreen HostScreen { get; }
@@ -20,9 +21,10 @@ namespace WateryTart.Core.ViewModels.Players
         public ReactiveCommand<Unit, Unit> ClickedCommand { get; }
 
         [Reactive] public partial IPlayersService PlayersService { get; set; }
+
         public IScreen Screen { get; }
 
-        private DispatcherTimer _timer;
+        
 
         public MiniPlayerViewModel(IPlayersService playersService, IScreen screen)
         {
@@ -39,22 +41,7 @@ namespace WateryTart.Core.ViewModels.Players
             }
             );
 
-            _timer = new DispatcherTimer();
-            _timer.Interval = new System.TimeSpan(0, 0, 1);
-            _timer.Tick += T_Tick;
-            _timer.Start();
-        }
 
-        private void T_Tick(object? sender, System.EventArgs e)
-        {
-            if (PlayersService.SelectedPlayer?.PlaybackState == PlaybackState.playing)
-                PlayersService.SelectedPlayer?.CurrentMedia.elapsed_time += 1;
-        }
-
-        public void Reap()
-        {
-            _timer?.Stop();
-            _timer = null;
         }
     }
 }

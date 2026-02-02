@@ -7,7 +7,7 @@ using WateryTart.Service.MassClient.Models;
 
 namespace WateryTart.Core.ViewModels.Players
 {
-    public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase, IReaper
+    public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
     {
         public string? UrlPathSegment { get; } = "BigPlayerViewModel";
         public IScreen HostScreen { get; }
@@ -28,23 +28,6 @@ namespace WateryTart.Core.ViewModels.Players
             PlayNextCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerNext());
             PlayerPlayPauseCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPlayPause());
             PlayerPreviousCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPrevious());
-
-            /*  _timer = new DispatcherTimer();
-              _timer.Interval = new System.TimeSpan(0, 0, 1);
-              _timer.Tick += T_Tick;
-              _timer.Start();*/
-        }
-
-        private void T_Tick(object? sender, System.EventArgs e)
-        {
-            if (PlayersService.SelectedPlayer?.PlaybackState == PlaybackState.playing)
-                PlayersService.SelectedPlayer?.CurrentMedia.elapsed_time += 1;
-        }
-
-        public void Reap()
-        {
-            _timer?.Stop();
-            _timer = null;
         }
     }
 }

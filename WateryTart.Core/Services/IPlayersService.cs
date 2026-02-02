@@ -7,6 +7,7 @@ namespace WateryTart.Core.Services;
 
 public interface IPlayersService
 {
+    double Progress { get; }
     PlayerQueue SelectedQueue { get; set; }
     ObservableCollection<Player> Players { get; }
     ReadOnlyObservableCollection<QueuedItem> CurrentQueue { get; }

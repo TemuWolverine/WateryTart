@@ -14,13 +14,12 @@
 			 x:DataType="vm:Players.MiniPlayerViewModel">
 
 	<UserControl.Resources>
-		<converters:MetadataImageConverter x:Key="MetadataImageConverter" />
-		<x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
+        <x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
 		<converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
 		<converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
 	</UserControl.Resources>
 	<StackPanel>
-		<ProgressBar Foreground="Red" Value="{Binding PlayersService.SelectedPlayer.CurrentMedia.progress}" Minimum="0" Maximum="100" />
+		<ProgressBar Foreground="Red" Value="{Binding PlayersService.Progress}" Minimum="0" Maximum="100" />
 		<Grid
 			x:Name="grdPlayer"
 			Background="Black" >
@@ -32,7 +31,7 @@
 
 			<asyncImageLoader:AdvancedImage Grid.Column="0"
 											Loader="{x:Static core:App.ImageLoaderInstance}"
-											Height="50" Width="50"  Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.image_url}" >
+											Height="50" Width="50"  Source="{Binding Path=PlayersService.SelectedQueue.current_item.image, Converter={StaticResource MassImageImageConverter}}" >
 				 <Interaction.Behaviors>
                         <EventTriggerBehavior EventName="Tapped">
                             <InvokeCommandAction
@@ -42,8 +41,8 @@
 			</asyncImageLoader:AdvancedImage>
 
 			<StackPanel Grid.Column="1" Margin="15,5,5,5">
-				<TextBlock Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.artist}" FontSize="14"/>
-				<TextBlock Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.title}" FontWeight="Bold" />
+				<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.media_item.artists[0].Name}" FontSize="14"/>
+				<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.media_item.Name}" FontWeight="Bold" />
 				<TextBlock Text="{Binding PlayersService.SelectedPlayer.Name}" FontSize="12" />
 			</StackPanel>
 

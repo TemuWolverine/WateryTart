@@ -221,10 +221,12 @@ namespace WateryTart.Service.MassClient
 
                 case EventType.QueueAdded:
                 case EventType.QueueUpdated:
-                case EventType.QueueItemsUpdated:
-                case EventType.QueueTimeUpdated:
                     subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueEventResponse>(response.Text));
-
+                    break;
+                case EventType.QueueItemsUpdated:
+                    break;
+                case EventType.QueueTimeUpdated:
+                    subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueTimeUpdatedEventResponse>(response.Text));
                     break;
 
                 default:
