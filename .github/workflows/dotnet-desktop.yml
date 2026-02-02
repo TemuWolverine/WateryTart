@@ -49,4 +49,4 @@ jobs:
           uses: actions/upload-artifact@v4
           with:    
             name: Windows-x64
-            path: /home/runner/work/WateryTart/WateryTart/WateryTart.Platform.Windows/bin/release/net10.0/publish/win-x64/**
+            path: D:\a\WateryTart\WateryTart\WateryTart.Platform.Windows\bin\Release\net10.0\publish\win-x64\**
