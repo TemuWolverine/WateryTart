@@ -30,8 +30,8 @@ jobs:
       - name: Zip Linux-arm64 files
         run: |
           mkdir -p $GITHUB_WORKSPACE/artifacts
-          cd $GITHUB_WORKSPACE/WateryTart.Platform.Linux/bin/release/net10.0/publish/linux-arm64
-          zip -r $GITHUB_WORKSPACE/artifacts/WateryTart.LinuxArm64.zip .
+          cd $GITHUB_WORKSPACE/WateryTart.Platform.Linux/bin/Release/net10.0/publish/linux-arm64 || cd $GITHUB_WORKSPACE/WateryTart.Platform.Linux/bin/release/net10.0/publish/linux-arm64
+          zip -r "$GITHUB_WORKSPACE/artifacts/WateryTart.LinuxArm64.zip" .
         shell: bash
       - name: Upload Linux zip artifact
         uses: actions/upload-artifact@v4
@@ -59,9 +59,14 @@ jobs:
       - name: Zip Windows win-x64 files
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path $env:GITHUB_WORKSPACE\artifacts | Out-Null
+          $artifactDir = Join-Path $env:GITHUB_WORKSPACE 'artifacts'
+          New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
           $publishPath = Join-Path $env:GITHUB_WORKSPACE 'WateryTart.Platform.Windows\bin\Release\net10.0\publish\win-x64'
-          Compress-Archive -Path (Join-Path $publishPath '*') -DestinationPath (Join-Path $env:GITHUB_WORKSPACE 'artifacts\WateryTart.Windows-x64.zip') -Force
+          if (-Not (Test-Path $publishPath)) {
+            # fallback to lowercase 'release' path if present
+            $publishPath = Join-Path $env:GITHUB_WORKSPACE 'WateryTart.Platform.Windows\bin\release\net10.0\publish\win-x64'
+          }
+          Compress-Archive -Path (Join-Path $publishPath '*') -DestinationPath (Join-Path $artifactDir 'WateryTart.Windows-x64.zip') -Force
       - name: Upload Windows zip artifact
         uses: actions/upload-artifact@v4
         with:
@@ -95,11 +100,11 @@ jobs:
           echo "Windows files:"
           ls -R artifacts/windows || true
 
-      - name: Upload assets to published Release
+      - name: Upload assets to published Release (only ZIPs)
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/linux/**
-            artifacts/windows/**
+            artifacts/linux/*.zip
+            artifacts/windows/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
