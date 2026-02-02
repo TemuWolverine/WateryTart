@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -22,12 +23,16 @@ namespace WateryTart.Core.ViewModels
         [Reactive] public partial string Title { get; set; }
         [Reactive] public partial Artist Artist { get; set; }
         [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
+        [Reactive] public partial bool IsBioExpanded { get; set; } = false;
         public Image ArtistLogo { get { return Artist?.Metadata?.images?.FirstOrDefault(i => i.type == "logo"); } }
 
         public Image ArtistThumb { get { return Artist?.Metadata?.images?.FirstOrDefault(i => i.type == "thumb"); } }
 
         public ReactiveCommand<Artist, Unit> AltMenuCommand { get; }
         public ReactiveCommand<Unit, Unit> ArtistFullViewCommand { get; }
+        public ReactiveCommand<Unit, Unit> ToggleBioCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> PlayArtistRadioCommand { get; }
         public ObservableCollection<Item> Tracks { get; set; }
 
         public ArtistViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, Artist artist = null)
@@ -44,6 +49,11 @@ namespace WateryTart.Core.ViewModels
                 screen.Router.Navigate.Execute(this);
             });
 
+            ToggleBioCommand = ReactiveCommand.Create(() =>
+            {
+                IsBioExpanded = !IsBioExpanded;
+            });
+
             AltMenuCommand = ReactiveCommand.Create<Artist>(i =>
             {
                 var menu = new MenuViewModel(
@@ -55,6 +65,11 @@ namespace WateryTart.Core.ViewModels
                 menu.AddMenuItem(MenuHelper.AddPlayers(_playersService, artist));
 
                 MessageBus.Current.SendMessage(menu);
+            });
+
+            PlayArtistRadioCommand = ReactiveCommand.Create(() =>
+            {
+                _playersService.PlayArtistRadio(Artist);
             });
         }
 

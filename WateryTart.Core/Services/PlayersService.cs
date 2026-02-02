@@ -12,6 +12,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using WateryTart.Core.Extensions;
 using WateryTart.Core.Settings;
+using WateryTart.Core.ViewModels;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Events;
@@ -256,31 +257,13 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
     }
 
-    public async Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace)
+    public async Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace, bool RadioMode = false)
     {
         p ??= SelectedPlayer;
 
         if (p == null)
         {
-            //This really shouldn't be in the service, but shhhh
-            var menu = new MenuViewModel();
-            foreach (var player in Players)
-            {
-                var capturedPlayer = player;
-                menu.AddMenuItem(new MenuItemViewModel($"\tPlay on {player.DisplayName}", string.Empty, ReactiveCommand.Create<Unit>(async _ =>
-                {
-                    try
-                    {
-                        SelectedPlayer = capturedPlayer;
-                        var pq = await _massClient.PlayerActiveQueueAsync(capturedPlayer.PlayerId);
-                        await _massClient.PlayAsync(pq.Result.queue_id, t, mode);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Error playing item: {ex.Message}");
-                    }
-                })));
-            }
+            var menu = MenuHelper.AddPlayers(this, t);
             MessageBus.Current.SendMessage(menu);
         }
         else
@@ -288,7 +271,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             try
             {
                 var pq = await _massClient.PlayerActiveQueueAsync(p.PlayerId);
-                await _massClient.PlayAsync(pq.Result.queue_id, t, mode);
+                await _massClient.PlayAsync(pq.Result.queue_id, t, mode, RadioMode);
             }
             catch (Exception ex)
             {
@@ -321,6 +304,11 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             Debug.WriteLine($"Error playing previous: {ex.Message}");
         }
+    }
+
+    public async Task PlayArtistRadio(Artist artist)
+    {
+        PlayItem(artist, RadioMode: true);
     }
 
     public async Task ReapAsync()

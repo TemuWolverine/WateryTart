@@ -35,7 +35,8 @@ namespace WateryTart.Service.MassClient
             {
                 ContractResolver = new DefaultContractResolver
                 {
-                    NamingStrategy = new LowercaseNamingPolicy()
+                    NamingStrategy = new LowercaseNamingPolicy(),
+
                 }
             };
             s.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -142,7 +143,7 @@ namespace WateryTart.Service.MassClient
             var argsx = new Hashtable { { "token", credentials.Token } };
             var auth = new Auth()
             {
-                message_id = "auth-123",
+                message_id = "auth-" + Guid.NewGuid(),
                 args = argsx
             };
             _client?.Send(JsonConvert.SerializeObject(auth));

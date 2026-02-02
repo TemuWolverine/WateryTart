@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
+using System.Diagnostics;
 using System.Reactive;
 using WateryTart.Core.Extensions;
 using WateryTart.Core.Messages;
@@ -25,7 +26,10 @@ public partial class MenuItemViewModel : ReactiveObject, IViewModelBase
         Icon = icon;
         ClickedCommand = ReactiveCommand.Create<Unit>(_ =>
         {
-            _clickedCommand.ExecuteIfPossible().Subscribe();
+            _clickedCommand.ExecuteIfPossible().Subscribe(
+                onNext: _ => { },
+                onError: ex => Debug.WriteLine($"Error executing menu command '{title}': {ex.Message}")
+            );
             MessageBus.Current.SendMessage(new CloseMenuMessage());
         });
     }

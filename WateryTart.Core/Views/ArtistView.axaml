@@ -6,6 +6,7 @@
 			 xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
 			 xmlns:app="clr-namespace:WateryTart.Core"
 			 xmlns:converters="clr-namespace:WateryTart.Core.Converters"
+			 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="WateryTart.Core.Views.ArtistView"
 			 x:DataType="vm:ArtistViewModel">
@@ -33,7 +34,9 @@
 				<asyncImageLoader:AdvancedImage
 				Loader="{x:Static app:App.ImageLoaderInstance}"
 				MaxWidth="350" Source="{Binding Path=ArtistLogo, Converter={StaticResource LibraryImageConverter}}" />
-				<Button />
+				<Button Command="{Binding PlayArtistRadioCommand}">
+					<avalonia:MaterialIcon HorizontalAlignment="Right"  Kind="Radio" Width="35" Height="35" />
+				</Button>
 				<Button />
 				<Button />
 			</StackPanel>
@@ -44,10 +47,32 @@
 		<ListBox Background="Transparent"
 				 ItemsSource="{Binding Albums}"
 				 Padding="0"
-                 ItemTemplate="{StaticResource albumSmallReusableTemplate}">
-			
+				 ItemTemplate="{StaticResource albumSmallReusableTemplate}">
+
 		</ListBox>
 		<TextBlock>Bio</TextBlock>
-		<TextBlock Text="{Binding Artist.Metadata.description}" TextWrapping="Wrap" Margin="10"></TextBlock>
+		<StackPanel Margin="10">
+			<TextBlock Text="{Binding Artist.Metadata.description}"
+					   TextWrapping="Wrap"
+					   MaxLines="{Binding IsBioExpanded, Converter={x:Static converters:BoolToMaxLinesConverter.Instance}}"
+					   TextTrimming="CharacterEllipsis">
+				<Interaction.Behaviors>
+					<EventTriggerBehavior EventName="Tapped">
+						<InvokeCommandAction Command="{Binding ToggleBioCommand}"/>
+					</EventTriggerBehavior>
+				</Interaction.Behaviors>
+			</TextBlock>
+			<TextBlock Text="{Binding IsBioExpanded, Converter={x:Static converters:BoolToShowMoreTextConverter.Instance}}"
+					   Foreground="#99FFFFFF"
+					   FontSize="12"
+					   Margin="0,5,0,0"
+					   Cursor="Hand">
+				<Interaction.Behaviors>
+					<EventTriggerBehavior EventName="Tapped">
+						<InvokeCommandAction Command="{Binding ToggleBioCommand}"/>
+					</EventTriggerBehavior>
+				</Interaction.Behaviors>
+			</TextBlock>
+		</StackPanel>
 	</StackPanel>
 </UserControl>

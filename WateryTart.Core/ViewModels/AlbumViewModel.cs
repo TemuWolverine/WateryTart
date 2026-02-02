@@ -27,7 +27,6 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     public ObservableCollection<TrackViewModel> Tracks { get; set; }
     public ReactiveCommand<Unit, Unit> PlayAlbumCommand { get; }
     public ReactiveCommand<Item, Unit> TrackTappedCommand { get; }
-   // public ReactiveCommand<Item, Unit> TrackAltMenuCommand { get; }
     public ReactiveCommand<Unit, Unit> AlbumAltMenuCommand { get; }
 
     public ReactiveCommand<Unit, Unit> AlbumFullViewCommand { get; }
@@ -53,11 +52,6 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
         {
             MessageBus.Current.SendMessage(MenuHelper.BuildStandardPopup(playersService, Album));
         });
-
-        //TrackAltMenuCommand = ReactiveCommand.Create<Item>((t) =>
-        //{
-        //    MessageBus.Current.SendMessage(MenuHelper.BuildStandardPopup(_playersService, t));
-        //});
     }
 
     public void LoadFromId(string id, string provider)
