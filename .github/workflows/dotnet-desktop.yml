@@ -19,13 +19,11 @@ jobs:
           dotnet-version: '10.x'
           cache: true
           cache-dependency-path: './WateryTart.Platform.Linux/packages.lock.json'
-          workloads: android 
       - name: Install dependencies
         run: dotnet restore
-      - run: dotnet build WateryTart.Platform.Windows/WateryTart.Platform.Windows.csproj
+     # - run: dotnet build WateryTart.Platform.Windows/WateryTart.Platform.Windows.csproj
       - run: dotnet publish WateryTart.Platform.Linux -p:PublishProfile=LinuxArm
-      - name: Archive code coverage results
+      - name: Linux-arm64 files
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report
-          path: WateryTart/WateryTart.Platform.Linux/bin/release/net10.0/publish/linux-arm64/**
+          path: /home/runner/work/WateryTart/WateryTart.Platform.Linux/bin/release/net10.0/publish/linux-arm64/**
