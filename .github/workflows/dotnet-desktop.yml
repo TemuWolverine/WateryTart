@@ -19,8 +19,7 @@ jobs:
           dotnet-version: '10.x'
           cache: true
           cache-dependency-path: './WateryTart.Platform.Linux/packages.lock.json'
+          workloads: android 
       - name: Install dependencies
         run: dotnet restore
-      - name: Install workloads
-        run: dotnet workload restore
       - run: dotnet build WateryTart.Platform.Windows/WateryTart.Platform.Windows.csproj
