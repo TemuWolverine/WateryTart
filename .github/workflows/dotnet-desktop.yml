@@ -25,7 +25,7 @@ jobs:
           cache: true
           cache-dependency-path: './WateryTart.Platform.Linux/packages.lock.json'
       - name: Install dependencies
-        run: dotnet restore WateryTart.sln
+        run: dotnet restore WateryTart.Platform.Linux
       - run: dotnet publish WateryTart.Platform.Linux -p:PublishProfile=LinuxArm
       - name: Zip Linux-arm64 files
         run: |
@@ -54,7 +54,7 @@ jobs:
           cache: true
           cache-dependency-path: './WateryTart.Platform.Linux/packages.lock.json'
       - name: Install dependencies
-        run: dotnet restore WateryTart.sln
+        run: dotnet restore WateryTart.Platform.Windows
       - run: dotnet publish WateryTart.Platform.Windows -p:PublishProfile=Winx64
       - name: Zip Windows win-x64 files
         shell: pwsh
@@ -82,7 +82,7 @@ jobs:
         with:
           dotnet-version: '10.x'
       - name: Install dependencies
-        run: dotnet restore WateryTart.sln
+        run: dotnet restore WateryTart.Platform.macOS
       - name: Publish
         run: dotnet publish WateryTart.Platform.macOS -p:PublishProfile=MacOSArm64
       - name: Create .app bundle
