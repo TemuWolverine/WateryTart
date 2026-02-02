@@ -11,9 +11,9 @@ jobs:
         dotnet-version: [ '3.1.x', '6.0.x' ]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup .NET 10.x
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           # Semantic version range syntax or exact version of a dotnet version
           dotnet-version: '10.x'
@@ -23,5 +23,4 @@ jobs:
         run: dotnet restore
       - name: Install workloads
         run: dotnet workload restore
-      - name: Build
-        run: dotnet publish WateryTart.Platform.Linux -p:PublishProfile=LinuxArm
+      - run: dotnet build WateryTart.Platform.Windows/WateryTart.Platform.Windows.csproj
