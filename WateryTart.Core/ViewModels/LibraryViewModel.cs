@@ -44,53 +44,79 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
             })
         };
 
-        var tracks = new LibraryItem() { Title = "Tracks" };
+        var tracks = new LibraryItem()
+        {
+            Title = "Tracks",
+            ClickedCommand = ReactiveCommand.Create(() =>
+            {
+                //var vm = App.Container.GetRequiredService<AlbumsListViewModel>();
+                //screen.Router.Navigate.Execute(vm);
+            })
+        };
+        var playlists = new LibraryItem { Title = "Playlists",
+            ClickedCommand = ReactiveCommand.Create(() =>
+            {
+                var vm = App.Container.GetRequiredService<PlaylistsViewModel>();
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+        //var genres = new LibraryItem { Title = "Genres" };
+        var podcasts = new LibraryItem { Title = "Podcasts" };
+        var radios = new LibraryItem { Title = "Radios" };
+        var audiobooks = new LibraryItem { Title = "Audiobooks" };
 
         Items =
-        [
-            artists,
-            albums,
-            tracks,
-            new() { Title = "Playlists" },
-            new() { Title = "Genres" }
-        ];
+       [
+           artists,
+           albums,
+           tracks,
+           playlists,
+          // genres,
+           podcasts,
+           radios,
+           audiobooks
+       ];
 
         // Load counts asynchronously in the background
 #pragma warning disable CS4014 // Fire-and-forget intentional - loads data asynchronously
-        _ = LoadLibraryCountsAsync(artists, albums, tracks);
+        _ = LoadLibraryCountsAsync(artists, albums, tracks, playlists, null, podcasts, radios, audiobooks);
 #pragma warning restore CS4014
     }
 
-    private async Task LoadLibraryCountsAsync(LibraryItem artists, LibraryItem albums, LibraryItem tracks)
+    private async Task LoadLibraryCountsAsync(LibraryItem artists, LibraryItem albums, LibraryItem tracks, LibraryItem playlists, LibraryItem genres, LibraryItem podcasts, LibraryItem radios, LibraryItem audiobooks)
     {
         try
         {
             var artistCountResponse = await _massClient.ArtistCountAsync();
             artists.Count = artistCountResponse.Result;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Error loading artist count: {ex.Message}");
-        }
 
-        try
-        {
             var albumCountResponse = await _massClient.AlbumsCountAsync();
             albums.Count = albumCountResponse.Result;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Error loading album count: {ex.Message}");
-        }
 
-        try
-        {
             var trackCountResponse = await _massClient.TrackCountAsync();
             tracks.Count = trackCountResponse.Result;
+
+            //Currently the API  docs has this call but it does not return a result
+            //var genreCountResponse = await _massClient.GenreCountAsync();
+            //genres.Count = genreCountResponse.Result;
+
+            var podcastCountResponse = await _massClient.PodcastCountAsync();
+            podcasts.Count = podcastCountResponse.Result;
+
+            var radiosCountResponse = await _massClient.RadiosCountAsync();
+            radios.Count = radiosCountResponse.Result;
+
+            var audiobookCountResponse = await _massClient.AudiobookCountAsync();
+            audiobooks.Count = audiobookCountResponse.Result;
+
+            var playlistsCountResponse = await _massClient.PlaylistsCountAsync();
+            playlists.Count = playlistsCountResponse.Result;
+
+            _massClient.PlaylistsGetAsync();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error loading track count: {ex.Message}");
+            Debug.WriteLine($"Error loading counts: {ex.Message}");
         }
     }
 }

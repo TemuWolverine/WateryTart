@@ -27,9 +27,56 @@ public static partial class MassClientExtensions
             return await SendAsync<CountResponse>(c, JustId("music/tracks/count", "false", "favourite_only"));
         }
 
+        public async Task<CountResponse> PlaylistsCountAsync()
+        {
+            return await SendAsync<CountResponse>(c, JustId("music/playlists/count", "false", "favorite_only"));
+        }
+
+        public async Task<CountResponse> AudiobookCountAsync()
+        {
+            return await SendAsync<CountResponse>(c, JustId("music/audiobooks/count", "false", "favorite_only"));
+        }
+
+        public async Task<CountResponse> PodcastCountAsync()
+        {
+            return await SendAsync<CountResponse>(c, JustId("music/podcasts/count", "false", "favorite_only"));
+        }
+
+        public async Task<CountResponse> GenreCountAsync()
+        {
+            return await SendAsync<CountResponse>(c, JustId("music/genre/count", "false", "favorite_only"));
+        }
+        public async Task<CountResponse> RadiosCountAsync()
+        {
+            return await SendAsync<CountResponse>(c, JustId("music/radios/count", "false", "favorite_only"));
+        }
+
         public async Task<PlaylistResponse> PlaylistGetAsync(string playlistId, string provider_instance_id_or_domain)
         {
             return await SendAsync<PlaylistResponse>(c, IdAndProvider(Commands.PlaylistGet, playlistId, provider_instance_id_or_domain));
+        }
+
+        public async Task<PlaylistsResponse> PlaylistsGetAsync(int? limit = null, int? offset = null)
+        {
+            var m = new Message("music/playlists/library_items")
+            {
+                args = new Hashtable
+                {
+                    { "favorite_only", "false" },
+
+                }
+            };
+
+            if (limit.HasValue)
+            {
+                m.args["limit"] = limit.Value.ToString();
+            }
+            if (offset.HasValue)
+            {
+                m.args["offset"] = offset.Value.ToString();
+            }
+
+            return await SendAsync<PlaylistsResponse>(c, m);
         }
 
         public async Task<TracksResponse> PlaylistTracksGetAsync(string playlistId, string provider_instance_id_or_domain)
