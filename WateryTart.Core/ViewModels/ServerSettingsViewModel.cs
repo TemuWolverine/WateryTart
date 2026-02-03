@@ -76,7 +76,9 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
             });
 
         // Start discovery immediately
+#pragma warning disable CS4014 // Fire-and-forget intentional - starts async discovery on construction
         _ = StartDiscoveryAsync();
+#pragma warning restore CS4014
     }
 
     private async Task StartDiscoveryAsync()

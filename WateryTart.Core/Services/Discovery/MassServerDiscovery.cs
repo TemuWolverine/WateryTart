@@ -53,7 +53,9 @@ public sealed class MassServerDiscovery : IMassServerDiscovery, IDisposable
         _logger?.LogInformation("Starting Music Assistant server discovery via mDNS");
 
         // Run continuous discovery in background
+#pragma warning disable CS4014 // Fire-and-forget intentional - runs continuous discovery loop
         _ = ContinuousDiscoveryAsync(_discoveryCts.Token);
+#pragma warning restore CS4014
     }
 
     private async Task ContinuousDiscoveryAsync(CancellationToken ct)
