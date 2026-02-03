@@ -49,8 +49,8 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
             Title = "Tracks",
             ClickedCommand = ReactiveCommand.Create(() =>
             {
-                //var vm = App.Container.GetRequiredService<AlbumsListViewModel>();
-                //screen.Router.Navigate.Execute(vm);
+                var vm = App.Container.GetRequiredService<TracksViewModel>();
+                screen.Router.Navigate.Execute(vm);
             })
         };
         var playlists = new LibraryItem { Title = "Playlists",
@@ -111,8 +111,6 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
 
             var playlistsCountResponse = await _massClient.PlaylistsCountAsync();
             playlists.Count = playlistsCountResponse.Result;
-
-            _massClient.PlaylistsGetAsync();
         }
         catch (Exception ex)
         {

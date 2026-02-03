@@ -127,6 +127,7 @@ public partial class App : Application
         builder.RegisterType<TrackViewModel>();
         builder.RegisterType<RecommendationViewModel>();
         builder.RegisterType<PlaylistsViewModel>();
+        builder.RegisterType<TracksViewModel>();
 
         Container = builder.Build();
 

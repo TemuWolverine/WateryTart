@@ -27,6 +27,26 @@ public static partial class MassClientExtensions
             return await SendAsync<CountResponse>(c, JustId("music/tracks/count", "false", "favourite_only"));
         }
 
+        public async Task<TracksResponse> TracksGetAsync(int? limit = null, int? offset = null)
+        {
+            var m = new Message("music/tracks/library_items")
+            {
+                args = new Hashtable
+                {
+                    { "favorite_only", "false" },
+                }
+            };
+            if (limit.HasValue)
+            {
+                m.args["limit"] = limit.Value.ToString();
+            }
+            if (offset.HasValue)
+            {
+                m.args["offset"] = offset.Value.ToString();
+            }
+            return await SendAsync<TracksResponse>(c, m);
+        }
+
         public async Task<CountResponse> PlaylistsCountAsync()
         {
             return await SendAsync<CountResponse>(c, JustId("music/playlists/count", "false", "favorite_only"));
