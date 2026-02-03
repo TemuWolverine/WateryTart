@@ -6,6 +6,7 @@ namespace WateryTart.Service.MassClient.Models;
 public class PlayerQueue : INotifyPropertyChanged
 {
     private long? current_index1;
+    private string? _state;
 
     public string? queue_id { get; set; }
     public bool active { get; set; }
@@ -15,16 +16,31 @@ public class PlayerQueue : INotifyPropertyChanged
     public bool shuffle_enabled { get; set; }
     public string? repeat_mode { get; set; }
     public bool dont_stop_the_music_enabled { get; set; }
-    public Int64? current_index { get => current_index1;
+    public Int64? current_index
+    {
+        get => current_index1;
         set
         {
-            current_index1 = value; NotifyPropertyChanged();
-
-        } }
+            current_index1 = value;
+            NotifyPropertyChanged();
+        }
+    }
     public Int64? index_in_buffer { get; set; }
     public double? elapsed_time { get; set; }
     public double? elapsed_time_last_updated { get; set; }
-    public string? state { get; set; }
+
+    public string? state
+    {
+        get => _state;
+        set
+        {
+            if (_state != value)
+            {
+                _state = value;
+                NotifyPropertyChanged();
+            }
+        }
+    }
 
     public QueuedItem? current_item
     {
@@ -50,5 +66,4 @@ public class PlayerQueue : INotifyPropertyChanged
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

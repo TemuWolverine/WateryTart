@@ -9,6 +9,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:players="using:WateryTart.Core.ViewModels.Players"
 			 xmlns:core="clr-namespace:WateryTart.Core"
+			 xmlns:icons="clr-namespace:Material.Icons;assembly=Material.Icons"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="WateryTart.Core.Views.Players.MiniPlayerView"
 			 x:DataType="vm:Players.MiniPlayerViewModel">
@@ -17,6 +18,7 @@
         <x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
 		<converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
 		<converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
+		<converters:PlaybackStateToIconConverter x:Key="PlaybackStateToIconConverter" />
 	</UserControl.Resources>
 	<StackPanel>
 		<ProgressBar Foreground="Red" Value="{Binding PlayersService.Progress}" Minimum="0" Maximum="100" />
@@ -48,7 +50,13 @@
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
 				<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
-				<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="PlayPause" Width="25" Height="25" /></Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">
+                    <materialIcons:MaterialIcon 
+                        Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, 
+           Converter={StaticResource PlaybackStateToIconConverter}, 
+           FallbackValue={x:Static icons:MaterialIconKind.Play}}" 
+                        Width="25" Height="25" />
+				</Button>
 				<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 			</StackPanel>
 		</Grid>

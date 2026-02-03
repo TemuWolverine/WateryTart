@@ -15,6 +15,7 @@
 	<UserControl.Resources>
 		<converters:FriendlyTimeConverter x:Key="FriendlyTimeConverter" />
 		<converters:MetadataImageConverter x:Key="MetadataImageConverter" />
+		<converters:PlaybackStateToIconConverter x:Key="PlaybackStateToIconConverter" />
 		<x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
 		<converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
 		<converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
@@ -55,44 +56,44 @@
 						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.artists[0].Name}" FontSize="18"/>
 						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.Name}" FontSize="20" FontWeight="Bold" />
 						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.current_item.media_item.album.Name}" />
-						
+
 						<!-- Quality Badges - Each as separate tag -->
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6" Margin="0,10,0,0">
 							<!-- Codec Badge (FLAC, MP3, OPUS, etc.) -->
-							<Border Background="#1A1A1A" 
+							<Border Background="#1A1A1A"
 									BorderBrush="#1DB954"
 									BorderThickness="1"
-									CornerRadius="4" 
+									CornerRadius="4"
 									Padding="8,3"
 									IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatCodecConverter}}" 
-										   FontSize="11" 
+								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatCodecConverter}}"
+										   FontSize="11"
 										   FontWeight="Bold"
 										   Foreground="#1DB954" />
 							</Border>
-							
+
 							<!-- Sample Rate Badge (44.1kHz, 48kHz, etc.) -->
-							<Border Background="#1A1A1A" 
+							<Border Background="#1A1A1A"
 									BorderBrush="#64B5F6"
 									BorderThickness="1"
-									CornerRadius="4" 
+									CornerRadius="4"
 									Padding="8,3"
 									IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatSampleRateConverter}}" 
-										   FontSize="11" 
+								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatSampleRateConverter}}"
+										   FontSize="11"
 										   FontWeight="Bold"
 										   Foreground="#64B5F6" />
 							</Border>
-							
+
 							<!-- Bit Depth Badge (16bit, 24bit, etc.) -->
-							<Border Background="#1A1A1A" 
+							<Border Background="#1A1A1A"
 									BorderBrush="#FFB74D"
 									BorderThickness="1"
-									CornerRadius="4" 
+									CornerRadius="4"
 									Padding="8,3"
 									IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatBitDepthConverter}}" 
-										   FontSize="11" 
+								<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatBitDepthConverter}}"
+										   FontSize="11"
 										   FontWeight="Bold"
 										   Foreground="#FFB74D" />
 							</Border>
@@ -101,7 +102,9 @@
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 						<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
-						<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="PlayPause" Width="25" Height="25" /></Button>
+						<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">
+							<materialIcons:MaterialIcon Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" Width="25" Height="25" />
+						</Button>
 						<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 					</StackPanel>
 
@@ -163,11 +166,11 @@
 					MaxWidth="300">
 				<Border ClipToBounds="True" CornerRadius="5">
 					<asyncImageLoader:AdvancedImage
-					    Loader="{x:Static app:App.ImageLoaderInstance}"
-					    Stretch="Uniform"
-                        MaxHeight="300"
-                        MaxWidth="300"
-					    Source="{Binding Path=PlayersService.SelectedQueue.current_item.image, Converter={StaticResource MassImageImageConverter}}" />
+					Loader="{x:Static app:App.ImageLoaderInstance}"
+					Stretch="Uniform"
+					MaxHeight="300"
+					MaxWidth="300"
+					Source="{Binding Path=PlayersService.SelectedQueue.current_item.image, Converter={StaticResource MassImageImageConverter}}" />
 				</Border>
 			</Border>
 
@@ -179,40 +182,40 @@
 				<!-- Quality Badges for Small Display - Each as separate tag -->
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4" Margin="0,5,0,0">
 					<!-- Codec Badge -->
-					<Border Background="#1A1A1A" 
+					<Border Background="#1A1A1A"
 							BorderBrush="#1DB954"
 							BorderThickness="1"
-							CornerRadius="3" 
+							CornerRadius="3"
 							Padding="5,2"
 							IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatCodecConverter}}" 
-								   FontSize="9" 
+						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatCodecConverter}}"
+								   FontSize="9"
 								   FontWeight="Bold"
 								   Foreground="#1DB954" />
 					</Border>
-					
+
 					<!-- Sample Rate Badge -->
-					<Border Background="#1A1A1A" 
+					<Border Background="#1A1A1A"
 							BorderBrush="#64B5F6"
 							BorderThickness="1"
-							CornerRadius="3" 
+							CornerRadius="3"
 							Padding="5,2"
 							IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatSampleRateConverter}}" 
-								   FontSize="9" 
+						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatSampleRateConverter}}"
+								   FontSize="9"
 								   FontWeight="Bold"
 								   Foreground="#64B5F6" />
 					</Border>
-					
+
 					<!-- Bit Depth Badge -->
-					<Border Background="#1A1A1A" 
+					<Border Background="#1A1A1A"
 							BorderBrush="#FFB74D"
 							BorderThickness="1"
-							CornerRadius="3" 
+							CornerRadius="3"
 							Padding="5,2"
 							IsVisible="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatBitDepthConverter}}" 
-								   FontSize="9" 
+						<TextBlock Text="{Binding PlayersService.SelectedQueue.current_item.streamdetails.audio_format, Converter={StaticResource AudioFormatBitDepthConverter}}"
+								   FontSize="9"
 								   FontWeight="Bold"
 								   Foreground="#FFB74D" />
 					</Border>

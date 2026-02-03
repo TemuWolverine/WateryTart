@@ -16,7 +16,18 @@ public partial class Player : INotifyPropertyChanged, IResult
     public bool Available { get; set; }
     [JsonProperty("device_info")] public DeviceInfo? DeviceInfo { get; set; }
     [JsonProperty("supported_features")] public List<string>? SupportedFeatures { get; set; }
-    [JsonProperty("playback_state")] public PlaybackState PlaybackState { get; set; }
+
+    [JsonProperty("playback_state")]
+    public PlaybackState PlaybackState
+    {
+        get => field;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+        }
+    }
+
     [JsonProperty("elapsed_time")] public double? ElapsedTime { get; set; }
     [JsonProperty("elapsed_time_last_updated")] public double? ElapsedTimeLastUpdated { get; set; }
     public bool Powered { get; set; }
