@@ -3,7 +3,6 @@ using ReactiveUI.Avalonia;
 using System;
 using System.Reflection;
 using WateryTart.Core;
-using WateryTart.Core.Playback;
 using WateryTart.Platform.Windows.ViewModels;
 
 namespace WateryTart.Platform.Windows;

@@ -3,6 +3,9 @@ using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using System;
+using Avalonia.Input;
+using Avalonia.Media;
+using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels;
 
@@ -10,7 +13,8 @@ namespace WateryTart.Core.Views;
 
 public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 {
-    ISettings _settings;
+    private ISettings _settings;
+    private ITrayService? _trayService;
     public MainWindow()
     {
         this.WhenActivated(disposables =>
@@ -23,6 +27,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 if (sv != null)
                     sv.ScrollToHome();
             });
+
             _settings = App.Container.GetRequiredService<ISettings>();
             if (_settings.WindowWidth != 0)
             {
@@ -30,12 +35,29 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 Height = _settings.WindowHeight;
                 Position = new Avalonia.PixelPoint((int)_settings.WindowPosX, (int)_settings.WindowPosY);
             }
+
             Resized += MainWindow_Resized;
             PositionChanged += MainWindow_PositionChanged;
+
+            // Initialize tray service
+            try
+            {
+                _trayService = new TrayService();
+                _trayService.Initialize(this);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Tray service initialization failed: {ex.Message}");
+            }
         });
 
-
         AvaloniaXamlLoader.Load(this);
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _trayService?.Dispose();
+        base.OnClosed(e);
     }
 
     private void MainWindow_PositionChanged(object? sender, PixelPointEventArgs e)
@@ -49,6 +71,4 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         _settings.WindowWidth = e.ClientSize.Width;
         _settings.WindowHeight = e.ClientSize.Height;
     }
-
-
 }
