@@ -15,6 +15,7 @@
 		ExtendClientAreaChromeHints="NoChrome"
 		ExtendClientAreaToDecorationsHint="True"
 		x:Class="WateryTart.Core.Views.MainWindow"
+		Icon="avares://WateryTart.Core/Assets/logo.png"
 		Padding="0"
 		Width="800"
 		Height="480"
@@ -69,7 +70,7 @@
 
 		<StackPanel Grid.Row="2">
 			<!-- Player Nav -->
-			<players1:MiniPlayerView DataContext="{Binding MiniPlayer}" IsVisible="{Binding #window.((vm:MainWindowViewModel)DataContext).CurrentViewModel.ShowMiniPlayer}" />
+			<players1:MiniPlayerView DataContext="{Binding MiniPlayer}" IsVisible="{Binding #window.((vm:MainWindowViewModel)DataContext).IsMiniPlayerVisible}" />
 
 			<!-- Bottom Nav -->
 			<Grid Background="#66000000" IsVisible="{Binding  #window.((vm:MainWindowViewModel)DataContext).CurrentViewModel.ShowNavigation}">

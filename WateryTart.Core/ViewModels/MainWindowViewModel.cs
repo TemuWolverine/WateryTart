@@ -29,6 +29,8 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     public ReactiveCommand<Unit, IRoutableViewModel> GoSettings { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoPlayers { get; }
 
+    [Reactive] public partial bool IsMiniPlayerVisible { get; set; }
+
     [Reactive] public partial string Title { get; set; }
     [Reactive] public partial IPlayersService PlayersService { get; set; }
     public IColourService ColourService { get; }
@@ -85,10 +87,14 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
 
                 MiniPlayer = App.Container.GetRequiredService<MiniPlayerViewModel>();
             }
-
         });
 
-
+        // Subscribe to changes in CurrentViewModel and SelectedPlayer to update IsMiniPlayerVisible
+        this.WhenAnyValue(
+            x => x.CurrentViewModel.ShowMiniPlayer,
+            x => x.PlayersService.SelectedPlayer,
+            (showMiniPlayer, selectedPlayer) => showMiniPlayer && selectedPlayer != null)
+            .Subscribe(isVisible => IsMiniPlayerVisible = isVisible);
 
         MessageBus.Current.Listen<FromLoginMessage>()
             .Subscribe(x =>
@@ -112,9 +118,6 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
 
     public async Task Connect()
     {
-        /* This shouldn't be set too early otherwise the UI hangs
-            Needs to be tied to a message to open/close the menu
-         */
         if (string.IsNullOrEmpty(_settings.Credentials.Token))
         {
             Router.Navigate.Execute(App.Container.GetRequiredService<LoginViewModel>());
