@@ -31,6 +31,17 @@ public partial class Settings : INotifyPropertyChanged, ISettings
         }
     }
 
+    public string LastSearchTerm
+    {
+        get => field;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
     public double WindowWidth
     {
         get => field;

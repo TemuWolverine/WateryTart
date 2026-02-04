@@ -13,6 +13,7 @@ using Autofac;
 using DynamicData;
 using Splat;
 using WateryTart.Core.Services;
+using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Core.Views;
 using WateryTart.Service.MassClient;
@@ -21,23 +22,19 @@ using WateryTart.Service.MassClient.Responses;
 
 namespace WateryTart.Core.ViewModels;
 
-public partial class SearchViewModel : ReactiveObject, IViewModelBase, IAsyncReaper
+public partial class SearchViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IMassWsClient _massClient;
+    private readonly ISettings _settings;
     private readonly IPlayersService _playersService;
     private readonly CompositeDisposable _disposables;
 
-    public string? UrlPathSegment { get; }
+    public string? UrlPathSegment { get; } = "Search";
     public IScreen HostScreen { get; }
     public bool ShowMiniPlayer { get => true; }
     public bool ShowNavigation => true;
 
-    public string Title
-    {
-        get => "Search";
-        set;
-    }
-
+    [Reactive] public partial string Title { get; set; } = "Search";
     [Reactive] public partial string SearchTerm { get; set; }
     public ReactiveCommand<Unit, Unit> SearchCommand { get; }
 
@@ -62,14 +59,27 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase, IAsyncRea
     public ReadOnlyObservableCollection<TrackViewModel> SearchItem => searchItem;
     public ReadOnlyObservableCollection<PlaylistViewModel> SearchPlaylist => searchPlaylist;
 
-    public SearchViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService)
+    public SearchViewModel(IMassWsClient massClient, ISettings settings, IPlayersService playersService, IScreen screen)
     {
         _massClient = massClient;
+        _settings = settings;
         _playersService = playersService;
         HostScreen = screen;
         _disposables = [];
 
-        //PlayAlbumCommand = ReactiveCommand.Create(() => _playersService.PlayItem(Album, mode: PlayMode.Replace));
+        // Load the last search term
+        SearchTerm = _settings.LastSearchTerm ?? string.Empty;
+
+        // Subscribe to search term changes and save them
+        this.WhenAnyValue(x => x.SearchTerm)
+            .Subscribe(term =>
+            {
+                if (!string.IsNullOrEmpty(term))
+                {
+                    _settings.LastSearchTerm = term;
+                }
+            });
+
 
         ExpandArtistsResultsCommand = ReactiveCommand.Create(() =>
         {

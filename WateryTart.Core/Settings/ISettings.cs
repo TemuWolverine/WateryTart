@@ -9,6 +9,7 @@ public interface ISettings
 
     public string LastSelectedPlayerId { get; set; }
 
+    public string LastSearchTerm { get; set; }
     public double WindowWidth { get; set; }
     public double WindowHeight { get; set; }
     public double WindowPosX { get; set; }
