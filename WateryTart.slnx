@@ -23,6 +23,10 @@
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
   </Project>
+  <Folder Name="/Solution Items/Assets/">
+    <File Path="Assets/logo.ico" />
+    <File Path="Assets/logo.png" />
+  </Folder>
   <Project Path="WateryTart.Core/WateryTart.Core.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
