@@ -49,8 +49,7 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
             .DistinctUntilChanged();
 
         PlayerPlayPauseCommand = ReactiveCommand.CreateFromTask(
-            () => _playersService.PlayerPlayPause(_playersService.SelectedPlayer),
-            canExecute);
+            () => _playersService.PlayerPlayPause(_playersService.SelectedPlayer));
 
         PlayerPreviousCommand = ReactiveCommand.CreateFromTask(
             () => _playersService.PlayerPrevious(_playersService.SelectedPlayer),
