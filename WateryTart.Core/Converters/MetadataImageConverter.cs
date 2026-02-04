@@ -10,34 +10,42 @@ public class MetadataImageConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        MediaItemBase item;
-        if (value is MediaItemBase)
+        try
+        {
+            MediaItemBase item;
+            if (value is MediaItemBase)
 
-            item = (MediaItemBase?)value;
+                item = (MediaItemBase?)value;
 
-        else
-            return null; //string.Empty;
+            else
+                return null; //string.Empty;
 
-        //If it's not an item, return
-        if (item == null)
+            //If it's not an item, return
+            if (item == null)
+                return null;
+
+            //If it is an item, but has a "image" field set, use that
+            if (item.image != null && !string.IsNullOrEmpty(item.image.path))
+                //If the image field starts with http, use that
+                return item.image.path.StartsWith(("http"))
+                    ? item.image.path
+                    : ProxyString(item.image.path, item.image.provider);
+
+            //If there is no image field set, use metadata, make sure its not null
+            if (item.Metadata.images == null)
+                return null;
+
+            //Try a locally accessible source first
+            var result = item.Metadata.images.FirstOrDefault(i => i.remotely_accessible == false);
+            if (result == null)
+                result = item.Metadata.images.FirstOrDefault(i => i.remotely_accessible);
+
+            return result.path.StartsWith("http") ? result.path : ProxyString(result.path, result.provider);
+        }
+        catch (Exception ex)
+        {
             return null;
-
-        //If it is an item, but has a "image" field set, use that
-        if (item.image != null && !string.IsNullOrEmpty(item.image.path))
-            //If the image field starts with http, use that
-            return item.image.path.StartsWith(("http")) ?
-                item.image.path : ProxyString(item.image.path, item.image.provider);
-
-        //If there is no image field set, use metadata, make sure its not null
-        if (item.Metadata.images == null)
-            return null;
-
-        //Try a locally accessible source first
-        var result = item.Metadata.images.FirstOrDefault(i => i.remotely_accessible == false);
-        if (result == null)
-            result = item.Metadata.images.FirstOrDefault(i => i.remotely_accessible);
-
-        return result.path.StartsWith("http") ? result.path : ProxyString(result.path, result.provider);
+        }
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

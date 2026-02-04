@@ -18,6 +18,14 @@
     <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="NewFolder\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaResource Include="..\Assets\logo.png" Link="Assets\logo.png" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaResource Include="..\Assets\logo.ico" Link="Assets\logo.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AsyncImageLoader.Avalonia" />
@@ -68,9 +76,5 @@
     <None Update="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Images\" />
   </ItemGroup>
 </Project>
