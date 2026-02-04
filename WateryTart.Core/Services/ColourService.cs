@@ -44,9 +44,9 @@ public partial class ColourService : ReactiveObject, IColourService
 
             var image = new Avalonia.Media.Imaging.Bitmap(stream);
 
-            var colors = await DominantColorExtractor.GetDominantColorsAsync(image);
+            var colors = await DominantColorExtractor.GetDominantColorsAsync(image, colorSimilarityThreshold: 10);
             ColourA = colors[0];
-            ColourB = colors[1];
+            ColourB = colors[2];
         }
         catch (Exception ex)
         {

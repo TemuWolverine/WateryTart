@@ -12,42 +12,54 @@ namespace WateryTart.Core.Utilities
     public class DominantColorExtractor
     {
         /// <summary>
-        /// Extracts the top 3 dominant colors from an Avalonia ImageSource.
+        /// Extracts the top 3 dominant colors from an Avalonia ImageSource with fuzzy color clustering.
         /// </summary>
         /// <param name="imageSource">The image source to analyze</param>
         /// <param name="sampleSize">Optional: Number of colors to quantize to (default: 256)</param>
         /// <param name="ensureWhiteTextContrast">Optional: Whether to ensure colors have sufficient contrast with white text</param>
         /// <param name="minContrastRatio">Optional: Minimum contrast ratio for white text (default: 4.5)</param>
+        /// <param name="colorSimilarityThreshold">Optional: Maximum distance between similar colors (default: 50)</param>
         /// <returns>A list of the top 3 dominant colors</returns>
         public static async Task<List<Color>> GetDominantColorsAsync(
             IImage imageSource, 
             int sampleSize = 256, 
             bool ensureWhiteTextContrast = false,
-            double minContrastRatio = 4.5)
+            double minContrastRatio = 4.5,
+            int colorSimilarityThreshold = 50)
         {
             if (imageSource == null)
                 return new List<Color>();
 
-            return await Task.Run(() => GetDominantColors(imageSource, sampleSize, ensureWhiteTextContrast, minContrastRatio));
+            return await Task.Run(() => GetDominantColors(imageSource, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold));
         }
 
         /// <summary>
         /// Synchronous version of GetDominantColorsAsync.
         /// </summary>
-        public static List<Color> GetDominantColors(IImage imageSource, int sampleSize = 256, bool ensureWhiteTextContrast = false, double minContrastRatio = 4.5)
+        public static List<Color> GetDominantColors(
+            IImage imageSource, 
+            int sampleSize = 256, 
+            bool ensureWhiteTextContrast = false, 
+            double minContrastRatio = 4.5,
+            int colorSimilarityThreshold = 50)
         {
             if (imageSource == null)
                 return new List<Color>();
 
             if (imageSource is Bitmap bitmap)
             {
-                return ExtractColorsFromBitmap(bitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio);
+                return ExtractColorsFromBitmap(bitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold);
             }
 
             return new List<Color>();
         }
 
-        private static List<Color> ExtractColorsFromBitmap(Bitmap bitmap, int sampleSize, bool ensureWhiteTextContrast, double minContrastRatio)
+        private static List<Color> ExtractColorsFromBitmap(
+            Bitmap bitmap, 
+            int sampleSize, 
+            bool ensureWhiteTextContrast, 
+            double minContrastRatio,
+            int colorSimilarityThreshold)
         {
             try
             {
@@ -56,7 +68,7 @@ namespace WateryTart.Core.Utilities
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
                 using var skBitmap = SKBitmap.Decode(memoryStream);
-                return ExtractColorsFromSkBitmap(skBitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio);
+                return ExtractColorsFromSkBitmap(skBitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold);
             }
             catch
             {
@@ -64,7 +76,12 @@ namespace WateryTart.Core.Utilities
             }
         }
 
-        private static List<Color> ExtractColorsFromSkBitmap(SKBitmap bitmap, int sampleSize, bool ensureWhiteTextContrast, double minContrastRatio)
+        private static List<Color> ExtractColorsFromSkBitmap(
+            SKBitmap bitmap, 
+            int sampleSize, 
+            bool ensureWhiteTextContrast, 
+            double minContrastRatio,
+            int colorSimilarityThreshold)
         {
             var colorBuckets = new Dictionary<int, int>();
             int width = bitmap.Width;
@@ -93,6 +110,9 @@ namespace WateryTart.Core.Utilities
                 }
             }
 
+            // Merge similar colors (fuzzy logic)
+            colorBuckets = MergeSimilarColors(colorBuckets, colorSimilarityThreshold);
+
             // Get colors with sufficient contrast for white text
             var topColors = colorBuckets
                 .OrderByDescending(x => x.Value)
@@ -117,6 +137,59 @@ namespace WateryTart.Core.Utilities
             return topColors;
         }
 
+        private static Dictionary<int, int> MergeSimilarColors(Dictionary<int, int> colorBuckets, int threshold)
+        {
+            var merged = new Dictionary<int, int>(colorBuckets);
+            var merged_keys = new HashSet<int>(merged.Keys);
+            var toRemove = new HashSet<int>();
+
+            var sortedByCount = merged.OrderByDescending(x => x.Value).ToList();
+
+            foreach (var kvp in sortedByCount)
+            {
+                if (toRemove.Contains(kvp.Key))
+                    continue;
+
+                var mainColor = UnquantizeColor(kvp.Key);
+                var mainCount = kvp.Value;
+
+                // Find similar colors and merge them into this bucket
+                foreach (var otherKvp in sortedByCount)
+                {
+                    if (toRemove.Contains(otherKvp.Key) || otherKvp.Key == kvp.Key)
+                        continue;
+
+                    var otherColor = UnquantizeColor(otherKvp.Key);
+                    int distance = CalculateColorDistance(mainColor, otherColor);
+
+                    if (distance <= threshold)
+                    {
+                        // Merge the other color into this bucket
+                        merged[kvp.Key] += otherKvp.Value;
+                        toRemove.Add(otherKvp.Key);
+                    }
+                }
+            }
+
+            // Remove merged colors
+            foreach (var key in toRemove)
+            {
+                merged.Remove(key);
+            }
+
+            return merged;
+        }
+
+        private static int CalculateColorDistance(Color color1, Color color2)
+        {
+            // Euclidean distance in RGB space
+            int rDiff = color1.R - color2.R;
+            int gDiff = color1.G - color2.G;
+            int bDiff = color1.B - color2.B;
+
+            return (int)Math.Sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+        }
+
         private static int QuantizeColor(byte r, byte g, byte b)
         {
             // Reduce color to 3 bits per channel for faster grouping
@@ -139,6 +212,7 @@ namespace WateryTart.Core.Utilities
 
             return new Color(255, r, g, b);
         }
+
         private static double GetRelativeLuminance(Color color)
         {
             // Convert to sRGB and calculate relative luminance (WCAG 2.0)
