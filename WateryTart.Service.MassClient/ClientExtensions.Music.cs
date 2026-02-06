@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WateryTart.Service.MassClient.Messages;
 using WateryTart.Service.MassClient.Responses;
 
@@ -6,13 +7,19 @@ namespace WateryTart.Service.MassClient;
 
 public static partial class MassClientExtensions
 {
+    // ✅ FIXED: Proper extension method syntax
+    public static async Task<RecommendationResponse> MusicRecommendationsAsync(this IMassWsClient c)
+    {
+        return await SendAsync<RecommendationResponse>(c, JustCommand(Commands.MusicRecommendations));
+    }
+
     extension(IMassWsClient c)
     {
         public async Task<CountResponse> AlbumsCountAsync()
         {
             var m = new Message("music/albums/count")
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "favorite_only", "false" },
                     { "album_types", "[\"album\", \"single\", \"live\", \"soundtrack\", \"compilation\", \"ep\", \"unknown\"]" }
@@ -31,7 +38,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message("music/tracks/library_items")
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "favorite_only", "false" },
                 }
@@ -80,7 +87,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message("music/playlists/library_items")
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "favorite_only", "false" },
 
@@ -108,7 +115,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message("music/artists/library_items")
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "favorite_only", "false" },
                 }
@@ -130,7 +137,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message(Commands.MusicAlbumLibraryItems)
             {
-                args = new Hashtable()
+                args = new Dictionary<string, object>()
             };
             
             if (limit.HasValue)
@@ -153,11 +160,6 @@ public static partial class MassClientExtensions
         public async Task<TracksResponse> MusicAlbumTracksAsync(string id, string provider_instance_id_or_domain)
         {
             return await SendAsync<TracksResponse>(c, IdAndProvider(Commands.MusicAlbumTracks, id, provider_instance_id_or_domain));
-        }
-
-        public async Task<RecommendationResponse> MusicRecommendationsAsync()
-        {
-            return await SendAsync<RecommendationResponse>(c, JustCommand(Commands.MusicRecommendations));
         }
     }
 }

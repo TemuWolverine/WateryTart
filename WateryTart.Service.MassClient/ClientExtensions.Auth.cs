@@ -12,7 +12,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message(Commands.AuthLogin)
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "username", username },
                     { "password", password }

@@ -1,22 +1,15 @@
-﻿namespace WateryTart.Service.MassClient.Models.Auth;
+﻿using System.Text.Json.Serialization;
 
-public interface IMassCredentials
-{
-    public string Token { get; set; }
-    public string BaseUrl { get; set; }
-    public string Username { get; set; }
-}
+namespace WateryTart.Service.MassClient.Models.Auth;
 
 public class MassCredentials : IMassCredentials
 {
-    public string Token { get; set; }
-    public string BaseUrl { get; set; }
-    public string Username { get; set; }
-}
+    [JsonPropertyName("Token")] 
+    public string? Token { get; set; }
 
-public class LoginResults
-{
-    public IMassCredentials Credentials { get; set; }
-    public bool Success { get; set; }
-    public string Error { get; set; }
+    [JsonPropertyName("BaseUrl")] 
+    public string? BaseUrl { get; set; }
+    
+    [JsonPropertyName("Username")] 
+    public string Username { get; set; }
 }

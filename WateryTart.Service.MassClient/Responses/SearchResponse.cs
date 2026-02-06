@@ -2,8 +2,7 @@
 
 namespace WateryTart.Service.MassClient.Responses;
 
-public class Playlist : MediaItemBase
+public class SearchResponse : ResponseBase<Search>
 {
 
 }
-

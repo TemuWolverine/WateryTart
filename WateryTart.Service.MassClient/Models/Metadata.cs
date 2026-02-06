@@ -1,25 +1,66 @@
-﻿namespace WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models;
 
 public class Metadata
 {
-    public string? description { get; set; }
-    public string? review { get; set; }
-    public bool? @explicit { get; set; }
-    public List<Image>? images { get; set; }
-    public object? grouping { get; set; }
-    public List<string>? genres { get; set; }
-    public string? mood { get; set; }
-    public string? style { get; set; }
-    public string? copyright { get; set; }
-    public object? lyrics { get; set; }
-    public object? lrc_lyrics { get; set; }
-    public string? label { get; set; }
-    public List<Link>? links { get; set; }
-    public object? performers { get; set; }
-    public object? preview { get; set; }
-    public int? popularity { get; set; }
-    public DateTime? release_date { get; set; }
-    public object? languages { get; set; }
-    public object? chapters { get; set; }
-    public int? last_refresh { get; set; }
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+    
+    [JsonPropertyName("review")]
+    public string? Review { get; set; }
+    
+    [JsonPropertyName("explicit")]
+    public bool? Explicit { get; set; }
+    
+    [JsonPropertyName("images")]
+    public List<Image>? Images { get; set; }
+    
+    [JsonPropertyName("grouping")]
+    public string? Grouping { get; set; }
+    
+    [JsonPropertyName("genres")]
+    public List<string>? Genres { get; set; }
+    
+    [JsonPropertyName("mood")]
+    public string? Mood { get; set; }
+    
+    [JsonPropertyName("style")]
+    public string? Style { get; set; }
+    
+    [JsonPropertyName("copyright")]
+    public string? Copyright { get; set; }
+    
+    [JsonPropertyName("lyrics")]
+    public string? Lyrics { get; set; }
+    
+    [JsonPropertyName("lrc_lyrics")]
+    public string? LrcLyrics { get; set; }
+    
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
+    
+    [JsonPropertyName("links")]
+    public List<MetadataLink>? Links { get; set; }
+    
+    [JsonPropertyName("performers")]
+    public object? Performers { get; set; }
+    
+    [JsonPropertyName("preview")]
+    public object? Preview { get; set; }
+    
+    [JsonPropertyName("popularity")]
+    public int? Popularity { get; set; }
+    
+    [JsonPropertyName("release_date")]
+    public string? ReleaseDate { get; set; }
+    
+    [JsonPropertyName("languages")]
+    public object? Languages { get; set; }
+    
+    [JsonPropertyName("chapters")]
+    public object? Chapters { get; set; }
+    
+    [JsonPropertyName("last_refresh")]
+    public long? LastRefresh { get; set; }
 }

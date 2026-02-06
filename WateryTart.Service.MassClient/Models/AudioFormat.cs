@@ -1,12 +1,26 @@
-﻿namespace WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
 
+namespace WateryTart.Service.MassClient.Models;
 public class AudioFormat
 {
-    public string? content_type { get; set; }
-    public string? codec_type { get; set; }
-    public int sample_rate { get; set; }
-    public int bit_depth { get; set; }
-    public int channels { get; set; }
-    public string? output_format_str { get; set; }
-    public int bit_rate { get; set; }
+    [JsonPropertyName("content_type")]
+    public string? ContentType { get; set; }
+    
+    [JsonPropertyName("codec_type")]
+    public string? CodecType { get; set; }
+    
+    [JsonPropertyName("sample_rate")]
+    public int SampleRate { get; set; }
+    
+    [JsonPropertyName("bit_depth")]
+    public int? BitDepth { get; set; }
+    
+    [JsonPropertyName("channels")]
+    public int? Channels { get; set; }
+    
+    [JsonPropertyName("output_format_str")]
+    public string? OutputFormatStr { get; set; }
+    
+    [JsonPropertyName("bit_rate")]
+    public int? BitRate { get; set; }
 }

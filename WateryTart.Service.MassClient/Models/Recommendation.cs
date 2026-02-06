@@ -1,10 +1,12 @@
-﻿namespace WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models;
 
 public class Recommendation : MediaItemBase
 {
-    public string? path { get; set; }
-    public new object? image { get; set; }
-    public string? icon { get; set; }
-    public List<Item>? items { get; set; }
-    public string? subtitle { get; set; }
+    [JsonPropertyName("path")] public string? path { get; set; }
+    [JsonPropertyName("image")] public new object? image { get; set; }
+    [JsonPropertyName("icon")] public string? icon { get; set; }
+    [JsonPropertyName("items")] public List<Item>? items { get; set; }
+    [JsonPropertyName("subtitle")] public string? subtitle { get; set; }
 }

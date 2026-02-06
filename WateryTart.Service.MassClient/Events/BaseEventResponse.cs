@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
-using WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
+using WateryTart.Service.MassClient.Models.Enums;
 
 namespace WateryTart.Service.MassClient.Events;
 
 public class BaseEventResponse
 {
-    [JsonProperty("event")]
-    public EventType EventName { get; set; }
-
-    public string object_id { get; set; }
+    [JsonPropertyName("event")] public EventType EventName { get; set; }
+    
+    [JsonPropertyName("object_id")] public string? object_id { get; set; }
+    
+    [JsonPropertyName("data")] public object? data { get; set; }
 }

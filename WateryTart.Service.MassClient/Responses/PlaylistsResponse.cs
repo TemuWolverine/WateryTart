@@ -2,7 +2,6 @@
 
 namespace WateryTart.Service.MassClient.Responses;
 
-public class PlaylistResponse : ResponseBase<Playlist>
+public class PlaylistsResponse : ResponseBase<List<Playlist>>
 {
 }
-

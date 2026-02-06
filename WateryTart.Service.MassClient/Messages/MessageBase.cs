@@ -1,23 +1,20 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
+﻿using System.Text.Json;
 
-namespace WateryTart.Service.MassClient.Messages
+namespace WateryTart.Service.MassClient.Messages;
+
+public abstract class MessageBase(string command)
 {
-    public abstract class MessageBase
+    public Dictionary<string, object>? args { get; set; }
+    public string message_id { get; set; } = Guid.NewGuid().ToString();
+    public string command { get; set; } = command;
+
+    public string ToJson()
     {
-        public MessageBase(string _command)
+        return this switch
         {
-            message_id = Guid.NewGuid().ToString();
-            command = _command;
-        }
-
-        public Hashtable args { get; set; }
-        public string message_id { get; set; }
-        public string command { get; set; }
-
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+            Message msg => JsonSerializer.Serialize(msg, MassClientJsonContext.Default.Message),
+            Auth auth => JsonSerializer.Serialize(auth, MassClientJsonContext.Default.Auth),
+            _ => JsonSerializer.Serialize(this, MassWsClient.SerializerOptions)
+        };
     }
 }

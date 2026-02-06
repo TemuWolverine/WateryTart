@@ -1,8 +1,9 @@
-﻿namespace WateryTart.Service.MassClient.Models
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models;
+
+public class Artist : MediaItemBase
 {
-    public class Artist : MediaItemBase
-    {
-        public bool Available { get; set; }
-        public Image? Image { get; set; }
-    }
+    [JsonPropertyName("available")]
+    public bool Available { get; set; }
 }

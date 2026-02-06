@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using WateryTart.Service.MassClient.Messages;
+﻿using WateryTart.Service.MassClient.Messages;
 using WateryTart.Service.MassClient.Responses;
 
 namespace WateryTart.Service.MassClient;
@@ -27,7 +26,7 @@ public static partial class MassClientExtensions
         {
             var m = new Message(Commands.ArtistsCount)
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "favorite_only", "false" },
                     { "album_artists_only", "true" }

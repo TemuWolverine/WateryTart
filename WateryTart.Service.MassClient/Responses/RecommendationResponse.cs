@@ -2,6 +2,4 @@
 
 namespace WateryTart.Service.MassClient.Responses;
 
-public class RecommendationResponse : ResponseBase<List<Recommendation>>
-{
-}
+public class RecommendationResponse : ResponseBase<List<Recommendation>> { }

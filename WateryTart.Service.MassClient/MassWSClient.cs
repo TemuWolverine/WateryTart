@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Collections;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Reactive.Subjects;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using WateryTart.Service.MassClient.Events;
 using WateryTart.Service.MassClient.Messages;
-using WateryTart.Service.MassClient.Models;
 using WateryTart.Service.MassClient.Models.Auth;
+using WateryTart.Service.MassClient.Models.Enums;
 using WateryTart.Service.MassClient.Responses;
 using Websocket.Client;
 
@@ -17,7 +17,7 @@ namespace WateryTart.Service.MassClient
     {
         private string _baseUrl;
         internal WebsocketClient _client;
-        internal Dictionary<string, Action<string>> _routing = new();
+        internal ConcurrentDictionary<string, Action<string>> _routing = new();  // Changed from Dictionary
         private IMassCredentials creds;
 
         private CancellationTokenSource _connectionCts = new CancellationTokenSource();
@@ -29,19 +29,22 @@ namespace WateryTart.Service.MassClient
         private Task _currentConnectTask = Task.CompletedTask;
         private readonly object _connectLock = new object();
 
-        public MassWsClient()
-        {
-            JsonSerializerSettings s = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new LowercaseNamingPolicy(),
+        private bool _isAuthenticated = false;
+        private readonly Queue<string> _pendingMessages = new();
+        private readonly object _authLock = new object();
 
-                }
-            };
-            s.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            JsonConvert.DefaultSettings = () => s;
-        }
+        /// <summary>
+        /// Shared JSON serializer options for all MassClient operations. AOT-compatible with snake_case naming.
+        /// </summary>
+        internal static readonly JsonSerializerOptions SerializerOptions = new()
+        {
+            TypeInfoResolver = MassClientJsonContext.Default,
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = false
+
+        };
 
         public async Task<LoginResults> Login(string username, string password, string baseurl)
         {
@@ -109,17 +112,19 @@ namespace WateryTart.Service.MassClient
 
         public async Task<bool> Connect(IMassCredentials credentials)
         {
-            // Only allow one Connect attempt at a time
+            var x = new MassClientJsonContext();
+            Console.WriteLine($"WS Connecting");
+
             lock (_connectLock)
             {
                 if (!_currentConnectTask.IsCompleted)
                 {
-                    Console.WriteLine("Connect already in progress, returning existing task");
                     return false;
                 }
             }
 
             creds = credentials;
+            _isAuthenticated = false;
 
             _reconnectionSubscription?.Dispose();
             _messageSubscription?.Dispose();
@@ -131,7 +136,6 @@ namespace WateryTart.Service.MassClient
                 Options = { KeepAliveInterval = TimeSpan.FromSeconds(1) }
             });
 
-            // Music Assistant uses port 8095 for HTTP and 8097 for WebSocket API
             var wsUrl = GetWebSocketUrl(credentials.BaseUrl);
             _client = new WebsocketClient(new Uri(wsUrl), factory);
 
@@ -148,16 +152,30 @@ namespace WateryTart.Service.MassClient
             await _client.Start();
             SendLogin(credentials);
 
-            try
+            var authTimeout = Task.Delay(TimeSpan.FromSeconds(10), _connectionCts.Token);
+            var authCompleted = WaitForAuthenticationAsync();
+
+            var completedTask = await Task.WhenAny(authCompleted, authTimeout);
+
+            if (completedTask == authTimeout)
             {
-                await Task.Delay(Timeout.Infinite, _connectionCts.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine("Connect cancelled");
+                Console.WriteLine("Authentication timeout");
+                return false;
             }
 
-            return !_connectionCts.Token.IsCancellationRequested;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(Timeout.Infinite, _connectionCts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Background connection task cancelled");
+                }
+            });
+
+            return _isAuthenticated;
         }
 
         /// <summary>
@@ -172,46 +190,69 @@ namespace WateryTart.Service.MassClient
 
         private void SendLogin(IMassCredentials credentials)
         {
-            var argsx = new Hashtable { { "token", credentials.Token } };
+            Console.WriteLine("Sending authentication...");
+            var argsx = new Dictionary<string, object>() { { "token", credentials.Token } };
             var auth = new Auth()
             {
                 message_id = "auth-" + Guid.NewGuid(),
                 args = argsx
             };
-            _client?.Send(JsonConvert.SerializeObject(auth));
+
+            _routing.TryAdd(auth.message_id, (response) =>
+            {
+                Console.WriteLine($"Auth response: {response}");
+
+                if (!response.Contains("error"))
+                {
+                    lock (_authLock)
+                    {
+                        _isAuthenticated = true;
+
+                        // Send all pending messages
+                        while (_pendingMessages.Count > 0)
+                        {
+                            var pending = _pendingMessages.Dequeue();
+                            _client?.Send(pending);
+                        }
+                    }
+                }
+            });
+
+            var json = JsonSerializer.Serialize(auth, SerializerOptions);
+            Console.WriteLine($"Sending auth: {json}");
+            _client?.Send(json);
         }
 
         public void Send<T>(MessageBase message, Action<string> responseHandler, bool ignoreConnection = false)
         {
+
             var json = message.ToJson();
-            Console.WriteLine($"WS Sending: {json}");
-            _routing.Add(message.message_id, responseHandler);
+            _routing.TryAdd(message.message_id, responseHandler);  // Changed from Add
 
             if (!ignoreConnection && (_client == null || !_client.IsRunning))
             {
-                // Only start a new Connect task if one isn't already running
                 lock (_connectLock)
                 {
                     if (_currentConnectTask.IsCompleted)
                     {
-                        Console.WriteLine("Starting new Connect task from Send");
                         _currentConnectTask = ConnectSafely();
                     }
                 }
             }
 
-            _client?.Send(message.ToJson());
+            _client?.Send(json);
         }
 
         private async Task ConnectSafely()
         {
+            Debug.WriteLine($"WS Connecting");
             try
             {
                 await Connect(creds);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Connect error: {ex}");
+                Debug.WriteLine($"Connect error: {ex}");
             }
         }
 
@@ -222,61 +263,63 @@ namespace WateryTart.Service.MassClient
             if (string.IsNullOrEmpty(response.Text))
                 return;
 
-            Console.WriteLine($"WS Received: {response.Text.Substring(0, Math.Min(200, response.Text.Length))}...");
-
-            // Skip server info messages but NOT auth responses
             if (response.Text.Contains("\"server_id\"") && !response.Text.Contains("\"message_id\""))
             {
-                Console.WriteLine("Skipping server info message");
                 return;
             }
 
-            TempResponse y = JsonConvert.DeserializeObject<TempResponse>(response.Text);
-            Console.WriteLine($"Parsed message_id: {y?.message_id}, routing keys: {string.Join(",", _routing.Keys)}");
-            if (y?.message_id != null && _routing.ContainsKey(y.message_id))
+            TempResponse y = JsonSerializer.Deserialize<TempResponse>(response.Text, SerializerOptions);
+
+            // Use TryRemove instead of ContainsKey + indexer
+            if (y?.message_id != null && _routing.TryRemove(y.message_id, out var handler))
             {
-                Console.WriteLine($"Found routing match for {y.message_id}");
-                _routing[y.message_id].Invoke(response.Text);
-                _routing.Remove(y.message_id);
+                handler?.Invoke(response.Text);
                 return;
             }
 
-            var e = JsonConvert.DeserializeObject<BaseEventResponse>(response.Text);
-
-            switch (e.EventName)
+            try
             {
-                case EventType.MediaItemPlayed:
-                    subject.OnNext(JsonConvert.DeserializeObject<MediaItemEventResponse>(response.Text));
-                    break;
-                case EventType.PlayerAdded:
-                case EventType.PlayerUpdated:
-                case EventType.PlayerRemoved:
-                case EventType.PlayerConfigUpdated:
-                    try
-                    {
-                        var x = JsonConvert.DeserializeObject<PlayerEventResponse>(response.Text);
-                        subject.OnNext(x);
-                    }
-                    catch (Exception ex)
-                    {
+                var e = JsonSerializer.Deserialize<BaseEventResponse>(response.Text, SerializerOptions);
+                switch (e.EventName)
+                {
+                    case EventType.MediaItemPlayed:
+                        subject.OnNext(JsonSerializer.Deserialize<MediaItemEventResponse>(response.Text, SerializerOptions));
+                        break;
+                    case EventType.PlayerAdded:
+                    case EventType.PlayerUpdated:
+                    case EventType.PlayerRemoved:
+                    case EventType.PlayerConfigUpdated:
+                        try
+                        {
+                            var x = JsonSerializer.Deserialize<PlayerEventResponse>(response.Text, SerializerOptions);
+                            subject.OnNext(x);
+                        }
+                        catch (Exception ex)
+                        {
 
-                    }
+                        }
 
-                    break;
+                        break;
 
-                case EventType.QueueAdded:
-                case EventType.QueueUpdated:
-                    subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueEventResponse>(response.Text));
-                    break;
-                case EventType.QueueItemsUpdated:
-                    break;
-                case EventType.QueueTimeUpdated:
-                    subject.OnNext(JsonConvert.DeserializeObject<PlayerQueueTimeUpdatedEventResponse>(response.Text));
-                    break;
+                    case EventType.QueueAdded:
+                    case EventType.QueueUpdated:
+                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueEventResponse>(response.Text, SerializerOptions));
+                        break;
+                    case EventType.QueueItemsUpdated:
+                        break;
+                    case EventType.QueueTimeUpdated:
+                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueTimeUpdatedEventResponse>(response.Text, SerializerOptions));
+                        break;
 
-                default:
-                    subject.OnNext(e);
-                    break;
+                    default:
+                        subject.OnNext(e);
+                        break;
+                }
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"JSON Deserialization Error: {ex.Message}");
+                Debug.WriteLine($"Path: {ex.Path}");
             }
         }
 
@@ -284,8 +327,6 @@ namespace WateryTart.Service.MassClient
 
         public async Task DisconnectAsync()
         {
-            Console.WriteLine("MassWsClient Disconnecting...");
-
             try
             {
                 // Cancel the connection immediately
@@ -302,7 +343,6 @@ namespace WateryTart.Service.MassClient
 
                     if (_client.IsRunning)
                     {
-                        Console.WriteLine("Stopping WebSocket client...");
                         try
                         {
                             await _client.Stop(WebSocketCloseStatus.NormalClosure, "Shutdown");
@@ -315,7 +355,7 @@ namespace WateryTart.Service.MassClient
                         // Force abort if still running
                         if (_client.IsRunning)
                         {
-                            Console.WriteLine("WebSocket still running, attempting abort...");
+                            Debug.WriteLine("WebSocket still running, attempting abort...");
                             _client.NativeClient?.Abort();
                         }
 
@@ -325,7 +365,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error stopping WebSocket: {ex}");
+                Debug.WriteLine($"Error stopping WebSocket: {ex}");
             }
 
             try
@@ -336,7 +376,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error disposing WebSocket: {ex}");
+                Debug.WriteLine($"Error disposing WebSocket: {ex}");
             }
 
             try
@@ -345,7 +385,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error disposing CTS: {ex}");
+                Debug.WriteLine($"Error disposing CTS: {ex}");
             }
 
             try
@@ -354,10 +394,15 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error disposing subject: {ex}");
+                Debug.WriteLine($"Error disposing subject: {ex}");
             }
-
-            Console.WriteLine("MassWsClient Disconnected");
+        }
+        private async Task WaitForAuthenticationAsync()
+        {
+            while (!_isAuthenticated && !_connectionCts.Token.IsCancellationRequested)
+            {
+                await Task.Delay(100);
+            }
         }
     }
 }

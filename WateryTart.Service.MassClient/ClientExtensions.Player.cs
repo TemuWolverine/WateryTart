@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WateryTart.Service.MassClient.Messages;
 using WateryTart.Service.MassClient.Models;
+using WateryTart.Service.MassClient.Models.Enums;
 using WateryTart.Service.MassClient.Responses;
 
 namespace WateryTart.Service.MassClient;
-
 
 public static partial class MassClientExtensions
 {
@@ -12,41 +13,25 @@ public static partial class MassClientExtensions
     {
         public async Task<PlayersQueuesResponse> PlayAsync(string queueID, MediaItemBase t, PlayMode mode, bool radiomode)
         {
-            var modestr = "";
-            switch (mode)
+            var modestr = mode switch
             {
-                case PlayMode.Play:
-                    modestr = "play";
-                    break;
+                PlayMode.Play => "play",
+                PlayMode.Replace => "replace",
+                PlayMode.Next => "next",
+                PlayMode.ReplaceNext => "replace_next",
+                PlayMode.Add => "add",
+                _ => "unknown"
+            };
 
-                case PlayMode.Replace:
-                    modestr = "replace";
-                    break;
-
-                case PlayMode.Next:
-                    modestr = "next";
-                    break;
-
-                case PlayMode.ReplaceNext:
-                    modestr = "replace_next";
-                    break;
-
-                case PlayMode.Add:
-                    modestr = "add";
-                    break;
-
-                case PlayMode.Unknown:
-                    modestr = "unknown";
-                    break;
-            }
             var mediaArray = new string[] { t.Uri };
+
             var m = new Message(Commands.PlayerQueuePlayMedia)
             {
-                args = new Hashtable
+                args = new Dictionary<string, object>()
                 {
                     { "queue_id", queueID },
-                    {"media", mediaArray},
-                    { "option", mode}
+                    { "media", mediaArray },
+                    { "option", modestr }
                 }
             };
 
@@ -55,6 +40,7 @@ public static partial class MassClientExtensions
 
             return await SendAsync<PlayersQueuesResponse>(c, m);
         }
+
 
         public async Task<PlayersQueuesResponse> PlayerNextAsync(string playerId)
         {
@@ -106,21 +92,4 @@ public static partial class MassClientExtensions
             return await SendAsync<PlayersQueuesResponse>(c, JustId(Commands.PlayerGroupVolumeDown, playerId, "player_id"));
         }
     }
-}
-
-public class SearchResponse : ResponseBase<Search>
-{
-
-}
-
-public class Search
-{
-    public List<Artist> artists { get; set; }
-    public List<Album> albums { get; set; }
-    public List<object> genres { get; set; }
-    public List<Item> tracks { get; set; }
-    public List<Playlist> playlists { get; set; }
-    public List<object> radio { get; set; }
-    public List<object> audiobooks { get; set; }
-    public List<object> podcasts { get; set; }
 }
