@@ -3,10 +3,12 @@ using ReactiveUI.Avalonia;
 using System;
 using System.Reflection;
 using WateryTart.Core;
+using WateryTart.Core.Playback;
 using WateryTart.Platform.Windows.ViewModels;
+using WateryTart.Platform.Windows.Views;
 
 namespace WateryTart.Platform.Windows;
-
+    
 sealed class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
@@ -20,11 +22,16 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>(() =>
         {
+            // Register platform-specific views BEFORE creating App
+            ViewLocator.RegisterView<SimpleWasapiPlayerSettingsViewModel, SimpleWasapiPlayerSettingsView>();
+            
             var x = new App(
             [
-                new InstancePlatformSpecificRegistration(new WindowsAudioPlayerFactory()),
-                new TypePlatformSpecificRegistration<SimpleWasapiPlayerSettingsViewModel>(),
-            ], Assembly.GetExecutingAssembly());
+                new InstancePlatformSpecificRegistration<IPlayerFactory>(new WindowsAudioPlayerFactory()),
+                new LambdaRegistration<SimpleWasapiPlayerSettingsViewModel>(
+                    c => new SimpleWasapiPlayerSettingsViewModel(/* pass dependencies */)
+                )
+            ]);
             return x;
         })
             .UsePlatformDetect()

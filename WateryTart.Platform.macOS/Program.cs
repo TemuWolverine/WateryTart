@@ -108,9 +108,9 @@ sealed class Program
         {
             var x = new App(
                 [
-                    new InstancePlatformSpecificRegistration(new MacOSAudioPlayerFactory()),
+                    new InstancePlatformSpecificRegistration<IPlayerFactory>(new MacOSAudioPlayerFactory()),
                     // No GPIO on macOS - skip volume encoder registration
-                ], Assembly.GetExecutingAssembly());
+                ]);
 
             return x;
         })

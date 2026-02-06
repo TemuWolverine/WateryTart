@@ -2,9 +2,13 @@
 using ReactiveUI.Avalonia;
 using System;
 using System.Reflection;
+using Autofac;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
+using WateryTart.Core.Services;
+using WateryTart.Core.Settings;
 using WateryTart.Platform.Linux.ViewModels;
+using WateryTart.Platform.Linux.Views;
 
 namespace WateryTart.Platform.Linux;
 
@@ -21,12 +25,15 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>(() =>
         {
+            ViewLocator.RegisterView<GpioVolumeSettingsViewModel, GpioVolumeSettingsView>();
+
+
             var x = new App(
                 [
-                    new InstancePlatformSpecificRegistration(new LinuxAudioPlayerFactory()),
-                    new TypePlatformSpecificRegistration<GpioVolumeService>(),
-                    new TypePlatformSpecificRegistration<GpioVolumeSettingsViewModel>(),
-                ], Assembly.GetExecutingAssembly());
+                    new InstancePlatformSpecificRegistration<IPlayerFactory>(new LinuxAudioPlayerFactory()),
+                    new LambdaRegistration<GpioVolumeService>(c => new GpioVolumeService(c.Resolve<ISettings>(),c.Resolve<IPlayersService>())),
+                    new LambdaRegistration<GpioVolumeSettingsViewModel>(c => new GpioVolumeSettingsViewModel()),
+                ]);
 
             return x;
         })
