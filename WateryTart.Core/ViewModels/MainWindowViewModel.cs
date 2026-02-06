@@ -36,7 +36,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     public RoutingState Router { get; } = new();
     public ISettings Settings => _settings;
     [Reactive] public partial bool ShowSlideupMenu { get; set; }
-    [Reactive] public partial ReactiveObject SlideupMenu { get; set; }
+    [Reactive] public partial ReactiveObject SlideupMenu { get; set; } = new();
     [Reactive] public partial string Title { get; set; }
 
     public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService, SendSpinClient sendSpinClient)
@@ -63,8 +63,10 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
 
         var canNavigateToPlayers = Router.CurrentViewModel
             .Select(vm => vm is not PlayersViewModel);
-
+        
         GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()), canNavigateToHome);
+
+        //GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()), canNavigateToHome);
 
         GoMusic = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<LibraryViewModel>()), canNavigateToMusic);
 
@@ -99,8 +101,12 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
             .Subscribe(
                 x =>
                 {
-                    SlideupMenu = x;
-                    ShowSlideupMenu = true;
+                    Console.WriteLine("a");
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        SlideupMenu = x;
+                        ShowSlideupMenu = true;
+                    });
                 }
             );
 
@@ -114,6 +120,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     }
 
     [GenerateTypedAction]
+    [GenerateTypedAction(UseDispatcher = true)]
     public void CloseMenuClicked()
     {
         Console.WriteLine("The menu should close");

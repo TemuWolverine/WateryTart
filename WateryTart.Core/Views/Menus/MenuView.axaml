@@ -7,13 +7,13 @@
         x:Class="WateryTart.Core.Views.Menus.MenuView"
         x:DataType="vm:MenuViewModel"
         x:CompileBindings="True">
-  <ListBox ItemsSource="{Binding MenuItems}" Background="{x:Null}">
+  <ListBox ItemsSource="{Binding MenuItems}" Background="Transparent">
       <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:MenuItemViewModel">
               <Grid Background="Transparent">
                   <Interaction.Behaviors>
                       <EventTriggerBehavior EventName="Tapped">
-                          <vm:SubmitAction Command="{Binding CoolDudeCommand}" />
+                          <vm:MenuItemClickedAction TargetObject="{Binding}"  />
                       </EventTriggerBehavior>
                   </Interaction.Behaviors>
 

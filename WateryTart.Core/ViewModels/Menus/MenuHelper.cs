@@ -1,9 +1,10 @@
 ﻿using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services;
 using WateryTart.Service.MassClient.Models;
 
@@ -35,16 +36,16 @@ public static class MenuHelper
             var capturedItem = item; // Capture item too
             var displayName = capturedPlayer.DisplayName ?? "Unknown Player";
 
-            var playerCommand = ReactiveCommand.CreateFromTask(async () =>
+            ICommand playerCommand = new AsyncRelayCommand(async () =>
             {
                 Debug.WriteLine($"Playing on {displayName}");
                 playersService.SelectedPlayer = capturedPlayer;
                 await playersService.PlayItem(capturedItem, capturedPlayer);
+
             });
 
             players.Add(new MenuItemViewModel($"\tPlay on {displayName}", string.Empty, playerCommand));
         }
-
 
         return players;
     }
@@ -63,40 +64,16 @@ public static class MenuHelper
             return new MenuViewModel([]);
         }
 
-        // ✅ Create commands with proper error handling
-        var playCommand = ReactiveCommand.CreateFromTask(async () =>
+
+        ICommand playCommand = new AsyncRelayCommand(async () =>
         {
-            try
-            {
-                Debug.WriteLine($"Playing item: {item.Name}");
-                await playersService.PlayItem(item);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"❌ Error playing item: {ex.Message}");
-            }
+            await playersService.PlayItem(item);
+
         });
 
-        // ✅ CRITICAL: Subscribe to command errors
-        playCommand.ThrownExceptions.Subscribe(ex =>
-        {
-            Debug.WriteLine($"❌ Play command error: {ex.Message}");
-        });
-
-        var addToLibraryCommand = ReactiveCommand.Create(() =>
-            Debug.WriteLine("Add to library clicked"));
-        addToLibraryCommand.ThrownExceptions.Subscribe(ex =>
-            Debug.WriteLine($"❌ Add to library error: {ex.Message}"));
-
-        var addToFavouritesCommand = ReactiveCommand.Create(() =>
-            Debug.WriteLine("Add to favourites clicked"));
-        addToFavouritesCommand.ThrownExceptions.Subscribe(ex =>
-            Debug.WriteLine($"❌ Add to favourites error: {ex.Message}"));
-
-        var addToPlaylistCommand = ReactiveCommand.Create(() =>
-            Debug.WriteLine("Add to playlist clicked"));
-        addToPlaylistCommand.ThrownExceptions.Subscribe(ex =>
-            Debug.WriteLine($"❌ Add to playlist error: {ex.Message}"));
+        var addToLibraryCommand = new RelayCommand(() => Debug.WriteLine("Add to library clicked"));
+        var addToFavouritesCommand = new RelayCommand(() => Debug.WriteLine("Add to favourites clicked"));
+        var addToPlaylistCommand = new RelayCommand(() => Debug.WriteLine("Add to playlist clicked"));
 
         var menu = new MenuViewModel(
         [

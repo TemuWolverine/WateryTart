@@ -57,7 +57,7 @@
 					   TextTrimming="CharacterEllipsis">
 				<Interaction.Behaviors>
 					<EventTriggerBehavior EventName="Tapped">
-						<InvokeCommandAction Command="{Binding ToggleBioCommand}"/>
+						<vm:ToggleBioClickedAction TargetObject="{Binding}"/>
 					</EventTriggerBehavior>
 				</Interaction.Behaviors>
 			</TextBlock>
@@ -68,7 +68,7 @@
 					   Cursor="Hand">
 				<Interaction.Behaviors>
 					<EventTriggerBehavior EventName="Tapped">
-						<InvokeCommandAction Command="{Binding ToggleBioCommand}"/>
+						<vm:ToggleBioClickedAction TargetObject="{Binding}"/>
 					</EventTriggerBehavior>
 				</Interaction.Behaviors>
 			</TextBlock>

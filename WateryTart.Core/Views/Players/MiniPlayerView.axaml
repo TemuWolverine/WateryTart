@@ -49,7 +49,7 @@
 			</StackPanel>
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
-				<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
 				<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">
                     <materialIcons:MaterialIcon 
                         Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, 
@@ -57,7 +57,7 @@
            FallbackValue={x:Static icons:MaterialIconKind.Play}}" 
                         Width="25" Height="25" />
 				</Button>
-				<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
+				<Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 			</StackPanel>
 		</Grid>
 	</StackPanel>

@@ -14,5 +14,7 @@ public enum ImageType
     Discart,
     Clearart,
     Logo,
+    Banner,
+    cutout,
     Other
 }

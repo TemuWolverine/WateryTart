@@ -36,6 +36,8 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
 
     [Reactive] public partial string Title { get; set; } = "Search";
     [Reactive] public partial string SearchTerm { get; set; }
+    [Reactive] public partial bool IsSearching { get; set; }
+
     public ReactiveCommand<Unit, Unit> SearchCommand { get; }
 
     public ReactiveCommand<Unit, Unit> ExpandArtistsResultsCommand { get; }
@@ -131,19 +133,28 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
         });
 
         // Create a debounced search command
-        SearchCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            if (!string.IsNullOrEmpty(SearchTerm))
+        SearchCommand = ReactiveCommand.CreateFromTask(
+            async () =>
             {
-                SearchResponse results = await (_massClient.SearchAsync(SearchTerm));
-                _searchResponse = results;
-                _searchResults.Clear();
-                _searchResults.AddRange(_searchResponse.Result.albums);
-                _searchResults.AddRange(_searchResponse.Result.artists);
-                _searchResults.AddRange(_searchResponse.Result.playlists);
-                _searchResults.AddRange(_searchResponse.Result.tracks);
-            }
-        });
+                IsSearching = true;
+                try
+                {
+                    if (!string.IsNullOrEmpty(SearchTerm))
+                    {
+                        SearchResponse results = await (_massClient.SearchAsync(SearchTerm));
+                        _searchResponse = results;
+                        _searchResults.Clear();
+                        _searchResults.AddRange(_searchResponse.Result.albums);
+                        _searchResults.AddRange(_searchResponse.Result.artists);
+                        _searchResults.AddRange(_searchResponse.Result.playlists);
+                        _searchResults.AddRange(_searchResponse.Result.tracks);
+                    }
+                }
+                finally
+                {
+                    IsSearching = false;
+                }
+            });
 
         // Debounce SearchTerm changes and trigger search after 1.5 seconds of inactivity
         this.WhenAnyValue(x => x.SearchTerm)

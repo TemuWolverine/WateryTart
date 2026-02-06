@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using Avalonia.Threading;
+﻿using CommunityToolkit.Mvvm.Input;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using System.Reactive;
+using System.Windows.Input;
 using WateryTart.Core.Services;
-using WateryTart.Service.MassClient.Models;
 
 namespace WateryTart.Core.ViewModels.Players
 {
@@ -13,35 +11,32 @@ namespace WateryTart.Core.ViewModels.Players
         public string? UrlPathSegment { get; } = "MiniPlayerViewModel";
         public IScreen HostScreen { get; }
         [Reactive] public partial string Title { get; set; }
-        public ReactiveCommand<Unit, Unit> PlayNextCommand { get; }
-        public ReactiveCommand<Unit, Unit> PlayerPlayPauseCommand { get; }
-        public ReactiveCommand<Unit, Unit> PlayerPreviousCommand { get; }
         public bool ShowMiniPlayer => false;
         public bool ShowNavigation => false;
-        public ReactiveCommand<Unit, Unit> ClickedCommand { get; }
 
         [Reactive] public partial IPlayersService PlayersService { get; set; }
 
         public IScreen Screen { get; }
 
-        
+        public ICommand PlayerNextCommand { get; set; }
+        public ICommand PlayerPlayPauseCommand { get; set; }
+        public ICommand PlayPreviousCommand { get; set; }
+
+        [ReactiveCommand]
+        private void Clicked()
+        {
+            var vm = App.Container.GetRequiredService<BigPlayerViewModel>();
+            Screen.Router.Navigate.Execute(vm);
+        }
 
         public MiniPlayerViewModel(IPlayersService playersService, IScreen screen)
         {
             PlayersService = playersService;
             Screen = screen;
-            PlayNextCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerNext());
-            PlayerPlayPauseCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPlayPause());
-            PlayerPreviousCommand = ReactiveCommand.Create<Unit>(_ => PlayersService.PlayerPrevious());
 
-            ClickedCommand = ReactiveCommand.Create<Unit>(_ =>
-            {
-                var vm = App.Container.GetRequiredService<BigPlayerViewModel>();
-                Screen.Router.Navigate.Execute(vm);
-            }
-            );
-
-
+            PlayPreviousCommand = new RelayCommand(() => PlayersService.PlayerPrevious());
+            PlayerNextCommand = new RelayCommand(() => PlayersService.PlayerNext());
+            PlayerPlayPauseCommand = new RelayCommand(() => PlayersService.PlayerPlayPause());
         }
     }
 }

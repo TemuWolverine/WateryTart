@@ -3,6 +3,8 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services;
 
 namespace WateryTart.Core.ViewModels.Players;
@@ -10,8 +12,8 @@ namespace WateryTart.Core.ViewModels.Players;
 public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
 {
     private readonly IPlayersService _playersService;
-    public string? UrlPathSegment { get; }
-    public IScreen HostScreen { get; }
+    public string? UrlPathSegment { get; } = "BigPlayer";
+    public required IScreen HostScreen { get; set; }
     public bool ShowMiniPlayer => false;
     public bool ShowNavigation => false;
     public string Title { get; set; } = "";
@@ -33,12 +35,15 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
 
     public IPlayersService PlayersService => _playersService;
 
-    public ReactiveCommand<Unit, Unit> PlayerPlayPauseCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayerPreviousCommand { get; }
-    public ReactiveCommand<Unit, Unit> PlayNextCommand { get; }
+    public ICommand PlayerNextCommand { get; set; }
+    public ICommand PlayerPlayPauseCommand { get; set; }
+    public ICommand PlayPreviousCommand { get; set; }
 
     public BigPlayerViewModel(IPlayersService playersService, IScreen screen)
     {
+        PlayPreviousCommand = new RelayCommand(() => PlayersService.PlayerPrevious());
+        PlayerNextCommand = new RelayCommand(() => PlayersService.PlayerNext());
+        PlayerPlayPauseCommand = new RelayCommand(() => PlayersService.PlayerPlayPause());
         _playersService = playersService;
         HostScreen = screen;
 
@@ -47,17 +52,6 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
             .Select(player => player != null)
             .ObserveOn(RxApp.MainThreadScheduler)
             .DistinctUntilChanged();
-
-        PlayerPlayPauseCommand = ReactiveCommand.CreateFromTask(
-            () => _playersService.PlayerPlayPause(_playersService.SelectedPlayer));
-
-        PlayerPreviousCommand = ReactiveCommand.CreateFromTask(
-            () => _playersService.PlayerPrevious(_playersService.SelectedPlayer),
-            canExecute);
-
-        PlayNextCommand = ReactiveCommand.CreateFromTask(
-            () => _playersService.PlayerNext(_playersService.SelectedPlayer),
-            canExecute);
     }
 
     public void UpdateCachedDimensions(double width, double height)

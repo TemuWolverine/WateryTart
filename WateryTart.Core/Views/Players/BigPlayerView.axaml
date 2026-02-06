@@ -125,11 +125,11 @@
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-						<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
+						<Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
 						<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">
 							<materialIcons:MaterialIcon Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" Width="25" Height="25" />
 						</Button>
-						<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
+						<Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
 					</StackPanel>
 
 					<Grid MaxWidth="400">
@@ -276,9 +276,9 @@
 
 				<!-- Compact Controls -->
 				<StackPanel Grid.Row="2" Margin="10" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-					<Button Classes="iconButton navButton" Command="{Binding PlayerPreviousCommand}"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="30" Height="30" /></Button>
+					<Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="30" Height="30" /></Button>
 					<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}"><materialIcons:MaterialIcon Kind="PlayPause" Width="30" Height="30" /></Button>
-					<Button Classes="iconButton navButton" Command="{Binding PlayNextCommand}"><materialIcons:MaterialIcon Kind="SkipNext" Width="30" Height="30" /></Button>
+					<Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}"><materialIcons:MaterialIcon Kind="SkipNext" Width="30" Height="30" /></Button>
 				</StackPanel>
 
 
