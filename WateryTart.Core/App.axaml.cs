@@ -155,6 +155,7 @@ public partial class App : Application
         builder.RegisterType<KeyboardVolumeKeyBindingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<SearchResultsViewModel>().AsSelf().SingleInstance();
         builder.RegisterType<LoggerSettingsViewModel>().As<IHaveSettings>().SingleInstance();
+        builder.RegisterType<SearchViewModel>().SingleInstance();
 
         //Platform specific registrations from Platform.Linux, Platform.Windows projects
         foreach (var platformSpecificRegistration in PlatformSpecificRegistrations)
@@ -173,7 +174,6 @@ public partial class App : Application
         builder.RegisterType<LoginViewModel>();
         builder.RegisterType<PlaylistViewModel>();
         builder.RegisterType<ArtistViewModel>();
-        builder.RegisterType<SearchViewModel>();
         builder.RegisterType<ArtistsViewModel>();
         builder.RegisterType<LibraryViewModel>();
         builder.RegisterType<TrackViewModel>();
