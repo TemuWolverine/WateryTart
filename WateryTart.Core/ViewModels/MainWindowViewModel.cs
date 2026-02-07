@@ -2,8 +2,9 @@
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Messages;
 using WateryTart.Core.Playback;
 using WateryTart.Core.Services;
@@ -20,16 +21,24 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     private readonly IMassWsClient _massClient;
     private readonly SendSpinClient _sendSpinClient;
     private readonly ISettings _settings;
-    public ViewModelActivator Activator { get; }
-    [Reactive] public partial ReactiveCommand<Unit, Unit> CloseSlideupCommand { get; set; }
+    private readonly ILogger<MainWindowViewModel> _logger;
+    
+    private bool _canNavigateToHome = true;
+    private bool _canNavigateToMusic = true;
+    private bool _canNavigateToSearch = true;
+    private bool _canNavigateToSettings = true;
+    private bool _canNavigateToPlayers = true;
+
+    public ViewModelActivator? Activator { get; }
+    public RelayCommand CloseSlideupCommand { get; }
     public IColourService ColourService { get; }
     [Reactive] public partial IViewModelBase CurrentViewModel { get; set; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
-    public ReactiveCommand<Unit, IRoutableViewModel> GoHome { get; }
-    public ReactiveCommand<Unit, IRoutableViewModel> GoMusic { get; }
-    public ReactiveCommand<Unit, IRoutableViewModel> GoPlayers { get; }
-    public ReactiveCommand<Unit, IRoutableViewModel> GoSearch { get; }
-    public ReactiveCommand<Unit, IRoutableViewModel> GoSettings { get; }
+    public RelayCommand GoHome { get; }
+    public RelayCommand GoMusic { get; }
+    public RelayCommand GoPlayers { get; }
+    public RelayCommand GoSearch { get; }
+    public RelayCommand GoSettings { get; }
     [Reactive] public partial bool IsMiniPlayerVisible { get; set; }
     [Reactive] public partial MiniPlayerViewModel MiniPlayer { get; set; }
     [Reactive] public partial IPlayersService PlayersService { get; set; }
@@ -39,42 +48,40 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     [Reactive] public partial ReactiveObject SlideupMenu { get; set; } = new();
     [Reactive] public partial string Title { get; set; }
 
-    public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService, SendSpinClient sendSpinClient)
+    public MainWindowViewModel(IMassWsClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService, SendSpinClient sendSpinClient, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         PlayersService = playersService;
         _settings = settings;
         _sendSpinClient = sendSpinClient;
         ColourService = colourService;
+        _logger = loggerFactory.CreateLogger<MainWindowViewModel>();
         ShowSlideupMenu = false;
 
-        // Create observables that check if we're already on the target page
-        var canNavigateToHome = Router.CurrentViewModel
-            .Select(vm => vm is not HomeViewModel);
+        // Create the commands first
+        GoHome = new RelayCommand(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()), () => _canNavigateToHome);
+        GoMusic = new RelayCommand(() => Router.Navigate.Execute(App.Container.GetRequiredService<LibraryViewModel>()), () => _canNavigateToMusic);
+        GoSearch = new RelayCommand(() => Router.Navigate.Execute(App.Container.GetRequiredService<SearchViewModel>()), () => _canNavigateToSearch);
+        GoSettings = new RelayCommand(() => Router.Navigate.Execute(App.Container.GetRequiredService<SettingsViewModel>()), () => _canNavigateToSettings);
+        GoPlayers = new RelayCommand(() => Router.Navigate.Execute(App.Container.GetRequiredService<PlayersViewModel>()), () => _canNavigateToPlayers);
+        CloseSlideupCommand = new RelayCommand(CloseMenu);
 
-        var canNavigateToMusic = Router.CurrentViewModel
-            .Select(vm => vm is not LibraryViewModel);
+        // Subscribe to CurrentViewModel changes and update canExecute predicates
+        Router.CurrentViewModel.Subscribe(vm =>
+        {
+            _canNavigateToHome = vm is not HomeViewModel;
+            _canNavigateToMusic = vm is not LibraryViewModel;
+            _canNavigateToSearch = vm is not SearchViewModel;
+            _canNavigateToSettings = vm is not SettingsViewModel;
+            _canNavigateToPlayers = vm is not PlayersViewModel;
 
-        var canNavigateToSearch = Router.CurrentViewModel
-            .Select(vm => vm is not SearchViewModel);
-
-        var canNavigateToSettings = Router.CurrentViewModel
-            .Select(vm => vm is not SettingsViewModel);
-
-        var canNavigateToPlayers = Router.CurrentViewModel
-            .Select(vm => vm is not PlayersViewModel);
-        
-        GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()), canNavigateToHome);
-
-        //GoHome = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<HomeViewModel>()), canNavigateToHome);
-
-        GoMusic = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<LibraryViewModel>()), canNavigateToMusic);
-
-        GoSearch = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SearchViewModel>()), canNavigateToSearch);
-
-        GoSettings = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<SettingsViewModel>()), canNavigateToSettings);
-
-        GoPlayers = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(App.Container.GetRequiredService<PlayersViewModel>()), canNavigateToPlayers);
+            // Notify commands to re-evaluate their canExecute predicates
+            GoHome.NotifyCanExecuteChanged();
+            GoMusic.NotifyCanExecuteChanged();
+            GoSearch.NotifyCanExecuteChanged();
+            GoSettings.NotifyCanExecuteChanged();
+            GoPlayers.NotifyCanExecuteChanged();
+        });
 
         Router.CurrentViewModel.Subscribe(vm =>
         {
@@ -95,13 +102,13 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
             (showMiniPlayer, selectedPlayer) => showMiniPlayer && selectedPlayer != null)
             .Subscribe(isVisible => IsMiniPlayerVisible = isVisible);
 
-        MessageBus.Current.Listen<FromLoginMessage>().Subscribe(x => { Connect(); });
+        MessageBus.Current.Listen<FromLoginMessage>().Subscribe(x => { _ = Connect(); });
 
         MessageBus.Current.Listen<MenuViewModel>()
             .Subscribe(
                 x =>
                 {
-                    Console.WriteLine("a");
+                    _logger.LogDebug("Menu view model received");
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
                         SlideupMenu = x;
@@ -114,8 +121,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
             .Subscribe(
                 x =>
                 {
-                    ShowSlideupMenu = false;
-                    SlideupMenu = null; //
+                    CloseMenu();
                 });
     }
 
@@ -123,29 +129,44 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     [GenerateTypedAction(UseDispatcher = true)]
     public void CloseMenuClicked()
     {
-        Console.WriteLine("The menu should close");
+        CloseMenu();
+    }
+
+    private void CloseMenu()
+    {
+        _logger.LogDebug("Close menu clicked");
         ShowSlideupMenu = false;
+        SlideupMenu = null;
     }
 
     public async Task Connect()
     {
         if (string.IsNullOrEmpty(_settings.Credentials?.Token))
         {
-            Router.Navigate.Execute(App.Container.GetRequiredService<LoginViewModel>());
+            _logger.LogInformation("No credentials found, navigating to login");
+            var loginViewModel = App.Container?.GetRequiredService<LoginViewModel>();
+            if (loginViewModel != null)
+            {
+                Router.Navigate.Execute(loginViewModel);
+            }
+
             return;
         }
 
+        _logger.LogInformation("Attempting to connect to MassClient");
         var connected = await _massClient.Connect(_settings.Credentials);
 
         if (!connected)
         {
+            _logger.LogError("Failed to connect to MassClient");
             return;
         }
 
+        _logger.LogInformation("Successfully connected to MassClient");
         await PlayersService.GetPlayers();
 
-        GoHome.Execute();
+        GoHome.Execute(null);
 
-        _sendSpinClient.ConnectAsync(_settings.Credentials.BaseUrl);
+        _ = _sendSpinClient.ConnectAsync(_settings.Credentials.BaseUrl);
     }
 }

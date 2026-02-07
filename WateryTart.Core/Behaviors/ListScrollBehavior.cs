@@ -10,26 +10,18 @@ namespace WateryTart.Core.Behaviors;
 /// </summary>
 public class ListScrollBehavior : Behavior<ListBox>
 {
+    public static readonly StyledProperty<bool> HasMoreItemsProperty = AvaloniaProperty.Register<ListScrollBehavior, bool>(nameof(HasMoreItems), defaultValue: true);
+    public static readonly StyledProperty<bool> IsLoadingProperty = AvaloniaProperty.Register<ListScrollBehavior, bool>(nameof(IsLoading));
+    public static readonly StyledProperty<ICommand?> LoadMoreCommandProperty = AvaloniaProperty.Register<ListScrollBehavior, ICommand?>(nameof(LoadMoreCommand));
+    public static readonly StyledProperty<int> ThresholdProperty = AvaloniaProperty.Register<ListScrollBehavior, int>(nameof(Threshold), defaultValue: 10);
+    private bool _hasTriggeredForCurrentBatch = false;
     private int _lastKnownItemCount = 0;
     private int _lastTriggeredAtCount = 0;
-    private bool _hasTriggeredForCurrentBatch = false;
 
-    public static readonly StyledProperty<ICommand?> LoadMoreCommandProperty =
-        AvaloniaProperty.Register<ListScrollBehavior, ICommand?>(nameof(LoadMoreCommand));
-
-    public static readonly StyledProperty<bool> IsLoadingProperty =
-        AvaloniaProperty.Register<ListScrollBehavior, bool>(nameof(IsLoading));
-
-    public static readonly StyledProperty<bool> HasMoreItemsProperty =
-        AvaloniaProperty.Register<ListScrollBehavior, bool>(nameof(HasMoreItems), defaultValue: true);
-
-    public static readonly StyledProperty<int> ThresholdProperty =
-        AvaloniaProperty.Register<ListScrollBehavior, int>(nameof(Threshold), defaultValue: 10);
-
-    public ICommand? LoadMoreCommand
+    public bool HasMoreItems
     {
-        get => GetValue(LoadMoreCommandProperty);
-        set => SetValue(LoadMoreCommandProperty, value);
+        get => GetValue(HasMoreItemsProperty);
+        set => SetValue(HasMoreItemsProperty, value);
     }
 
     public bool IsLoading
@@ -38,10 +30,10 @@ public class ListScrollBehavior : Behavior<ListBox>
         set => SetValue(IsLoadingProperty, value);
     }
 
-    public bool HasMoreItems
+    public ICommand? LoadMoreCommand
     {
-        get => GetValue(HasMoreItemsProperty);
-        set => SetValue(HasMoreItemsProperty, value);
+        get => GetValue(LoadMoreCommandProperty);
+        set => SetValue(LoadMoreCommandProperty, value);
     }
 
     public int Threshold

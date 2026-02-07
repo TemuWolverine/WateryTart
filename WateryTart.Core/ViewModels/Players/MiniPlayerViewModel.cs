@@ -10,14 +10,11 @@ namespace WateryTart.Core.ViewModels.Players
     {
         public string? UrlPathSegment { get; } = "MiniPlayerViewModel";
         public IScreen HostScreen { get; }
-        [Reactive] public partial string Title { get; set; }
+        [Reactive] public partial string? Title { get; set; }
         public bool ShowMiniPlayer => false;
         public bool ShowNavigation => false;
 
         [Reactive] public partial IPlayersService PlayersService { get; set; }
-
-        public IScreen Screen { get; }
-
         public ICommand PlayerNextCommand { get; set; }
         public ICommand PlayerPlayPauseCommand { get; set; }
         public ICommand PlayPreviousCommand { get; set; }
@@ -25,14 +22,15 @@ namespace WateryTart.Core.ViewModels.Players
         [ReactiveCommand]
         private void Clicked()
         {
-            var vm = App.Container.GetRequiredService<BigPlayerViewModel>();
-            Screen.Router.Navigate.Execute(vm);
+            var vm = App.Container?.GetRequiredService<BigPlayerViewModel>();
+            if (vm != null) 
+                HostScreen.Router.Navigate.Execute(vm);
         }
 
         public MiniPlayerViewModel(IPlayersService playersService, IScreen screen)
         {
             PlayersService = playersService;
-            Screen = screen;
+            HostScreen = screen;
 
             PlayPreviousCommand = new RelayCommand(() => PlayersService.PlayerPrevious());
             PlayerNextCommand = new RelayCommand(() => PlayersService.PlayerNext());

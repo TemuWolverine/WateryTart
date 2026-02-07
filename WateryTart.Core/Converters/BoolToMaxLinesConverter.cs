@@ -8,7 +8,7 @@ public class BoolToMaxLinesConverter : IValueConverter
 {
     public static readonly BoolToMaxLinesConverter Instance = new();
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isExpanded)
         {
@@ -16,9 +16,8 @@ public class BoolToMaxLinesConverter : IValueConverter
         }
         return 3;
     }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return value;
     }
 }

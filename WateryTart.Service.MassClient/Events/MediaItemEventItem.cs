@@ -5,56 +5,56 @@ namespace WateryTart.Service.MassClient.Events;
 public class MediaItemEventItem 
 {
     [JsonPropertyName("uri")]
-    public string uri { get; set; }
+    public string? uri { get; set; }
     
     [JsonPropertyName("media_type")]
-    public string media_type { get; set; }
+    public string? MediaType { get; set; }
     
     [JsonPropertyName("name")]
-    public string name { get; set; }
+    public string? Name { get; set; }
     
     [JsonPropertyName("duration")]
-    public int duration { get; set; }
+    public int? Duration { get; set; }
     
     [JsonPropertyName("seconds_played")]
-    public int seconds_played { get; set; }
+    public int? SecondsPlayed { get; set; }
     
     [JsonPropertyName("fully_played")]
-    public bool fully_played { get; set; }
+    public bool? FullyPlayed { get; set; }
     
     [JsonPropertyName("is_playing")]
-    public bool is_playing { get; set; }
+    public bool? IsPlaying { get; set; }
     
     [JsonPropertyName("mbid")]
-    public object mbid { get; set; }
+    public object? Mbid { get; set; }
     
     [JsonPropertyName("artist")]
-    public string artist { get; set; }
+    public string? Artist { get; set; }
     
     [JsonPropertyName("artists")]
-    public List<string> artists { get; set; }
+    public List<string>? Artists { get; set; }
     
     [JsonPropertyName("artist_mbids")]
-    public List<object> artist_mbids { get; set; }
+    public List<object>? ArtistMbids { get; set; }
     
     [JsonPropertyName("album")]
-    public string album { get; set; }
+    public string? Album { get; set; }
     
     [JsonPropertyName("album_mbid")]
-    public object album_mbid { get; set; }
+    public object? AlbumMbid { get; set; }
     
     [JsonPropertyName("album_artist")]
-    public string album_artist { get; set; }
+    public string? AlbumArtist { get; set; }
     
     [JsonPropertyName("album_artist_mbids")]
-    public List<object> album_artist_mbids { get; set; }
+    public List<object>? AlbumArtistMbids { get; set; }
     
     [JsonPropertyName("image_url")]
-    public string image_url { get; set; }
+    public string? ImageUrl { get; set; }
     
     [JsonPropertyName("version")]
-    public string version { get; set; }
+    public string? Version { get; set; }
     
     [JsonPropertyName("userid")]
-    public string userid { get; set; }
+    public string? Userid { get; set; }
 }

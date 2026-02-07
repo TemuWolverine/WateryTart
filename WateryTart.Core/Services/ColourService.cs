@@ -4,44 +4,52 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Utilities;
 
 namespace WateryTart.Core.Services;
 
 public partial class ColourService : ReactiveObject, IColourService
 {
+    private readonly HttpClient _httpClient;
+
     [Reactive] public partial Color ColourA { get; set; }
     [Reactive] public partial Color ColourB { get; set; }
     [Reactive] public partial Color ColourC { get; set; }
     [Reactive] public partial Color ColourD { get; set; }
     [Reactive] public partial ColourChosen LastPick { get; set; }
 
-    [Reactive] public partial string LastId { get; set; }
+    [Reactive] public partial string LastId { get; set; } = string.Empty;
 
     public ColourService()
     {
+        _httpClient = new HttpClient();
+
         ColourA = FromHex("FF5B4272");
         ColourB = FromHex("FF1C1C1E");
 
         LastPick = ColourChosen.AB;
     }
+
     public async Task Update(string id, string url)
     {
         if (id != LastId)
         {
             LastId = id;
-            GetDominateColours(url);
+
+#pragma warning disable CS4014 
+            await GetDominateColours(url);
+#pragma warning restore CS4014 
         }
     }
+
     private async Task GetDominateColours(string url)
     {
-        using WebClient client = new();
-
-        var result = await client.DownloadDataTaskAsync(new Uri(url));
         try
         {
+            var result = await _httpClient.GetByteArrayAsync(url);
             Stream stream = new MemoryStream(result);
 
             var image = new Avalonia.Media.Imaging.Bitmap(stream);
@@ -54,22 +62,22 @@ public partial class ColourService : ReactiveObject, IColourService
                 ColourD = colors[2];
                 LastPick = ColourChosen.CD;
 
-                Debug.Write($"Last colours {ColourC} & {ColourD}");
+                App.Logger?.LogInformation("Last colours {ColourC} & {ColourD}", ColourC, ColourD);
             }
             else
             {
                 ColourA = colors[0];
                 ColourB = colors[2];
                 LastPick = ColourChosen.AB;
-                Debug.Write($"Last colours {ColourA} & {ColourB}");
+                App.Logger?.LogInformation("Last colours {ColourA} & {ColourB}", ColourA, ColourB);
             }
-
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine(ex);
+            App.Logger?.LogError(ex, "Error extracting dominant colours");
         }
     }
+
     private Color FromHex(string hex)
     {
         if (string.IsNullOrWhiteSpace(hex))

@@ -29,7 +29,7 @@ public abstract class MediaItemBase
 
     public string? Provider { get; set; }
     public string? Name { get; set; }
-    public string? Version { get; set; }
+    [JsonPropertyName("version")] public string? Version { get; set; }
 
     [JsonPropertyName("sort_name")]
     public string? SortName { get; set; }
@@ -52,6 +52,6 @@ public abstract class MediaItemBase
     public List<ProviderMapping>? ProviderMappings { get; set; }
     [JsonPropertyName("metadata")] public Metadata? Metadata { get; set; }
     public bool Favorite { get; set; }
-    public int? Year { get; set; }
+    [JsonPropertyName("year")] public int? Year { get; set; }
     public Image? image { get; set; }
 }

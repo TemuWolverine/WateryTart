@@ -1,19 +1,19 @@
 using ReactiveUI;
 using System.Reactive;
+using System.Windows.Input;
 
 
 namespace WateryTart.Core.ViewModels;
 
 public class LibraryItem : ReactiveObject
 {
-    private int _count;
+    public string Title { get; set; } = string.Empty;
+    public ICommand? ClickedCommand { get; set; }
+    public string LowerTitle => Title.ToLowerInvariant();
 
-    public string Title { get; set; }
-    public ReactiveCommand<Unit, Unit> ClickedCommand { get; set; }
-    public string LowerTitle { get { return Title.ToLowerInvariant(); } }
     public int Count
     {
-        get => _count;
-        set => this.RaiseAndSetIfChanged(ref _count, value);
+        get => field;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 }

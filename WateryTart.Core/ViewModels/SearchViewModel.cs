@@ -1,5 +1,4 @@
-﻿using DynamicData.Binding;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
@@ -10,12 +9,11 @@ using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using CommunityToolkit.Mvvm.Input;
 using DynamicData;
-using Splat;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
-using WateryTart.Core.ViewModels.Menus;
-using WateryTart.Core.Views;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Models;
 using WateryTart.Service.MassClient.Responses;
@@ -27,6 +25,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
     private readonly IMassWsClient _massClient;
     private readonly ISettings _settings;
     private readonly IPlayersService _playersService;
+    private readonly ILogger<SearchViewModel> _logger;
     private readonly CompositeDisposable _disposables;
 
     public string? UrlPathSegment { get; } = "Search";
@@ -38,19 +37,15 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
     [Reactive] public partial string SearchTerm { get; set; }
     [Reactive] public partial bool IsSearching { get; set; }
 
-    public ReactiveCommand<Unit, Unit> SearchCommand { get; }
+    public AsyncRelayCommand SearchCommand { get; }
 
-    public ReactiveCommand<Unit, Unit> ExpandArtistsResultsCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExpandAlbumResultsCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExpandTracksResultsCommand { get; }
-    public ReactiveCommand<Unit, Unit> ExpandPlaylistResultsCommand { get; }
+    public RelayCommand ExpandArtistsResultsCommand { get; }
+    public RelayCommand ExpandAlbumResultsCommand { get; }
+    public RelayCommand ExpandTracksResultsCommand { get; }
+    public RelayCommand ExpandPlaylistResultsCommand { get; }
 
-
-    private SearchResponse _searchResponse { get; set; }
     private CompositeDisposable _subscriptions = new CompositeDisposable();
-
-    SourceList<MediaItemBase> _searchResults = new SourceList<MediaItemBase>();
-
+    private SourceList<MediaItemBase> _searchResults = new SourceList<MediaItemBase>();
     private ReadOnlyObservableCollection<ArtistViewModel> searchArtists;
     private ReadOnlyObservableCollection<AlbumViewModel> searchAlbums;
     private ReadOnlyObservableCollection<TrackViewModel> searchItem;
@@ -61,11 +56,12 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
     public ReadOnlyObservableCollection<TrackViewModel> SearchItem => searchItem;
     public ReadOnlyObservableCollection<PlaylistViewModel> SearchPlaylist => searchPlaylist;
 
-    public SearchViewModel(IMassWsClient massClient, ISettings settings, IPlayersService playersService, IScreen screen)
+    public SearchViewModel(IMassWsClient massClient, ISettings settings, IPlayersService playersService, IScreen screen, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         _settings = settings;
         _playersService = playersService;
+        _logger = loggerFactory.CreateLogger<SearchViewModel>();
         HostScreen = screen;
         _disposables = [];
 
@@ -82,8 +78,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
                 }
             });
 
-
-        ExpandArtistsResultsCommand = ReactiveCommand.Create(() =>
+        ExpandArtistsResultsCommand = new RelayCommand(() =>
         {
             var resultsViewModel = App.Container.Resolve<SearchResultsViewModel>();
             resultsViewModel.SetResults(
@@ -94,20 +89,19 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
             );
 
             HostScreen.Router.Navigate.Execute(resultsViewModel);
-
         });
-        ExpandAlbumResultsCommand = ReactiveCommand.Create(() =>
+        ExpandAlbumResultsCommand = new RelayCommand(() =>
         {
             var resultsViewModel = App.Container.Resolve<SearchResultsViewModel>();
             resultsViewModel.SetResults(
                 _searchResults
                     .Items
                     .Where(i => i is Album)
-                    .Select(i => new AlbumViewModel(massClient, HostScreen, playersService, (Album)i) )
+                    .Select(i => new AlbumViewModel(massClient, HostScreen, playersService, (Album)i))
                 );
             HostScreen.Router.Navigate.Execute(resultsViewModel);
         });
-        ExpandTracksResultsCommand = ReactiveCommand.Create(() =>
+        ExpandTracksResultsCommand = new RelayCommand(() =>
         {
             var resultsViewModel = App.Container.Resolve<SearchResultsViewModel>();
             resultsViewModel.SetResults(
@@ -119,7 +113,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
 
             HostScreen.Router.Navigate.Execute(resultsViewModel);
         });
-        ExpandPlaylistResultsCommand = ReactiveCommand.Create(() =>
+        ExpandPlaylistResultsCommand = new RelayCommand(() =>
         {
             var resultsViewModel = App.Container.Resolve<SearchResultsViewModel>();
             resultsViewModel.SetResults(
@@ -133,36 +127,36 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
         });
 
         // Create a debounced search command
-        SearchCommand = ReactiveCommand.CreateFromTask(
-            async () =>
+        SearchCommand = new AsyncRelayCommand(async () =>
+        {
+            IsSearching = true;
+            try
             {
-                IsSearching = true;
-                try
+                if (!string.IsNullOrEmpty(SearchTerm))
                 {
-                    if (!string.IsNullOrEmpty(SearchTerm))
-                    {
-                        SearchResponse results = await (_massClient.SearchAsync(SearchTerm));
-                        _searchResponse = results;
-                        _searchResults.Clear();
-                        _searchResults.AddRange(_searchResponse.Result.albums);
-                        _searchResults.AddRange(_searchResponse.Result.artists);
-                        _searchResults.AddRange(_searchResponse.Result.playlists);
-                        _searchResults.AddRange(_searchResponse.Result.tracks);
-                    }
+                    SearchResponse results = await (_massClient.SearchAsync(SearchTerm));
+                    var searchResponse = results;
+                    _searchResults.Clear();
+#pragma warning disable CS8604 // Possible null reference argument.
+                    _searchResults.AddRange(searchResponse.Result?.Albums);
+                    _searchResults.AddRange(searchResponse.Result?.Artists);
+                    _searchResults.AddRange(searchResponse.Result?.Playlists);
+                    _searchResults.AddRange(searchResponse.Result?.Tracks);
+#pragma warning restore CS8604 // Possible null reference argument.
                 }
-                finally
-                {
-                    IsSearching = false;
-                }
-            });
+            }
+            finally
+            {
+                IsSearching = false;
+            }
+        });
 
         // Debounce SearchTerm changes and trigger search after 1.5 seconds of inactivity
         this.WhenAnyValue(x => x.SearchTerm)
             .Throttle(TimeSpan.FromSeconds(1.5), RxApp.MainThreadScheduler)
             .Select(_ => Unit.Default)
-            .InvokeCommand(SearchCommand)
+            .Subscribe(_ => SearchCommand.Execute(null))
             .DisposeWith(_disposables);
-
 
         _subscriptions.Add(_searchResults
             .Connect()

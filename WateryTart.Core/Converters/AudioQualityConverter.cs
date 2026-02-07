@@ -39,52 +39,8 @@ public class AudioFormatCodecConverter : IValueConverter
         
         return null;
     }
-
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-/// Formats the sample rate as kHz (e.g., 44.1kHz, 48kHz)
-/// </summary>
-public class AudioFormatSampleRateConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is AudioFormat audioFormat && audioFormat.SampleRate > 0)
-        {
-            double sampleRateKhz = audioFormat.SampleRate / 1000.0;
-            return $"{sampleRateKhz:F1}kHz";
-        }
-        
-        return null;
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-/// Formats the bit depth (e.g., 16bit, 24bit)
-/// </summary>
-public class AudioFormatBitDepthConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is AudioFormat audioFormat && audioFormat.BitDepth > 0)
-        {
-            return $"{audioFormat.BitDepth}bit";
-        }
-        
-        return null;
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
+        return value;
     }
 }

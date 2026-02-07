@@ -16,7 +16,7 @@ public class ErrorEventArgs : EventArgs
         Message = exception.Message;
     }
 
-    public ErrorEventArgs(string message, Exception exception = null)
+    public ErrorEventArgs(string message, Exception exception)
     {
         Message = message ?? throw new ArgumentNullException(nameof(message));
         Exception = exception;

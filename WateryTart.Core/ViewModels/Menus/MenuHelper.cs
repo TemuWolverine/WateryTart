@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Service.MassClient.Models;
 
@@ -12,7 +13,7 @@ namespace WateryTart.Core.ViewModels.Menus;
 
 public static class MenuHelper
 {
-    public static IEnumerable<MenuItemViewModel> AddPlayers(IPlayersService playersService, MediaItemBase item, ReactiveCommand<Unit, Unit> playCommand = null)
+    public static IEnumerable<MenuItemViewModel> AddPlayers(IPlayersService playersService, MediaItemBase item)
     {
         var players = new List<MenuItemViewModel>();
 
@@ -38,7 +39,7 @@ public static class MenuHelper
 
             ICommand playerCommand = new AsyncRelayCommand(async () =>
             {
-                Debug.WriteLine($"Playing on {displayName}");
+                App.Logger?.LogInformation("Playing on {DisplayName}", displayName);
                 playersService.SelectedPlayer = capturedPlayer;
                 await playersService.PlayItem(capturedItem, capturedPlayer);
 
@@ -54,13 +55,13 @@ public static class MenuHelper
     {
         if (item == null)
         {
-            Debug.WriteLine("BuildStandardPopup: item is null");
+            App.Logger?.LogWarning("BuildStandardPopup: item is null");
             return new MenuViewModel([]);
         }
 
         if (playersService == null)
         {
-            Debug.WriteLine("BuildStandardPopup: playersService is null");
+            App.Logger?.LogWarning("BuildStandardPopup: playersService is null");
             return new MenuViewModel([]);
         }
 
@@ -71,9 +72,9 @@ public static class MenuHelper
 
         });
 
-        var addToLibraryCommand = new RelayCommand(() => Debug.WriteLine("Add to library clicked"));
-        var addToFavouritesCommand = new RelayCommand(() => Debug.WriteLine("Add to favourites clicked"));
-        var addToPlaylistCommand = new RelayCommand(() => Debug.WriteLine("Add to playlist clicked"));
+        var addToLibraryCommand = new RelayCommand(() => App.Logger?.LogDebug("Add to library clicked"));
+        var addToFavouritesCommand = new RelayCommand(() => App.Logger?.LogDebug("Add to favourites clicked"));
+        var addToPlaylistCommand = new RelayCommand(() => App.Logger?.LogDebug("Add to playlist clicked"));
 
         var menu = new MenuViewModel(
         [

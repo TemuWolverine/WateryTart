@@ -9,17 +9,14 @@ public class PlaybackStateToVisibilityConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is PlaybackState)
-        {
-            var state = (PlaybackState)value;
-            if (state == PlaybackState.Playing)
-                return true;
-        }
-        return false;
+        if (value is not PlaybackState state) 
+            return false;
+
+        return state == PlaybackState.Playing;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return value;
     }
 }

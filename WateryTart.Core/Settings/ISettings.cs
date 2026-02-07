@@ -14,4 +14,7 @@ public interface ISettings
     public double WindowHeight { get; set; }
     public double WindowPosX { get; set; }
     public double WindowPosY { get; set; }
+    LoggerSettings LoggerSettings { get; set; }
+
+    public void Save();
 }

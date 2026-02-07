@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
+using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -20,7 +20,6 @@ using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Events;
 using WateryTart.Service.MassClient.Models;
 using WateryTart.Service.MassClient.Models.Enums;
-using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace WateryTart.Core.Services;
 
@@ -28,7 +27,9 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 {
     private readonly IMassWsClient _massClient;
     private readonly ISettings _settings;
-    private readonly IColourService colourService;
+    private readonly IColourService _colourService;
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger<PlayersService> _logger;
     private ReadOnlyObservableCollection<TrackViewModel> currentQueue;
     private ReadOnlyObservableCollection<TrackViewModel> playedQueue;
     private CompositeDisposable _subscriptions = new CompositeDisposable();
@@ -37,13 +38,13 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     [Reactive] public partial SourceList<QueuedItem> QueuedItems { get; set; } = new SourceList<QueuedItem>();
     [Reactive] public partial ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
     [Reactive] public partial ObservableCollection<PlayerQueue> Queues { get; set; } = new ObservableCollection<PlayerQueue>();
-    [Reactive] public partial string SelectedPlayerQueueId { get; set; }
-    [Reactive] public partial PlayerQueue SelectedQueue { get; set; }
+    [Reactive] public partial string SelectedPlayerQueueId { get; set; } = string.Empty;
+    [Reactive] public partial PlayerQueue SelectedQueue { get; set; } = new PlayerQueue();
     public ReadOnlyObservableCollection<TrackViewModel> CurrentQueue { get => currentQueue; }
     public ReadOnlyObservableCollection<TrackViewModel> PlayedQueue { get => playedQueue; }
 
     [Reactive] public partial double Progress { get; set; }
-    public Player SelectedPlayer
+    public Player? SelectedPlayer
     {
         get => field;
         set
@@ -81,17 +82,19 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
+            _logger.LogError(ex, "Error fetching queue contents");
         }
     }
 
     private DispatcherTimer _timer;
 
-    public PlayersService(IMassWsClient massClient, ISettings settings, IColourService colourService)
+    public PlayersService(IMassWsClient massClient, ISettings settings, IColourService colourService, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         _settings = settings;
-        this.colourService = colourService;
+        _colourService = colourService;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<PlayersService>();
 
         /* Subscribe to the relevant websocket events from MASS */
         _subscriptions.Add(_massClient.Events
@@ -145,8 +148,9 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             case EventType.MediaItemPlayed:
                 mediaEvent = (MediaItemEventResponse)e;
-                if (mediaEvent.object_id == SelectedQueue?.current_item?.media_item.Uri)
-                    SelectedQueue.current_item.media_item.elapsed_time = mediaEvent.data.seconds_played;
+                if (mediaEvent.object_id == SelectedQueue?.current_item?.media_item?.Uri)
+                    if (mediaEvent.data.SecondsPlayed != null)
+                        SelectedQueue?.current_item?.media_item?.elapsed_time = mediaEvent.data.SecondsPlayed.Value;
                 break;
             case EventType.QueueTimeUpdated:
                 timeEvent = (PlayerQueueTimeUpdatedEventResponse)e;
@@ -189,12 +193,12 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                     var currentItem = SelectedQueue.current_item;
                     if (currentItem == null)
                         break;
-                    if (currentItem.image.remotely_accessible)
-                        colourService.Update(currentItem.media_item.ItemId, currentItem.image.path);
+                    if (currentItem.image != null && currentItem.image.remotely_accessible)
+                        _ = _colourService.Update(currentItem.media_item.ItemId, currentItem.image.path);
                     else
                     {
                         var url = string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(currentItem.image.path), currentItem.image.provider);
-                        colourService.Update(currentItem.media_item.ItemId, url);
+                        _ = _colourService.Update(currentItem.media_item.ItemId, url);
                     }
                 }
 
@@ -231,11 +235,11 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error loading players: {ex.Message}");
+            _logger.LogError(ex, "Error loading players");
         }
     }
 
-    public async Task PlayerVolumeDown(Player p)
+    public async Task PlayerVolumeDown(Player? p)
     {
         p ??= SelectedPlayer;
 
@@ -247,12 +251,12 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error adjusting volume: {ex.Message}");
+                _logger.LogError(ex, "Error adjusting volume down for player {PlayerId}", p.PlayerId);
             }
         }
     }
 
-    public async Task PlayerVolumeUp(Player p)
+    public async Task PlayerVolumeUp(Player? p)
     {
         p ??= SelectedPlayer;
 
@@ -264,12 +268,12 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error adjusting volume: {ex.Message}");
+                _logger.LogError(ex, "Error adjusting volume up for player {PlayerId}", p.PlayerId);
             }
         }
     }
 
-    public async Task PlayerPlayPause(Player p)
+    public async Task PlayerPlayPause(Player? p)
     {
         p ??= SelectedPlayer;
         try
@@ -278,12 +282,13 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error toggling playback: {ex.Message}");
+            _logger.LogError(ex, "Error toggling playback for player {PlayerId}", p?.PlayerId);
         }
     }
 
     public async Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace, bool RadioMode = false)
     {
+
         p ??= SelectedPlayer;
 
         if (p == null)
@@ -295,19 +300,22 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             try
             {
+                _logger.LogInformation($"Playing {t.Name}"); 
                 var pq = await _massClient.PlayerActiveQueueAsync(p.PlayerId);
                 await _massClient.PlayAsync(pq.Result.queue_id, t, mode, RadioMode);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error playing item: {ex.Message}");
+                _logger.LogError(ex, "Error playing item {ItemName} on player {PlayerId}", t?.Name, p?.PlayerId);
             }
         }
     }
 
-    public async Task PlayerNext(Player p = null)
+    public async Task PlayerNext(Player? p = null)
     {
         p ??= SelectedPlayer;
+        if (p?.PlayerId == null)
+            return;
         try
         {
 #pragma warning disable CS4014
@@ -316,13 +324,15 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error playing next: {ex.Message}");
+            _logger.LogError(ex, "Error playing next on player {PlayerId}", p.PlayerId);
         }
     }
 
-    public async Task PlayerPrevious(Player p)
+    public async Task PlayerPrevious(Player? p)
     {
         p ??= SelectedPlayer;
+        if (p?.PlayerId == null)
+            return;
         try
         {
 #pragma warning disable CS4014
@@ -331,19 +341,18 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error playing previous: {ex.Message}");
+            _logger.LogError(ex, "Error playing previous on player {PlayerId}", p?.PlayerId);
         }
     }
 
     public async Task PlayArtistRadio(Artist artist)
     {
-        PlayItem(artist, RadioMode: true);
+        _ = PlayItem(artist, RadioMode: true);
     }
 
     public async Task ReapAsync()
     {
         _timer?.Stop();
-        _timer = null;
         QueuedItems?.Dispose();
         _subscriptions?.Dispose();
         
@@ -360,7 +369,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error during disconnect: {ex}");
+            _logger.LogError(ex, "Error during disconnect");
         }
     }
 
@@ -385,11 +394,11 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error during disconnect: {ex}");
+            _logger.LogError(ex, "Error during disconnect");
         }
     }
 
-    private TrackViewModel GetOrCreateTrackViewModel(QueuedItem queuedItem)
+    private TrackViewModel GetOrCreateTrackViewModel(QueuedItem? queuedItem)
     {
         if (queuedItem == null)
             return null;

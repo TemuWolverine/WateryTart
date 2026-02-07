@@ -1,21 +1,18 @@
-﻿using Avalonia.Data.Converters;
+using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
 
 namespace WateryTart.Core.Converters;
 
-public class SecondsToMinutesConverter : IValueConverter
+public class StringNullOrEmptyToBoolConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        int seconds = (int)value!;
-
-        var span = new TimeSpan(0, 0, seconds);
-        return $"{(int)span.TotalMinutes}:{span.Seconds:00}";
+        return !string.IsNullOrEmpty(value as string);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value;
+        throw new NotImplementedException();
     }
 }

@@ -11,7 +11,7 @@ public static partial class MassClientExtensions
 {
     extension(IMassWsClient c)
     {
-        public async Task<PlayersQueuesResponse> PlayAsync(string queueID, MediaItemBase t, PlayMode mode, bool radiomode)
+        public async Task<PlayersQueuesResponse> PlayAsync(string queueId, MediaItemBase t, PlayMode mode, bool radiomode)
         {
             var modestr = mode switch
             {
@@ -23,13 +23,13 @@ public static partial class MassClientExtensions
                 _ => "unknown"
             };
 
-            var mediaArray = new string[] { t.Uri };
+            var mediaArray = new string?[] { t.Uri };
 
             var m = new Message(Commands.PlayerQueuePlayMedia)
             {
                 args = new Dictionary<string, object>()
                 {
-                    { "queue_id", queueID },
+                    { "queue_id", queueId },
                     { "media", mediaArray },
                     { "option", modestr }
                 }

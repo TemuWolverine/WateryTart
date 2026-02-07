@@ -2,32 +2,34 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
-
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using WateryTart.Service.MassClient;
 
 namespace WateryTart.Core.ViewModels;
 
 public partial class LibraryViewModel : ReactiveObject, IViewModelBase
 {
+    private ILogger<LibraryViewModel> _logger;
     private readonly IMassWsClient _massClient;
-    public string? UrlPathSegment { get; }
+    public string? UrlPathSegment { get; } = "library";
     public IScreen HostScreen { get; }
     public string Title { get; set; }
     [Reactive] public partial ObservableCollection<LibraryItem> Items { get; set; }
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
-    public LibraryViewModel(IMassWsClient massClient, IScreen screen)
+    public LibraryViewModel(IMassWsClient massClient, IScreen screen, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         HostScreen = screen;
         Title = "Library";
+        _logger = loggerFactory.CreateLogger<LibraryViewModel>();
 
         var artists = new LibraryItem()
         {
             Title = "Artists",
-            ClickedCommand = ReactiveCommand.Create(() =>
+            ClickedCommand = new RelayCommand(() =>
             {
                 var vm = App.Container.GetRequiredService<ArtistsViewModel>();
                 screen.Router.Navigate.Execute(vm);
@@ -37,7 +39,7 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
         var albums = new LibraryItem()
         {
             Title = "Albums",
-            ClickedCommand = ReactiveCommand.Create(() =>
+            ClickedCommand = new RelayCommand(() =>
             {
                 var vm = App.Container.GetRequiredService<AlbumsListViewModel>();
                 screen.Router.Navigate.Execute(vm);
@@ -47,19 +49,22 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
         var tracks = new LibraryItem()
         {
             Title = "Tracks",
-            ClickedCommand = ReactiveCommand.Create(() =>
+            ClickedCommand = new RelayCommand(() =>
             {
                 var vm = App.Container.GetRequiredService<TracksViewModel>();
                 screen.Router.Navigate.Execute(vm);
             })
         };
-        var playlists = new LibraryItem { Title = "Playlists",
-            ClickedCommand = ReactiveCommand.Create(() =>
+        var playlists = new LibraryItem
+        {
+            Title = "Playlists",
+            ClickedCommand = new RelayCommand(() =>
             {
                 var vm = App.Container.GetRequiredService<PlaylistsViewModel>();
                 screen.Router.Navigate.Execute(vm);
             })
         };
+
         //var genres = new LibraryItem { Title = "Genres" };
         var podcasts = new LibraryItem { Title = "Podcasts" };
         var radios = new LibraryItem { Title = "Radios" };
@@ -114,7 +119,7 @@ public partial class LibraryViewModel : ReactiveObject, IViewModelBase
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error loading counts: {ex.Message}");
+            _logger.LogError(ex, $"Error loading counts");
         }
     }
 }

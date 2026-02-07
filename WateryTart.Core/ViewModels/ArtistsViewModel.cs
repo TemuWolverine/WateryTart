@@ -1,34 +1,32 @@
-﻿using DynamicData;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reactive;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services;
 using WateryTart.Service.MassClient;
-using WateryTart.Service.MassClient.Models;
 
 namespace WateryTart.Core.ViewModels;
 
 public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
 {
-    public string? UrlPathSegment { get; }
+    public string? UrlPathSegment { get; } = "ArtistsList";
     public IScreen HostScreen { get; }
     private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
 
     [Reactive] public partial string Title { get; set; }
-    [Reactive] public partial ObservableCollection<ArtistViewModel> Artists { get; set; } = new();
+    [Reactive] public partial ObservableCollection<ArtistViewModel> Artists { get; set; } = [];
     [Reactive] public partial bool IsLoading { get; set; }
     [Reactive] public partial bool HasMoreItems { get; set; } = true;
     [Reactive] public partial int CurrentOffset { get; set; } = 0;
     
     private const int PageSize = 50;
 
-    public ReactiveCommand<ArtistViewModel, Unit> ClickedCommand { get; }
-    public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
+    public RelayCommand<ArtistViewModel> ClickedCommand { get; }
+    public AsyncRelayCommand LoadMoreCommand { get; }
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
 
@@ -39,14 +37,15 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
         HostScreen = screen;
         Title = "Artists";
 
-        ClickedCommand = ReactiveCommand.Create<ArtistViewModel>(item =>
+        ClickedCommand = new RelayCommand<ArtistViewModel>(item =>
         {
-            screen.Router.Navigate.Execute(item);
+            if (item != null)
+                screen.Router.Navigate.Execute(item);
         });
 
-        LoadMoreCommand = ReactiveCommand.CreateFromTask(
+        LoadMoreCommand = new AsyncRelayCommand(
             LoadMoreAsync,
-            this.WhenAnyValue(x => x.IsLoading, x => x.HasMoreItems, (loading, hasMore) => !loading && hasMore)
+            () => !IsLoading && HasMoreItems
         );
 
 #pragma warning disable CS4014

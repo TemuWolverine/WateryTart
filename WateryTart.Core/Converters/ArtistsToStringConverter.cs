@@ -11,7 +11,7 @@ public class ArtistsToStringConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        IList<Artist> artists = (IList<Artist>)value;
+        IList<Artist> artists = (IList<Artist>)value!;
 
         StringBuilder sb = new StringBuilder();
         foreach (var a in artists)
@@ -19,9 +19,8 @@ public class ArtistsToStringConverter : IValueConverter
 
         return sb.ToString();
     }
-
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return value;
     }
 }

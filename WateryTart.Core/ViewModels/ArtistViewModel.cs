@@ -1,11 +1,9 @@
-﻿using Avalonia.Platform;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Service.MassClient;
@@ -17,54 +15,25 @@ namespace WateryTart.Core.ViewModels
 {
     public partial class ArtistViewModel : ReactiveObject, IViewModelBase
     {
-        public string? UrlPathSegment { get; }
-        public IScreen HostScreen { get; }
         private readonly IMassWsClient _massClient;
         private readonly IPlayersService _playersService;
+        [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
+        public RelayCommand<Artist> AltMenuCommand { get; }
+        [Reactive] public partial Artist? Artist { get; set; }
+        public RelayCommand ArtistFullViewCommand { get; }
+        public Image? ArtistLogo { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.type == ImageType.Logo); } }
+        public Image? ArtistThumb { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.type == ImageType.Thumb); } }
+        public IScreen HostScreen { get; }
+        [Reactive] public partial bool IsBioExpanded { get; set; } = false;
+        public RelayCommand PlayArtistRadioCommand { get; }
         public bool ShowMiniPlayer => true;
         public bool ShowNavigation => true;
         [Reactive] public partial string Title { get; set; }
-        [Reactive] public partial Artist Artist { get; set; }
-        [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
-        [Reactive] public partial bool IsBioExpanded { get; set; } = false;
-        public Image ArtistLogo { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.type == ImageType.Logo); } }
+        public RelayCommand ToggleBioCommand { get; }
+        public ObservableCollection<Item>? Tracks { get; set; }
+        public string? UrlPathSegment { get; } = "Artist/ID";
 
-        public Image ArtistThumb { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.type == ImageType.Thumb); } }
-
-        public ReactiveCommand<Artist, Unit> AltMenuCommand { get; }
-        public ReactiveCommand<Unit, Unit> ArtistFullViewCommand { get; }
-        public ReactiveCommand<Unit, Unit> ToggleBioCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> PlayArtistRadioCommand { get; }
-        public ObservableCollection<Item> Tracks { get; set; }
-
-
-        [GenerateTypedAction]
-        public void ToggleBioClicked()
-        {
-            IsBioExpanded = !IsBioExpanded;
-        }
-        [GenerateTypedAction]
-        public void AltMenuClicked()
-        {
-            var menu = new MenuViewModel(
-            [
-                new MenuItemViewModel("Artist Radio", string.Empty, ReactiveCommand.Create<Unit>(r => {})),
-                new MenuItemViewModel("Play", string.Empty, ReactiveCommand.Create<Unit>(r => { }))
-            ]);
-
-            menu.AddMenuItem(MenuHelper.AddPlayers(_playersService, Artist));
-
-            MessageBus.Current.SendMessage(menu);
-        }
-        [GenerateTypedAction]
-        public void ArtistFullViewClicked()
-        {
-            LoadFromId(Artist.ItemId, Artist.Provider);
-            HostScreen.Router.Navigate.Execute(this);
-        }
-
-        public ArtistViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, Artist artist = null)
+        public ArtistViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, Artist? artist = null)
         {
             _massClient = massClient;
             _playersService = playersService;
@@ -72,44 +41,80 @@ namespace WateryTart.Core.ViewModels
             Title = "";
             Artist = artist;
 
-            /*
-            ArtistFullViewCommand = ReactiveCommand.Create(() =>
+            ArtistFullViewCommand = new RelayCommand(() =>
             {
+                if (Artist?.ItemId == null || Artist.Provider == null)
+                    return;
+
                 LoadFromId(Artist.ItemId, Artist.Provider);
                 screen.Router.Navigate.Execute(this);
             });
-            */
-            ToggleBioCommand = ReactiveCommand.Create(() =>
+
+            ToggleBioCommand = new RelayCommand(() =>
             {
                 IsBioExpanded = !IsBioExpanded;
             });
 
-            /*
-            AltMenuCommand = ReactiveCommand.Create<Artist>(i =>
+            AltMenuCommand = new RelayCommand<Artist>(i =>
             {
                 var menu = new MenuViewModel(
                 [
-                    new MenuItemViewModel("Artist Radio", string.Empty, ReactiveCommand.Create<Unit>(r => {})),
-                    new MenuItemViewModel("Play", string.Empty, ReactiveCommand.Create<Unit>(r => { }))
+                    new MenuItemViewModel("Artist Radio", string.Empty, new RelayCommand(() => {})),
+                    new MenuItemViewModel("Play", string.Empty, new RelayCommand(() => { }))
                 ]);
 
-                menu.AddMenuItem(MenuHelper.AddPlayers(_playersService, artist));
+                menu.AddMenuItem(MenuHelper.AddPlayers(_playersService, i));
 
                 MessageBus.Current.SendMessage(menu);
             });
 
-            PlayArtistRadioCommand = ReactiveCommand.Create(() =>
+            PlayArtistRadioCommand = new RelayCommand(() =>
             {
-                _playersService.PlayArtistRadio(Artist);
-            });*/
+                if (Artist != null)
+                    _playersService.PlayArtistRadio(Artist);
+            });
+        }
+
+        [GenerateTypedAction]
+        public void AltMenuClicked()
+        {
+            if (Artist == null)
+                return;
+
+            var menu = new MenuViewModel(
+            [
+            new MenuItemViewModel("Artist Radio", string.Empty, new RelayCommand(() => {})),
+                new MenuItemViewModel("Play", string.Empty, new RelayCommand(() => { }))
+            ]);
+
+
+            menu.AddMenuItem(MenuHelper.AddPlayers(_playersService, Artist));
+
+            MessageBus.Current.SendMessage(menu);
+        }
+
+        [GenerateTypedAction]
+        public void ArtistFullViewClicked()
+        {
+            if (Artist?.ItemId == null || Artist.Provider == null)
+                return;
+
+            LoadFromId(Artist.ItemId, Artist.Provider);
+            HostScreen.Router.Navigate.Execute(this);
         }
 
         public void LoadFromId(string id, string provider)
         {
-            Tracks = new ObservableCollection<Item>();
+            Tracks = [];
 
-            LoadArtistAlbum(id, provider);
-            LoadArtist(id, provider);
+            _ = LoadArtistAlbum(id, provider);
+            _ = LoadArtist(id, provider);
+        }
+
+        [GenerateTypedAction]
+        public void ToggleBioClicked()
+        {
+            IsBioExpanded = !IsBioExpanded;
         }
 
         private async Task LoadArtist(string id, string provider)
@@ -117,9 +122,10 @@ namespace WateryTart.Core.ViewModels
             var artistResponse = await _massClient.ArtistGetAsync(id, provider);
 
             Artist = artistResponse.Result;
-            Title = Artist.Name;
-            this.RaisePropertyChanged("ArtistLogo");
-            this.RaisePropertyChanged("ArtistThumb");
+            if (Artist?.Name != null)
+                Title = Artist.Name;
+            this.RaisePropertyChanged(nameof(ArtistLogo));
+            this.RaisePropertyChanged(nameof(ArtistThumb));
         }
 
         private async Task LoadArtistAlbum(string id, string provider)

@@ -3,8 +3,6 @@ using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using System;
-using Avalonia.Input;
-using Avalonia.Media;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels;
@@ -13,19 +11,21 @@ namespace WateryTart.Core.Views;
 
 public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 {
-    private ISettings _settings;
+    private ISettings? _settings;
     private ITrayService? _trayService;
     public MainWindow()
     {
         this.WhenActivated(disposables =>
         {
             var vm = DataContext as MainWindowViewModel;
-            vm.Connect();
+            if (vm == null)
+                return;
+
+            _ = vm.Connect();
             vm.Router.CurrentViewModel.Subscribe((_) =>
             {
                 var sv = this.Find<ScrollViewer>("sv");
-                if (sv != null)
-                    sv.ScrollToHome();
+                sv?.ScrollToHome();
             });
 
             _settings = App.Container.GetRequiredService<ISettings>();

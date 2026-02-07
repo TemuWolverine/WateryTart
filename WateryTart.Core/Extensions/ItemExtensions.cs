@@ -1,14 +1,14 @@
-﻿using System.Linq;
-using WateryTart.Core;
-using WateryTart.Core.ViewModels;
+﻿using WateryTart.Core.ViewModels;
 using WateryTart.Service.MassClient.Models;
 using WateryTart.Service.MassClient.Models.Enums;
+
+namespace WateryTart.Core.Extensions;
 
 public static class ItemExtensions
 {
     extension(Item item)
     {
-        public IViewModelBase CreateViewModelForItem()
+        public IViewModelBase? CreateViewModelForItem()
         {
             return item.MediaType switch
             {
@@ -52,7 +52,7 @@ public static class ItemExtensions
 
     private static ArtistViewModel CreateArtistViewModel(Item item)
     {
-            var vm = App.Container.GetRequiredService<ArtistViewModel>();
+        var vm = App.Container.GetRequiredService<ArtistViewModel>();
         vm.LoadFromId(item.ItemId, item.GetProviderInstance());
         return vm;
     }

@@ -1,24 +1,23 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using WateryTart.Core.Services;
+using WateryTart.Service.MassClient.Models;
 
 namespace WateryTart.Core.Converters;
-public class ColourPickConverter : IValueConverter
+
+/// <summary>
+/// Formats the bit depth (e.g., 16bit, 24bit)
+/// </summary>
+public class AudioFormatBitDepthConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var x = (ColourChosen)value!;
-        var y = parameter as string;
-
-        switch (x)
+        if (value is AudioFormat audioFormat && audioFormat.BitDepth > 0)
         {
-            case ColourChosen.AB when y == "AB":
-            case ColourChosen.CD when y == "CD":
-                return true;
-            default:
-                return false;
+            return $"{audioFormat.BitDepth}bit";
         }
+        
+        return null;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

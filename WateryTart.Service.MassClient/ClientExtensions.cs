@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using System.Threading.Tasks;
 using WateryTart.Service.MassClient.Messages;
 
 namespace WateryTart.Service.MassClient;
@@ -19,10 +15,13 @@ public static partial class MassClientExtensions
             {
                 try
                 {
-                    // ✅ Get the JsonTypeInfo from the context
                     var typeInfo = MassClientJsonContext.Default.GetTypeInfo(typeof(T)) as JsonTypeInfo<T>;
+                    if (typeInfo == null) 
+                        return;
+
                     var result = JsonSerializer.Deserialize(response, typeInfo);
-                    tcs.TrySetResult(result);
+                    if (result != null)
+                        tcs.TrySetResult(result);
                 }
                 catch (Exception ex)
                 {
@@ -43,13 +42,13 @@ public static partial class MassClientExtensions
         return new Message(command);
     }
 
-    private static MessageBase JustId(string command, string id, string id_label = "item_id")
+    private static MessageBase JustId(string command, string id, string idLabel = "item_id")
     {
         var m = new Message(command)
         {
-            args = new Dictionary<string, object>  // Changed from Hashtable
+            args = new Dictionary<string, object>
             {
-                { id_label, id },
+                { idLabel, id },
             }
         };
 
@@ -58,13 +57,9 @@ public static partial class MassClientExtensions
 
     private static MessageBase IdAndProvider(string command, string id, string provider)
     {
-        if (provider == null)
-        {
-            Console.WriteLine("got here from where?");
-        }
         var m = new Message(command)
         {
-            args = new Dictionary<string, object>  // Changed from Hashtable
+            args = new Dictionary<string, object>
             {
                 { "item_id", id },
                 { "provider_instance_id_or_domain", provider }
@@ -78,11 +73,9 @@ public static partial class MassClientExtensions
     {
         Action<string> d = (r) =>
         {
-            if (r == null)
-                return;
-
             var y = JsonSerializer.Deserialize<T>(r, MassWsClient.SerializerOptions);
-            responseHandler(y);
+            if (y != null)
+                responseHandler(y);
         };
 
         return d;

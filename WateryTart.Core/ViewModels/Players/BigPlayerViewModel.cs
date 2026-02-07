@@ -18,19 +18,17 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
     public bool ShowNavigation => false;
     public string Title { get; set; } = "";
 
-    private double _cachedImageWidth = 300;
-    private double _cachedImageHeight = 300;
     [Reactive] public partial bool IsSmallDisplay { get; set; }
     public double CachedImageWidth
     {
-        get => _cachedImageWidth;
-        set => this.RaiseAndSetIfChanged(ref _cachedImageWidth, value);
+        get => field;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public double CachedImageHeight
     {
-        get => _cachedImageHeight;
-        set => this.RaiseAndSetIfChanged(ref _cachedImageHeight, value);
+        get => field;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public IPlayersService PlayersService => _playersService;

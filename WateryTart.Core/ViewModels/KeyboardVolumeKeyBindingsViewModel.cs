@@ -2,6 +2,7 @@
 using Splat;
 using System;
 using System.Reactive;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.ViewModels;
 
 namespace WateryTart.Core.ViewModels;
@@ -65,15 +66,15 @@ public class KeyboardVolumeKeyBindingsViewModel : ReactiveObject, IViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isRecording, value);
     }
 
-    public ReactiveCommand<string, Unit> RecordKeyCommand { get; }
-    public ReactiveCommand<Unit, Unit> ResetToDefaultsCommand { get; }
+    public RelayCommand<string> RecordKeyCommand { get; }
+    public RelayCommand ResetToDefaultsCommand { get; }
 
     public KeyboardVolumeKeyBindingsViewModel(IScreen? hostScreen = null)
     {
         HostScreen = hostScreen ?? Locator.Current.GetService<IScreen>() ?? throw new InvalidOperationException("IScreen not registered");
 
-        RecordKeyCommand = ReactiveCommand.Create<string>(ExecuteRecordKey);
-        ResetToDefaultsCommand = ReactiveCommand.Create(ExecuteResetToDefaults);
+        RecordKeyCommand = new RelayCommand<string>((s) => ExecuteRecordKey(s));
+        ResetToDefaultsCommand = new RelayCommand(ExecuteResetToDefaults);
     }
 
     private void ExecuteRecordKey(string bindingName)

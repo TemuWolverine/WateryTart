@@ -10,7 +10,7 @@
   <ListBox ItemsSource="{Binding MenuItems}" Background="Transparent">
       <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:MenuItemViewModel">
-              <Grid Background="Transparent">
+              <Grid Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                   <Interaction.Behaviors>
                       <EventTriggerBehavior EventName="Tapped">
                           <vm:MenuItemClickedAction TargetObject="{Binding}"  />

@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using System;
 
 namespace WateryTart.Core.Controls;
 
@@ -13,17 +12,10 @@ public class ResponsiveColumnPanel : TemplatedControl
     private ContentPresenter? _firstColumnContent;
     private ContentPresenter? _secondColumnContent;
 
-    public static readonly StyledProperty<object?> FirstColumnProperty =
-        AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(FirstColumn));
-
-    public static readonly StyledProperty<object?> SecondColumnProperty =
-        AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(SecondColumn));
-
-    public static readonly StyledProperty<object?> HeaderProperty =
-        AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(Header));
-
-    public static readonly StyledProperty<double> BreakpointProperty =
-        AvaloniaProperty.Register<ResponsiveColumnPanel, double>(nameof(Breakpoint), 600.0);
+    public static readonly StyledProperty<object?> FirstColumnProperty = AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(FirstColumn));
+    public static readonly StyledProperty<object?> SecondColumnProperty = AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(SecondColumn));
+    public static readonly StyledProperty<object?> HeaderProperty = AvaloniaProperty.Register<ResponsiveColumnPanel, object?>(nameof(Header));
+    public static readonly StyledProperty<double> BreakpointProperty = AvaloniaProperty.Register<ResponsiveColumnPanel, double>(nameof(Breakpoint), 600.0);
 
     public object? FirstColumn
     {
@@ -96,7 +88,7 @@ public class ResponsiveColumnPanel : TemplatedControl
         UpdateLayout();
     }
 
-    private void UpdateLayout()
+    private new void UpdateLayout()
     {
         if (_contentGridContainer is null) return;
 

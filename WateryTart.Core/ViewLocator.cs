@@ -48,6 +48,7 @@ public class ViewLocator : IDataTemplate
         // Settings views
         [typeof(ServerSettingsViewModel)] = () => new ServerSettingsView(),
         [typeof(KeyboardVolumeKeyBindingsViewModel)] = () => new KeyboardVolumeKeyBindingsView(),
+        [typeof(LoggerSettingsViewModel)] = () => new LoggerSettingsView(),
     };
 
     public Control Build(object? data)

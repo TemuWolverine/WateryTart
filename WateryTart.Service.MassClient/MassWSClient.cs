@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Reactive.Subjects;
@@ -15,15 +16,14 @@ namespace WateryTart.Service.MassClient
 {
     public class MassWsClient : IMassWsClient
     {
-        private string _baseUrl;
-        internal WebsocketClient _client;
-        internal ConcurrentDictionary<string, Action<string>> _routing = new();  // Changed from Dictionary
-        private IMassCredentials creds;
+        internal WebsocketClient? _client;
+        internal ConcurrentDictionary<string, Action<string>> _routing = new();
+        private IMassCredentials? creds;
 
         private CancellationTokenSource _connectionCts = new CancellationTokenSource();
-        private readonly Subject<BaseEventResponse> subject = new Subject<BaseEventResponse>();
-        private IDisposable _reconnectionSubscription;
-        private IDisposable _messageSubscription;
+        private readonly Subject<BaseEventResponse?> subject = new Subject<BaseEventResponse?>();
+        private IDisposable? _reconnectionSubscription;
+        private IDisposable? _messageSubscription;
 
         // Track if we're already attempting to connect
         private Task _currentConnectTask = Task.CompletedTask;
@@ -33,6 +33,7 @@ namespace WateryTart.Service.MassClient
         private readonly Queue<string> _pendingMessages = new();
         private readonly object _authLock = new object();
 
+        private readonly ILogger logger;
         /// <summary>
         /// Shared JSON serializer options for all MassClient operations. AOT-compatible with snake_case naming.
         /// </summary>
@@ -45,6 +46,13 @@ namespace WateryTart.Service.MassClient
             WriteIndented = false
 
         };
+
+        public MassWsClient()
+        {
+            using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+            logger = factory.CreateLogger("Program");
+            logger.LogInformation("Hello World! Logging is {Description}.", "fun");
+        }
 
         public async Task<LoginResults> Login(string username, string password, string baseurl)
         {
@@ -61,14 +69,14 @@ namespace WateryTart.Service.MassClient
             var tcs = new TaskCompletionSource<LoginResults>();
             using (_client = new WebsocketClient(new Uri(wsUrl), factory))
             {
-                Console.WriteLine($"Connecting to WebSocket: {wsUrl}");
+                logger.LogInformation("Connecting to WebSocket: {WsUrl}", wsUrl);
                 _client.MessageReceived.Subscribe(OnNext);
                 await _client.Start();
-                Console.WriteLine("WebSocket connected, sending auth request");
+                logger.LogInformation("WebSocket connected, sending auth request");
 
                 this.GetAuthToken(username, password, (response) =>
                 {
-                    Console.WriteLine($"Auth response received: success={response?.Result?.success}");
+                    logger.LogInformation("Auth response received: success={Success}", response?.Result?.success);
                     if (response?.Result == null)
                     {
                         tcs.TrySetResult(new LoginResults { Success = false, Error = "No response from server" });
@@ -113,7 +121,7 @@ namespace WateryTart.Service.MassClient
         public async Task<bool> Connect(IMassCredentials credentials)
         {
             var x = new MassClientJsonContext();
-            Console.WriteLine($"WS Connecting");
+            logger.LogInformation("WS Connecting");
 
             lock (_connectLock)
             {
@@ -159,7 +167,7 @@ namespace WateryTart.Service.MassClient
 
             if (completedTask == authTimeout)
             {
-                Console.WriteLine("Authentication timeout");
+                logger.LogWarning("Authentication timeout");
                 return false;
             }
 
@@ -171,7 +179,7 @@ namespace WateryTart.Service.MassClient
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("Background connection task cancelled");
+                    logger.LogInformation("Background connection task cancelled");
                 }
             });
 
@@ -180,7 +188,7 @@ namespace WateryTart.Service.MassClient
 
         /// <summary>
         /// Converts a base URL (e.g., "192.168.1.63:8095") to the WebSocket URL.
-        /// Music Assistant WebSocket is on the same port as HTTP.
+        /// Music Assistant WebSocket is on the same port as HTTP, just different protocol.
         /// </summary>
         private static string GetWebSocketUrl(string baseUrl)
         {
@@ -190,7 +198,7 @@ namespace WateryTart.Service.MassClient
 
         private void SendLogin(IMassCredentials credentials)
         {
-            Console.WriteLine("Sending authentication...");
+            logger.LogInformation("Sending authentication...");
             var argsx = new Dictionary<string, object>() { { "token", credentials.Token } };
             var auth = new Auth()
             {
@@ -200,7 +208,7 @@ namespace WateryTart.Service.MassClient
 
             _routing.TryAdd(auth.message_id, (response) =>
             {
-                Console.WriteLine($"Auth response: {response}");
+                logger.LogInformation("Auth response: {Response}", response);
 
                 if (!response.Contains("error"))
                 {
@@ -218,8 +226,9 @@ namespace WateryTart.Service.MassClient
                 }
             });
 
-            var json = JsonSerializer.Serialize(auth, SerializerOptions);
-            Console.WriteLine($"Sending auth: {json}");
+            // Use JsonSerializer.Serialize with JsonTypeInfo to avoid RequiresUnreferencedCode warning
+            var json = JsonSerializer.Serialize(auth, MassClientJsonContext.Default.Auth);
+            logger.LogInformation("Sending auth: {Json}", json);
             _client?.Send(json);
         }
 
@@ -245,14 +254,14 @@ namespace WateryTart.Service.MassClient
 
         private async Task ConnectSafely()
         {
-            Debug.WriteLine($"WS Connecting");
+            logger.LogDebug("WS Connecting");
             try
             {
                 await Connect(creds);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Connect error: {ex}");
+                logger.LogError(ex, "Connect error");
             }
         }
 
@@ -268,7 +277,8 @@ namespace WateryTart.Service.MassClient
                 return;
             }
 
-            TempResponse y = JsonSerializer.Deserialize<TempResponse>(response.Text, SerializerOptions);
+            // Use JsonSerializer.Deserialize with JsonTypeInfo to avoid RequiresUnreferencedCode warning
+            TempResponse? y = JsonSerializer.Deserialize(response.Text, MassClientJsonContext.Default.TempResponse);
 
             // Use TryRemove instead of ContainsKey + indexer
             if (y?.message_id != null && _routing.TryRemove(y.message_id, out var handler))
@@ -280,10 +290,14 @@ namespace WateryTart.Service.MassClient
             try
             {
                 var e = JsonSerializer.Deserialize<BaseEventResponse>(response.Text, SerializerOptions);
+                if (e == null) 
+                    return;
+
                 switch (e.EventName)
                 {
                     case EventType.MediaItemPlayed:
-                        subject.OnNext(JsonSerializer.Deserialize<MediaItemEventResponse>(response.Text, SerializerOptions));
+                        subject.OnNext(JsonSerializer.Deserialize<MediaItemEventResponse>(response.Text,
+                            MassClientJsonContext.Default.MediaItemEventResponse));
                         break;
                     case EventType.PlayerAdded:
                     case EventType.PlayerUpdated:
@@ -291,24 +305,27 @@ namespace WateryTart.Service.MassClient
                     case EventType.PlayerConfigUpdated:
                         try
                         {
-                            var x = JsonSerializer.Deserialize<PlayerEventResponse>(response.Text, SerializerOptions);
+                            var x = JsonSerializer.Deserialize<PlayerEventResponse>(response.Text,
+                                MassClientJsonContext.Default.PlayerEventResponse);
                             subject.OnNext(x);
                         }
                         catch (Exception ex)
                         {
-
+                            logger.LogError(ex, "Error in player config update");
                         }
 
                         break;
 
                     case EventType.QueueAdded:
                     case EventType.QueueUpdated:
-                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueEventResponse>(response.Text, SerializerOptions));
+                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueEventResponse>(response.Text,
+                            MassClientJsonContext.Default.PlayerQueueEventResponse));
                         break;
                     case EventType.QueueItemsUpdated:
                         break;
                     case EventType.QueueTimeUpdated:
-                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueTimeUpdatedEventResponse>(response.Text, SerializerOptions));
+                        subject.OnNext(JsonSerializer.Deserialize<PlayerQueueTimeUpdatedEventResponse>(
+                            response.Text, MassClientJsonContext.Default.PlayerQueueTimeUpdatedEventResponse));
                         break;
 
                     default:
@@ -318,8 +335,8 @@ namespace WateryTart.Service.MassClient
             }
             catch (JsonException ex)
             {
-                Debug.WriteLine($"JSON Deserialization Error: {ex.Message}");
-                Debug.WriteLine($"Path: {ex.Path}");
+                logger.LogError(ex, "JSON Deserialization Error");
+                logger.LogDebug("Path: {Path}", ex.Path);
             }
         }
 
@@ -349,13 +366,13 @@ namespace WateryTart.Service.MassClient
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"Error calling Stop: {ex}");
+                            logger.LogError(ex, "Error calling Stop");
                         }
 
                         // Force abort if still running
                         if (_client.IsRunning)
                         {
-                            Debug.WriteLine("WebSocket still running, attempting abort...");
+                            logger.LogDebug("WebSocket still running, attempting abort...");
                             _client.NativeClient?.Abort();
                         }
 
@@ -365,7 +382,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error stopping WebSocket: {ex}");
+                logger.LogError(ex, "Error stopping WebSocket");
             }
 
             try
@@ -376,7 +393,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error disposing WebSocket: {ex}");
+                logger.LogError(ex, "Error disposing WebSocket");
             }
 
             try
@@ -385,7 +402,7 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error disposing CTS: {ex}");
+                logger.LogError(ex, "Error disposing CTS");
             }
 
             try
@@ -394,9 +411,10 @@ namespace WateryTart.Service.MassClient
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error disposing subject: {ex}");
+                logger.LogError(ex, "Error disposing subject");
             }
         }
+
         private async Task WaitForAuthenticationAsync()
         {
             while (!_isAuthenticated && !_connectionCts.Token.IsCancellationRequested)

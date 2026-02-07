@@ -2,57 +2,52 @@
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Reactive;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Models;
-using WateryTart.Service.MassClient.Responses;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WateryTart.Core.ViewModels
 {
     public partial class PlaylistViewModel : ReactiveObject, IViewModelBase
     {
-        public string? UrlPathSegment { get; }
+        public string? UrlPathSegment => "playlist";
         public IScreen HostScreen { get; }
         private readonly IMassWsClient _massClient;
         private readonly IPlayersService _playersService;
-        public bool ShowMiniPlayer { get => true; }
+        public bool ShowMiniPlayer => true; 
         public bool ShowNavigation => true;
         [Reactive] public partial Playlist Playlist { get; set; }
-        [Reactive] public partial string Title { get; set; }
+        [Reactive] public partial string? Title { get; set; }
 
-        public ObservableCollection<TrackViewModel> Tracks { get; set; }
-        public ReactiveCommand<Item, Unit> PlayCommand { get; }
-        public ReactiveCommand<Unit, Unit> PlaylistAltMenuCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> PlaylistFullViewCommand { get; }
-        public PlaylistViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, Playlist playlist = null)
+        public ObservableCollection<TrackViewModel>? Tracks { get; set; }
+        public RelayCommand<Item> PlayCommand { get; }
+        public RelayCommand PlaylistAltMenuCommand { get; }
+        public RelayCommand PlaylistFullViewCommand { get; }
+        public PlaylistViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, Playlist? playlist = null)
         {
             _massClient = massClient;
             _playersService = playersService;
             HostScreen = screen;
             Title = "";
-            Playlist = playlist;
+            Playlist = playlist ?? new Playlist();
 
-            PlaylistFullViewCommand = ReactiveCommand.Create(() =>
+            PlaylistFullViewCommand = new RelayCommand(() =>
             {
-                LoadFromId(Playlist.ItemId, Playlist.Provider);
+                if (Playlist.ItemId != null && Playlist.Provider != null)
+                    LoadFromId(Playlist.ItemId, Playlist.Provider);
                 screen.Router.Navigate.Execute(this);
             });
 
-            PlaylistAltMenuCommand = ReactiveCommand.Create(() =>
+            PlaylistAltMenuCommand = new RelayCommand(() =>
             {
                 MessageBus.Current.SendMessage(MenuHelper.BuildStandardPopup(playersService, Playlist));
             });
 
-            PlayCommand = ReactiveCommand.Create<Item>((i) =>
-            {
-                if (Playlist != null)
-                    _playersService.PlayItem(Playlist as MediaItemBase);
-            });
+            PlayCommand = new RelayCommand<Item>((i) => { _playersService.PlayItem(Playlist as MediaItemBase); });
         }
 
         public void LoadFromId(string id, string provider)
@@ -76,7 +71,7 @@ namespace WateryTart.Core.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading playlist: {ex.Message}");
+                App.Logger?.LogError(ex, $"Error loading playlists");
             }
 
             try
@@ -85,12 +80,12 @@ namespace WateryTart.Core.ViewModels
                 if (tracksResponse?.Result != null)
                 {
                     foreach (var t in tracksResponse.Result)
-                        Tracks.Add(new TrackViewModel(_massClient, HostScreen, _playersService, t));
+                        Tracks?.Add(new TrackViewModel(_massClient, HostScreen, _playersService, t));
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading playlist tracks: {ex.Message}");
+                App.Logger?.LogError(ex, $"Error loading playlists tracks");
             }
         }
     }

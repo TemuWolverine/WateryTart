@@ -18,10 +18,8 @@ public class HomeExtraToStringConverter : IValueConverter
         switch (item.MediaType)
         {
             case MediaType.Artist:
-                output = item.owner;
-                break;
             case MediaType.Playlist:
-                output = item.owner;
+                output = item.owner ?? string.Empty;
                 break;
             case MediaType.Album:
             case MediaType.Track:
@@ -39,6 +37,6 @@ public class HomeExtraToStringConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return value;
     }
 }

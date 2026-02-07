@@ -3,12 +3,12 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reactive;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Service.MassClient;
-using WateryTart.Service.MassClient.Models;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -18,6 +18,7 @@ public partial class TracksViewModel : ReactiveObject, IViewModelBase
     public IScreen HostScreen { get; }
     private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
+    private readonly ILogger _logger;
 
     [Reactive] public partial string Title { get; set; }
     [Reactive] public partial ObservableCollection<TrackViewModel> Tracks { get; set; } = new();
@@ -27,31 +28,45 @@ public partial class TracksViewModel : ReactiveObject, IViewModelBase
     
     private const int PageSize = 50;
 
-    public ReactiveCommand<TrackViewModel, Unit> ClickedCommand { get; }
-    public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
+    public RelayCommand<TrackViewModel> ClickedCommand { get; }
+    public AsyncRelayCommand LoadMoreCommand { get; }
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
 
-    public TracksViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService)
+    public TracksViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         _playersService = playersService;
+        _logger = loggerFactory.CreateLogger<TracksViewModel>();
         HostScreen = screen;
         Title = "Tracks";
 
-        ClickedCommand = ReactiveCommand.Create<TrackViewModel>(item =>
+        ClickedCommand = new RelayCommand<TrackViewModel>(item =>
         {
-            MessageBus.Current.SendMessage(MenuHelper.BuildStandardPopup(_playersService, item.Track));
-        });
+            if (item == null)
+                return;
 
-        LoadMoreCommand = ReactiveCommand.CreateFromTask(
-            LoadMoreAsync,
-            this.WhenAnyValue(x => x.IsLoading, x => x.HasMoreItems, (loading, hasMore) => !loading && hasMore)
-        );
+            MessageBus.Current.SendMessage(MenuHelper.BuildStandardPopup(_playersService, item.Track));
+        }, item => item != null);
+
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, CanLoadMore);
+
+        this.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(IsLoading) or nameof(HasMoreItems))
+            {
+                LoadMoreCommand.NotifyCanExecuteChanged();
+            }
+        };
 
 #pragma warning disable CS4014
         _ = LoadInitialAsync();
 #pragma warning restore CS4014
+    }
+
+    private bool CanLoadMore()
+    {
+        return !IsLoading && HasMoreItems;
     }
 
     private async Task LoadInitialAsync()
@@ -91,7 +106,7 @@ public partial class TracksViewModel : ReactiveObject, IViewModelBase
                     CurrentOffset += PageSize;
                 }
                 
-                Debug.WriteLine($"Loaded {response.Result.Count} tracks. Total: {Tracks.Count}. HasMore: {HasMoreItems}");
+                _logger.LogInformation($"Loaded {response.Result.Count} tracks. Total: {Tracks.Count}. HasMore: {HasMoreItems}");
             }
             else
             {
@@ -100,7 +115,7 @@ public partial class TracksViewModel : ReactiveObject, IViewModelBase
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error loading tracks: {ex.Message}");
+            _logger.LogError(ex, $"Error loading tracks");
             HasMoreItems = false;
         }
         finally

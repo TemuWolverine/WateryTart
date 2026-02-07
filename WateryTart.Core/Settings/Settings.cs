@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Avalonia.Logging;
 using WateryTart.Service.MassClient.Models.Auth;
 
 namespace WateryTart.Core.Settings;
@@ -88,6 +89,17 @@ public partial class Settings : INotifyPropertyChanged, ISettings
         }
     }
 
+    public LoggerSettings LoggerSettings
+    {
+        get => field;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
     [JsonIgnore]
     public string Path
     {
@@ -118,7 +130,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
             try
             {
                 var fileData = File.ReadAllText(path);
-                
+
                 var loaded = JsonSerializer.Deserialize<Settings>(fileData, SettingsJsonContext.Default.Settings);
 
                 if (loaded != null)
@@ -130,12 +142,18 @@ public partial class Settings : INotifyPropertyChanged, ISettings
                     WindowHeight = loaded.WindowHeight;
                     WindowPosX = loaded.WindowPosX;
                     WindowPosY = loaded.WindowPosY;
+                    LoggerSettings = loaded.LoggerSettings;
                 }
+
+                // Initialize if not loaded
+                LoggerSettings ??= new LoggerSettings();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error loading settings: {ex.Message}");
             }
+
+
         }
         else
         {
@@ -147,7 +165,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
         _suppressSave = false;
     }
 
-    private void Save()
+    public void Save()
     {
         if (!_suppressSave && !string.IsNullOrEmpty(Path))
         {
@@ -178,6 +196,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
     DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
 [JsonSerializable(typeof(Settings))]
 [JsonSerializable(typeof(MassCredentials))]
+[JsonSerializable(typeof(LoggerSettings))]
 internal partial class SettingsJsonContext : JsonSerializerContext
 {
 }

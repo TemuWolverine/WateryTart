@@ -9,10 +9,9 @@ public partial class MainView : UserControl
     {
     }
 
-
     private void MainView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         var vm = DataContext as MainWindowViewModel;
-        vm.Connect();
+        _ = vm.Connect();
     }
 }

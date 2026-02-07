@@ -1,16 +1,14 @@
-using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Runtime;
 using System.Threading.Tasks;
 using WateryTart.Core.Services.Discovery;
 using WateryTart.Core.Settings;
 using WateryTart.Service.MassClient;
 using WateryTart.Service.MassClient.Models.Auth;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -22,48 +20,48 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
 {
     private readonly IMassWsClient _massClient;
     private readonly ISettings _settings;
-    private readonly IScreen _screen;
     private readonly IMassServerDiscovery _discovery;
     private bool _disposed;
 
-    public string? UrlPathSegment { get; }
+    public string? UrlPathSegment { get; } = "login";
+
     public IScreen HostScreen { get; }
-    public string Title { get; set; }
-    public bool ShowMiniPlayer { get; }
-    public bool ShowNavigation { get; }
+    public string Title { get; set; } = "Login";
+    public bool ShowMiniPlayer { get; } = false;
+    public bool ShowNavigation { get; } = false;
 
-    [Reactive] public partial string Server { get; set; }
+    [Reactive] public partial string Server { get; set; } = string.Empty;
 
-    [Reactive] public partial string Username { get; set; }
+    [Reactive] public partial string Username { get; set; } = string.Empty;
 
-    [Reactive] public partial string Password { get; set; }
+    [Reactive] public partial string Password { get; set; } = string.Empty;
 
-    [Reactive] public partial string ErrorMessage { get; set; }
+    [Reactive] public partial string ErrorMessage { get; set; } = string.Empty;
 
-    [Reactive] public partial bool HasError { get; set; }
+    [Reactive] public partial bool HasError { get; set; } = false;
 
-    [Reactive] public partial bool IsLoading { get; set; }
+    [Reactive] public partial bool IsLoading { get; set; } = false;
 
-    [Reactive] public partial bool IsScanning { get; set; }
+    [Reactive] public partial bool IsScanning { get; set; } = false;
 
     [Reactive] public partial DiscoveredServer? SelectedServer { get; set; }
 
-    [Reactive] public partial bool IsHomeAssistantAddon { get; set; }
+    [Reactive] public partial bool IsHomeAssistantAddon { get; set; } = false;
 
     public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = new();
 
-    public ReactiveCommand<Unit, Unit> LoginCommand { get; }
-    public ReactiveCommand<Unit, Unit> RefreshServersCommand { get; }
+    public AsyncRelayCommand LoginCommand { get; }
+    public AsyncRelayCommand RefreshServersCommand { get; }
 
     public LoginViewModel(IScreen screen, IMassWsClient massClient, ISettings settings, IMassServerDiscovery? discovery = null)
     {
         _massClient = massClient;
         _settings = settings;
-        _screen = screen;
+        HostScreen = screen;
         _discovery = discovery ?? new MassServerDiscovery();
 
-        LoginCommand = ReactiveCommand.CreateFromTask(ExecuteLogin);
-        RefreshServersCommand = ReactiveCommand.CreateFromTask(RefreshServers);
+        LoginCommand = new AsyncRelayCommand(ExecuteLogin);
+        RefreshServersCommand = new AsyncRelayCommand(RefreshServers);
 
         // Subscribe to discovery events
         _discovery.ServerDiscovered += OnServerDiscovered;
@@ -205,7 +203,7 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
             };
 
             MessageBus.Current.SendMessage(new FromLoginMessage());
-            _screen.Router.NavigateBack.Execute();
+            HostScreen.Router.NavigateBack.Execute();
             return;
         }
         SetError(x.Error);

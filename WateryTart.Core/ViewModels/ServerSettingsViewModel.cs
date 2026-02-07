@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services.Discovery;
 using WateryTart.Core.Settings;
 using WateryTart.Service.MassClient;
@@ -22,26 +23,26 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
     public string Icon => "Server";
 
     // Current connection info (read-only display)
-    [Reactive] public partial string CurrentServer { get; set; }
-    [Reactive] public partial string CurrentUsername { get; set; }
+    [Reactive] public partial string CurrentServer { get; set; } = string.Empty;
+    [Reactive] public partial string CurrentUsername { get; set; } = string.Empty;
     public string MaskedPassword => "**********";
 
     // New connection fields
-    [Reactive] public partial string Server { get; set; }
-    [Reactive] public partial string Username { get; set; }
-    [Reactive] public partial string Password { get; set; }
-    [Reactive] public partial string ErrorMessage { get; set; }
-    [Reactive] public partial bool HasError { get; set; }
-    [Reactive] public partial bool IsLoading { get; set; }
-    [Reactive] public partial bool IsScanning { get; set; }
+    [Reactive] public partial string Server { get; set; } = string.Empty;
+    [Reactive] public partial string Username { get; set; } = string.Empty;
+    [Reactive] public partial string Password { get; set; } = string.Empty;
+    [Reactive] public partial string ErrorMessage { get; set; } = string.Empty;
+    [Reactive] public partial bool HasError { get; set; } = false;
+    [Reactive] public partial bool IsLoading { get; set; } = false;
+    [Reactive] public partial bool IsScanning { get; set; } = false;
     [Reactive] public partial DiscoveredServer? SelectedServer { get; set; }
-    [Reactive] public partial bool IsHomeAssistantAddon { get; set; }
-    [Reactive] public partial bool ShowSuccess { get; set; }
+    [Reactive] public partial bool IsHomeAssistantAddon { get; set; } = false;
+    [Reactive] public partial bool ShowSuccess { get; set; } = false;
 
     public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = new();
 
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
-    public ReactiveCommand<Unit, Unit> RefreshServersCommand { get; }
+    public AsyncRelayCommand SaveCommand { get; }
+    public AsyncRelayCommand RefreshServersCommand { get; }
 
     public ServerSettingsViewModel(IMassWsClient massClient, ISettings settings, IMassServerDiscovery? discovery = null)
     {
@@ -53,8 +54,8 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
         CurrentServer = _settings.Credentials?.BaseUrl ?? "Not configured";
         CurrentUsername = _settings.Credentials?.Username ?? "Not configured";
 
-        SaveCommand = ReactiveCommand.CreateFromTask(ExecuteSave);
-        RefreshServersCommand = ReactiveCommand.CreateFromTask(RefreshServers);
+        SaveCommand = new AsyncRelayCommand(ExecuteSave);
+        RefreshServersCommand = new AsyncRelayCommand(RefreshServers);
 
         // Subscribe to discovery events
         _discovery.ServerDiscovered += OnServerDiscovered;
@@ -146,15 +147,11 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
     {
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            if (!DiscoveredServers.Any(s => s.Address == server.Address && s.Port == server.Port))
-            {
-                DiscoveredServers.Add(server);
+            if (DiscoveredServers.Any(s => s.Address == server.Address && s.Port == server.Port)) 
+                return;
 
-                if (SelectedServer == null)
-                {
-                    SelectedServer = server;
-                }
-            }
+            DiscoveredServers.Add(server);
+            SelectedServer ??= server;
         });
     }
 

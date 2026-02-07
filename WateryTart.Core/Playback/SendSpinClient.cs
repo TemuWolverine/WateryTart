@@ -13,7 +13,6 @@ namespace WateryTart.Core.Playback;
 public class SendSpinClient : IDisposable, IReaper
 {
     private readonly SendspinClientService _sendspinClient;
-    private readonly IAudioPlayer _audioPlayer;
     private readonly AudioPipeline _audioPipeline;
     private readonly ILogger<SendSpinClient> _logger;
     private AudioPlayerState _state = AudioPlayerState.Uninitialized;
@@ -182,7 +181,6 @@ public class SendSpinClient : IDisposable, IReaper
             if (State == AudioPlayerState.Stopped || State == AudioPlayerState.Uninitialized)
                 return;
 
-            _audioPlayer?.Stop();
             State = AudioPlayerState.Stopped;
             _logger.LogInformation("Audio playback stopped");
         }

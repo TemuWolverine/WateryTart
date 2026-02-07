@@ -2,12 +2,11 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Reactive;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Service.MassClient;
-using WateryTart.Service.MassClient.Models;
+using CommunityToolkit.Mvvm.Input;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -17,6 +16,7 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
     public IScreen HostScreen { get; }
     private readonly IMassWsClient _massClient;
     private readonly IPlayersService _playersService;
+    private readonly ILogger _logger;
 
     [Reactive] public partial string Title { get; set; }
     [Reactive] public partial ObservableCollection<PlaylistViewModel> Playlists { get; set; } = new();
@@ -26,32 +26,46 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
     
     private const int PageSize = 50;
 
-    public ReactiveCommand<PlaylistViewModel, Unit> ClickedCommand { get; }
-    public ReactiveCommand<Unit, Unit> LoadMoreCommand { get; }
+    public RelayCommand<PlaylistViewModel> ClickedCommand { get; }
+    public AsyncRelayCommand LoadMoreCommand { get; }
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
 
-    public PlaylistsViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService)
+    public PlaylistsViewModel(IMassWsClient massClient, IScreen screen, IPlayersService playersService, ILogger logger)
     {
         _massClient = massClient;
         _playersService = playersService;
+        _logger = logger;
         HostScreen = screen;
         Title = "Playlists";
 
-        ClickedCommand = ReactiveCommand.Create<PlaylistViewModel>(item =>
+        ClickedCommand = new RelayCommand<PlaylistViewModel>(item =>
         {
+            if (item?.Playlist.ItemId == null || item.Playlist?.Provider == null)
+                return;
+
             item.LoadFromId(item.Playlist.ItemId, item.Playlist.Provider);
             screen.Router.Navigate.Execute(item);
-        });
+        }, item => item != null);
 
-        LoadMoreCommand = ReactiveCommand.CreateFromTask(
-            LoadMoreAsync,
-            this.WhenAnyValue(x => x.IsLoading, x => x.HasMoreItems, (loading, hasMore) => !loading && hasMore)
-        );
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, CanLoadMore);
+
+        this.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(IsLoading) or nameof(HasMoreItems))
+            {
+                LoadMoreCommand.NotifyCanExecuteChanged();
+            }
+        };
 
 #pragma warning disable CS4014
         _ = LoadInitialAsync();
 #pragma warning restore CS4014
+    }
+
+    private bool CanLoadMore()
+    {
+        return !IsLoading && HasMoreItems;
     }
 
     private async Task LoadInitialAsync()
@@ -98,7 +112,7 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error loading playlists: {ex.Message}");
+            _logger.LogError(ex, $"Error loading playlists");
             HasMoreItems = false;
         }
         finally
