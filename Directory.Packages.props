@@ -41,7 +41,7 @@
     <PackageVersion Include="ReactiveUI.AndroidX" Version="22.3.1" />
     <PackageVersion Include="ReactiveUI.Avalonia" Version="11.3.8" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.6.1" />
-    <PackageVersion Include="Sendspin.SDK" Version="6.3.5" />
+    <PackageVersion Include="Sendspin.SDK" Version="6.1.1" />
     <PackageVersion Include="SharpHook" Version="7.1.1" />
     <PackageVersion Include="SharpHook.R3" Version="7.1.1" />
     <PackageVersion Include="SharpHook.Reactive" Version="7.1.1" />
@@ -60,8 +60,7 @@
     <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="11.3.9.4" />
     <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="11.3.9.4" />
     <PackageVersion Include="Xaml.Behaviors.SourceGenerators" Version="11.3.9.3" />
-
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="Karambolo.Extensions.Logging.File" Version="4.1.0"/>
+    <PackageVersion Include="Karambolo.Extensions.Logging.File" Version="4.1.0" />
   </ItemGroup>
 </Project>

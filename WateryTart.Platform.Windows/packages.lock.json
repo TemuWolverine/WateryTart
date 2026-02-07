@@ -63,9 +63,9 @@
       },
       "Sendspin.SDK": {
         "type": "Direct",
-        "requested": "[6.3.5, )",
-        "resolved": "6.3.5",
-        "contentHash": "rxZjhzkPSe/NcFD+G9suCzVw7bueWARdJ22LJ+Cdl7C5p4Pqi9XMHw3j9D0P+TWfuXWm+SWYKglIQzMxS/65kg==",
+        "requested": "[6.1.1, )",
+        "resolved": "6.1.1",
+        "contentHash": "2AKdwHRMHyGVJAK9nYvWNq3Jz6v5BcAO53atrP33gwNk/FO2DzNy1p5joVSMCJ6dlJGA/0m2qZ1hOdreThZGrA==",
         "dependencies": {
           "Concentus": "2.2.2",
           "Fleck": "1.2.0",
@@ -612,7 +612,7 @@
           "Material.Icons.Avalonia": "[2.4.1, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.2, )",
           "ReactiveUI.Avalonia": "[11.3.8, )",
-          "Sendspin.SDK": "[6.3.5, )",
+          "Sendspin.SDK": "[6.1.1, )",
           "SharpHook": "[7.1.1, )",
           "SkiaSharp": "[2.88.9, )",
           "System.Device.Gpio": "[4.1.0, )",
