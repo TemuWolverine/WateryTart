@@ -590,16 +590,10 @@
           "Xaml.Behaviors.Interactivity": "11.3.9.4"
         }
       },
-      "asyncimageloader.avalonia": {
-        "type": "Project",
-        "dependencies": {
-          "Avalonia": "[11.3.11, )"
-        }
-      },
       "waterytart.core": {
         "type": "Project",
         "dependencies": {
-          "AsyncImageLoader.Avalonia": "[1.0.0, )",
+          "AsyncImageLoader.Avalonia": "[3.6.0, )",
           "Autofac": "[9.0.0, )",
           "Avalonia": "[11.3.11, )",
           "Avalonia.Diagnostics": "[11.3.11, )",
@@ -628,6 +622,15 @@
           "Microsoft.Extensions.Logging": "[10.0.2, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.2, )",
           "Websocket.Client": "[5.3.0, )"
+        }
+      },
+      "AsyncImageLoader.Avalonia": {
+        "type": "CentralTransitive",
+        "requested": "[3.6.0, )",
+        "resolved": "3.6.0",
+        "contentHash": "MXZjvfVM1RGFisN6HkVZqpA9qXI1NBszwZ68TGrJY0dZB/zYCqlo8lbkIYj6LU3eRHHPt4IHJbWoKIFTqSINIw==",
+        "dependencies": {
+          "Avalonia": "11.1.0"
         }
       },
       "Autofac": {

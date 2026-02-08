@@ -39,7 +39,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     [Reactive] public partial ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
     [Reactive] public partial ObservableCollection<PlayerQueue> Queues { get; set; } = new ObservableCollection<PlayerQueue>();
     [Reactive] public partial string SelectedPlayerQueueId { get; set; } = string.Empty;
-    [Reactive] public partial PlayerQueue SelectedQueue { get; set; } = new PlayerQueue();
+    [Reactive] public partial PlayerQueue? SelectedQueue { get; set; } = new PlayerQueue();
     public ReadOnlyObservableCollection<TrackViewModel> CurrentQueue { get => currentQueue; }
     public ReadOnlyObservableCollection<TrackViewModel> PlayedQueue { get => playedQueue; }
 
@@ -106,7 +106,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         _subscriptions.Add(QueuedItems
                 .Connect()
                 .Sort(SortExpressionComparer<QueuedItem>.Ascending(t => t.sort_index))
-                .Filter(i => SelectedQueue != null && (i.sort_index > SelectedQueue.current_index || i.media_item.ItemId == SelectedQueue.current_item.media_item.ItemId))
+                .Filter(i => SelectedQueue != null && (i.sort_index > SelectedQueue.current_index || i.media_item?.ItemId == SelectedQueue.current_item?.media_item?.ItemId))
                 .Transform(i => GetOrCreateTrackViewModel(i))
                 .Bind(out currentQueue)
                 .Subscribe());
