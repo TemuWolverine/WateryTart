@@ -161,5 +161,11 @@ public static partial class MassClientExtensions
         {
             return await SendAsync<TracksResponse>(c, IdAndProvider(Commands.MusicAlbumTracks, id, provider_instance_id_or_domain));
         }
+
+        public async Task<TracksResponse> MusicSimilarTracksAsync(string id, string provider_instance_id_or_domain)
+        {
+            return await SendAsync<TracksResponse>(c, IdAndProvider(Commands.MusicSimilarTracks, id, provider_instance_id_or_domain));
+        }
+
     }
 }
