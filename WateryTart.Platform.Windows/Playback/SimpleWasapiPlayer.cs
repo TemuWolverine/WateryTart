@@ -2,15 +2,12 @@
 // Licensed under the MIT License. See LICENSE file in the project root. https://github.com/chrisuthe/windowsSpin/.
 // </copyright>
 
-using Iot.Device.Card.CreditCardProcessing;
 using NAudio.Wave;
 using Sendspin.SDK.Audio;
 using Sendspin.SDK.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using UnitsNet;
-using WateryTart.Core;
 
 namespace WateryTart.Platform.Windows.Playback;
 

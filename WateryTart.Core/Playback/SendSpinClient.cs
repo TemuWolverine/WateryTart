@@ -81,6 +81,7 @@ public class SendSpinClient : IDisposable, IReaper
                 precisionTimer: null,
                 waitForConvergence: true,
                 convergenceTimeoutMs: 5000);
+                useMonotonicTimer: false);
 
             var capabilities = new ClientCapabilities
             {
