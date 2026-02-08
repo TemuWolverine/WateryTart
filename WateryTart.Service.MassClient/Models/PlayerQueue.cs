@@ -11,31 +11,31 @@ public class PlayerQueue : INotifyPropertyChanged
     private string? _state;
 
     [JsonPropertyName("queue_id")]
-    public string? queue_id { get; set; }
+    public string? QueueId { get; set; }
     
     [JsonPropertyName("active")]
-    public bool active { get; set; }
+    public bool Active { get; set; }
     
     [JsonPropertyName("display_name")]
-    public string? display_name { get; set; }
+    public string? DisplayName { get; set; }
     
     [JsonPropertyName("available")]
-    public bool available { get; set; }
+    public bool Available { get; set; }
     
     [JsonPropertyName("items")]
-    public Int64 items { get; set; }
+    public Int64 Items { get; set; }
     
     [JsonPropertyName("shuffle_enabled")]
-    public bool shuffle_enabled { get; set; }
+    public bool ShuffleEnabled { get; set; }
     
     [JsonPropertyName("repeat_mode")]
-    public string? repeat_mode { get; set; }
+    public string? RepeatMode { get; set; }
     
     [JsonPropertyName("dont_stop_the_music_enabled")]
-    public bool dont_stop_the_music_enabled { get; set; }
+    public bool DontStopTheMusicEnabled { get; set; }
     
     [JsonPropertyName("current_index")]
-    public Int64? current_index
+    public Int64? CurrentIndex
     {
         get => current_index1;
         set
@@ -46,13 +46,13 @@ public class PlayerQueue : INotifyPropertyChanged
     }
     
     [JsonPropertyName("index_in_buffer")]
-    public Int64? index_in_buffer { get; set; }
+    public Int64? IndexInBuffer { get; set; }
     
     [JsonPropertyName("elapsed_time")]
-    public double? elapsed_time { get; set; }
+    public double? ElapsedTime { get; set; }
     
     [JsonPropertyName("elapsed_time_last_updated")]
-    public double? elapsed_time_last_updated { get; set; }
+    public double? ElapsedTimeLastUpdated { get; set; }
 
     [JsonPropertyName("state")]
     public string? state
@@ -69,7 +69,7 @@ public class PlayerQueue : INotifyPropertyChanged
     }
 
     [JsonPropertyName("current_item")]
-    public QueuedItem? current_item
+    public QueuedItem? CurrentItem
     {
         get => field;
         set

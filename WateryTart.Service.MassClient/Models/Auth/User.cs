@@ -1,10 +1,12 @@
-﻿namespace WateryTart.Service.MassClient.Models.Auth
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models.Auth
 {
     public class User
     {
-        public string? user_id { get; set; }
-        public string? username { get; set; }
-        public string? display_name { get; set; }
-        public string? role { get; set; }
+        [JsonPropertyName("user_id")] public string? UserId { get; set; }
+        [JsonPropertyName("username")]public string? Username { get; set; }
+        [JsonPropertyName("display_name")]public string? DisplayName { get; set; }
+        [JsonPropertyName("role")] public string? Role { get; set; }
     }
 }

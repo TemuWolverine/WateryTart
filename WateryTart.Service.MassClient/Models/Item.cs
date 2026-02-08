@@ -1,16 +1,18 @@
-﻿namespace WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models;
 
 public class Item : MediaItemBase
 {
-    public object? position { get; set; }
-    public string? owner { get; set; }
-    public bool? is_editable { get; set; }
-    public bool? available { get; set; }
-    public int? duration { get; set; }
-    public List<Artist>? artists { get; set; }
-    public int? last_played { get; set; }
-    public Album? album { get; set; }
-    public int? disc_number { get; set; }
-    public int? track_number { get; set; }
-    public string? album_type { get; set; }
+    [JsonPropertyName("position")]  public object? Position { get; set; }
+    [JsonPropertyName("owner")] public string? Owner { get; set; }
+    [JsonPropertyName("is_editable")] public bool? IsEditable { get; set; }
+    [JsonPropertyName("available")] public bool? Available { get; set; }
+    [JsonPropertyName("duration")] public int? Duration { get; set; }
+    [JsonPropertyName("artists")] public List<Artist>? Artists { get; set; }
+    [JsonPropertyName("last_played")] public int? LastPlayed { get; set; }
+    [JsonPropertyName("album")] public Album? Album { get; set; }
+    [JsonPropertyName("disc_number")] public int? DiscNumber { get; set; }
+    [JsonPropertyName("track_number")] public int? TrackNumber { get; set; }
+    [JsonPropertyName("album_type")] public string? AlbumType { get; set; }
 }

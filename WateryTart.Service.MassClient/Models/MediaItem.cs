@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace WateryTart.Service.MassClient.Models;
 
 public class MediaItem : Item, INotifyPropertyChanged
 {
-    public double elapsed_time
+    [JsonPropertyName("elapsed_time")]
+    public double ElapsedTime
     {
         get => field;
         set
@@ -18,9 +20,9 @@ public class MediaItem : Item, INotifyPropertyChanged
     {
         get
         {
-            if (duration == null || duration == 0)
+            if (Duration == null || Duration == 0)
                     return 0;
-            return (elapsed_time / duration.Value) * 100;
+            return (ElapsedTime / Duration.Value) * 100;
         }
     }
 

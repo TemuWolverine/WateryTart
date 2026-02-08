@@ -75,18 +75,18 @@ namespace WateryTart.Service.MassClient
 
                 this.GetAuthToken(username, password, (response) =>
                 {
-                    logger.LogInformation("Auth response received: success={Success}", response?.Result?.success);
+                    logger.LogInformation("Auth response received: success={Success}", response?.Result?.Success);
                     if (response?.Result == null)
                     {
                         tcs.TrySetResult(new LoginResults { Success = false, Error = "No response from server" });
                         return;
                     }
-                    if (!response.Result.success)
+                    if (!response.Result.Success)
                     {
                         var r = new LoginResults
                         {
                             Success = false,
-                            Error = response.Result.error ?? "Authentication failed"
+                            Error = response.Result.Error ?? "Authentication failed"
 
                         };
                         tcs.TrySetResult(r);
@@ -96,7 +96,7 @@ namespace WateryTart.Service.MassClient
                     {
                         Credentials = new MassCredentials
                         {
-                            Token = response.Result.access_token,
+                            Token = response.Result.AccessToken,
                             BaseUrl = baseurl
                         },
                         Success = true

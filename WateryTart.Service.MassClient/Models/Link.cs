@@ -1,7 +1,10 @@
-﻿namespace WateryTart.Service.MassClient.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace WateryTart.Service.MassClient.Models;
 
 public class Link
 {
-    public string? type { get; set; }
-    public string? url { get; set; }
+
+    [JsonPropertyName("type")] public string? Type { get; set; }
+    [JsonPropertyName("url")] public string? Url { get; set; }
 }

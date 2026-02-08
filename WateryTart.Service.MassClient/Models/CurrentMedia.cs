@@ -8,33 +8,34 @@ namespace WateryTart.Service.MassClient.Models;
 public partial class CurrentMedia : INotifyPropertyChanged
 {
     [JsonPropertyName("uri")]
-    public string? uri { get; set; }
+    public string? Uri { get; set; }
     
     [JsonPropertyName("media_type")]
-    public MediaType media_type { get; set; }
+    public MediaType MediaType { get; set; }
     
     [JsonPropertyName("title")]
-    public string? title { get; set; }
+    public string? Title { get; set; }
     
     [JsonPropertyName("artist")]
-    public string? artist { get; set; }
+    public string? Artist { get; set; }
     
     [JsonPropertyName("album")]
-    public string? album { get; set; }
+    public string? Album { get; set; }
     
     [JsonPropertyName("image_url")]
-    public string? image_url { get; set; }
+    public string? ImageUrl { get; set; }
     
     [JsonPropertyName("duration")]
-    public int? duration { get; set; }
+    public int? Duration { get; set; }
     
     [JsonPropertyName("queue_id")]
-    public string? queue_id { get; set; }
+    public string? QueueId { get; set; }
     
     [JsonPropertyName("queue_item_id")]
-    public string? queue_item_id { get; set; }
+    public string? QueueItemId { get; set; }
 
-    public double? elapsed_time
+    [JsonPropertyName("elapsed_time")]
+    public double? ElapsedTime
     {
         get => field;
         set
@@ -47,18 +48,19 @@ public partial class CurrentMedia : INotifyPropertyChanged
             }
         }
     }
-
-    public double progress
+    [JsonPropertyName("progress")]
+    public double Progress
     {
         get
         {
-            if (duration == null || duration == 0 || elapsed_time == null)
+            if (Duration == null || Duration == 0 || ElapsedTime == null)
                 return 0;
             
-            return ((double)elapsed_time / (double)duration) * 100;
+            return ((double)ElapsedTime / (double)Duration) * 100;
         }
     }
 
+    [JsonPropertyName("elapsed_time_last_updated")]
     public double? elapsed_time_last_updated { get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -5,26 +5,28 @@ namespace WateryTart.Service.MassClient.Models;
 public class QueuedItem
 {
     [JsonPropertyName("queue_id")]
-    public string? queue_id { get; set; }
+    public string? QueueId { get; set; }
     
     [JsonPropertyName("queue_item_id")]
-    public string? queue_item_id { get; set; }
+    public string? QueueItemId { get; set; }
     
     [JsonPropertyName("name")]
-    public string? name { get; set; }
+    public string? Name { get; set; }
     
     [JsonPropertyName("duration")]
-    public int? duration { get; set; }
+    public int? Duration { get; set; }
     
     [JsonPropertyName("sort_index")]
-    public int sort_index { get; set; }
+    public int SortIndex { get; set; }
     
     [JsonPropertyName("media_item")]
-    public MediaItem? media_item { get; set; }
+    public MediaItem? MediaItem { get; set; }
     
     [JsonPropertyName("image")]
-    public Image? image { get; set; }
-    public Streamdetails? streamdetails { get; set; }
+    public Image? Image { get; set; }
+
+    [JsonPropertyName("StreamDetails")]
+    public Streamdetails? StreamDetails { get; set; }
 }
 
 

@@ -6,14 +6,14 @@ namespace WateryTart.Service.MassClient.Models;
 public class Image
 {
     [JsonPropertyName("type")]
-    public ImageType type { get; set; }
+    public ImageType Type { get; set; }
     
     [JsonPropertyName("path")]
-    public string? path { get; set; }
+    public string? Path { get; set; }
     
     [JsonPropertyName("provider")]
-    public string? provider { get; set; }
+    public string? Provider { get; set; }
     
     [JsonPropertyName("remotely_accessible")]
-    public bool remotely_accessible { get; set; }
+    public bool RemotelyAccessible { get; set; }
 }
