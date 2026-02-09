@@ -25,6 +25,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AvaloniaResource Include="..\Assets\logo_square.png" Link="Assets\logo_square.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Include="..\Assets\logo_square.ico" Link="Assets\logo_square.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AsyncImageLoader.Avalonia" />
 		<PackageReference Include="Autofac" />
 		<PackageReference Include="Avalonia" />

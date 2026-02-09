@@ -33,7 +33,7 @@ public class TrayService : ITrayService
 
         try
         {
-            var uri = new Uri("avares://WateryTart.Core/Assets/logo.ico");
+            var uri = new Uri("avares://WateryTart.Core/Assets/logo_square.ico");
             using var stream = AssetLoader.Open(uri);
             icon = new WindowIcon(stream);
 

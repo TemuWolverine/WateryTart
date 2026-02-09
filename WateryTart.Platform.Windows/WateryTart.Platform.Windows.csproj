@@ -14,11 +14,23 @@
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<EnableXamlCompilation>true</EnableXamlCompilation>
+		<ApplicationIcon>..\Assets\logo_square.ico</ApplicationIcon>
+
+
 	</PropertyGroup>
+	<ItemGroup>
+		<Resource Include="..\Assets\logo_square.ico" />
+	</ItemGroup>
 	<PropertyGroup>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AssemblyName>WateryTartDesktop</AssemblyName>
 	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\Assets\logo-128.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia.Desktop" />
@@ -59,6 +71,7 @@
 
 	<PropertyGroup>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<PackageIcon>logo-128.png</PackageIcon>
 	</PropertyGroup>
 
 
@@ -78,7 +91,7 @@
 
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <Optimize>False</Optimize>
+		<Optimize>False</Optimize>
 	</PropertyGroup>
 
 
@@ -93,7 +106,7 @@
 
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMRELEASE|x64'">
-	  <Optimize>True</Optimize>
+		<Optimize>True</Optimize>
 	</PropertyGroup>
 
 

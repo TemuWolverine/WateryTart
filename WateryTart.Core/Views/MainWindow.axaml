@@ -15,7 +15,7 @@
 		ExtendClientAreaChromeHints="NoChrome"
 		ExtendClientAreaToDecorationsHint="True"
 		x:Class="WateryTart.Core.Views.MainWindow"
-		Icon="avares://WateryTart.Core/Assets/logo.png"
+		Icon="avares://WateryTart.Core/Assets/logo_square.png"
 		Padding="0"
 		Width="800"
 		Height="480"

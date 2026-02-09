@@ -28,9 +28,11 @@ public partial class ColourService : ReactiveObject, IColourService
     {
         _httpClient = new HttpClient();
 
-        ColourA = FromHex("FF5B4272");
-        ColourB = FromHex("FF1C1C1E");
-        ColourAccent = FromHex("880808");
+        //ColourA = FromHex("FF5B4272");
+        //ColourB = FromHex("FF1C1C1E");
+        ColourA = FromHex("092127");
+        ColourB = FromHex("144753");
+        ColourAccent = FromHex("FFFFFF");
         LastPick = ColourChosen.AB;
     }
 
