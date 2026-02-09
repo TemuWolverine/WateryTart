@@ -605,7 +605,7 @@
           "SharpHook": "[7.1.1, )",
           "SkiaSharp": "[2.88.9, )",
           "System.Device.Gpio": "[4.1.0, )",
-          "WateryTart.MusicAssistant": "[1.0.2, )",
+          "WateryTart.MusicAssistant": "[1.0.4, )",
           "Xaml.Behaviors.Avalonia": "[11.3.9.4, )",
           "Xaml.Behaviors.Interactivity": "[11.3.9.4, )",
           "Zeroconf": "[3.7.16, )"
@@ -805,9 +805,9 @@
       },
       "WateryTart.MusicAssistant": {
         "type": "CentralTransitive",
-        "requested": "[1.0.2, )",
-        "resolved": "1.0.2",
-        "contentHash": "YKuswyJecAMzgD5MQTmk/oL9pfZSijERs3mjm0uZvJmdmpDfyMBMUFjBArXPUyETqgk0rVxdvxkc1a3JUvPCzQ==",
+        "requested": "[1.0.4, )",
+        "resolved": "1.0.4",
+        "contentHash": "D+mgwpJgI24QbJAbeRI+mNR2/7/YRt65Ybe2r5/aQCNyDsITXlX3dAEhpmM71jzLMrN6/KMy05n+jBnipKbT9w==",
         "dependencies": {
           "Microsoft.Extensions.Logging": "10.0.2",
           "Microsoft.Extensions.Logging.Console": "10.0.2",

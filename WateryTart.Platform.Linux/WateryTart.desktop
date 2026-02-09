@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=MyProgram
+Comment=MyProgram, great for doing X
+Icon=myprogram
+Exec=myprogram
+StartupWMClass=myprogram
+Terminal=false
+Type=Application
+Categories=Development
+GenericName=MyProgram
+Keywords=keyword1; keyword2; keyword3

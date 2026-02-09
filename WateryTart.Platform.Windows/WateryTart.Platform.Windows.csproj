@@ -6,7 +6,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;X64Debug;ARMRELEASE</Configurations>
-		<Platforms>AnyCPU;ARM64</Platforms>
+		<Platforms>AnyCPU;ARM64;x64</Platforms>
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<EventSourceSupport>true</EventSourceSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
@@ -77,6 +77,11 @@
 	</PropertyGroup>
 
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
 		<Optimize>False</Optimize>
 	</PropertyGroup>
@@ -84,6 +89,11 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMRELEASE|AnyCPU'">
 		<Optimize>True</Optimize>
+	</PropertyGroup>
+
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMRELEASE|x64'">
+	  <Optimize>True</Optimize>
 	</PropertyGroup>
 
 

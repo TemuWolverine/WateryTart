@@ -1,0 +1,10 @@
+Package: WateryTart
+Version: 1.0.0
+Priority: optional
+Architecture: all
+Multi-Arch: no
+Depends: 
+Maintainer: Paul Jenkins
+Homepage: https://github.com/TemuWolverine/WateryTart
+Description: WateryTart, a MediaAssistant Client
+Copyright: 2026 Paul Jenkins

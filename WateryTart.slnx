@@ -4,8 +4,8 @@
     <BuildType Name="Debug" />
     <BuildType Name="Release" />
     <BuildType Name="X64Debug" />
-    <Platform Name="Any CPU" />
     <Platform Name="ARM64" />
+    <Platform Name="x64" />
   </Configurations>
   <Folder Name="/Solution Items/">
     <File Path="Directory.Packages.props" />
@@ -17,17 +17,25 @@
   </Folder>
   <Project Path="WateryTart.Core/WateryTart.Core.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
   </Project>
   <Project Path="WateryTart.Platform.Linux/WateryTart.Platform.Linux.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
   </Project>
   <Project Path="WateryTart.Platform.macOS/WateryTart.Platform.macOS.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
+    <Build Solution="Debug|x64" Project="false" />
+    <Build Solution="Release|x64" Project="false" />
   </Project>
   <Project Path="WateryTart.Platform.Windows/WateryTart.Platform.Windows.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="ARMRELEASE|Any CPU" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
   </Project>
 </Solution>

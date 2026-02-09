@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/WateryTart.Platform.Linux/out
+/WateryTart.Platform.Linux/staging_folder
+WateryTart.Platform.Linux/WateryTart_Linux_amd64.deb
+WateryTart.Platform.Linux/WateryTart_Linux_arm64.deb
