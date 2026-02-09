@@ -164,7 +164,7 @@ public partial class App : Application
         builder.RegisterType<SendSpinClient>().SingleInstance();
 
         //Volume controllers
-        builder.RegisterType<WindowsVolumeService>().As<IVolumeService>().As<IReaper>().SingleInstance();
+       // builder.RegisterType<WindowsVolumeService>().As<IVolumeService>().As<IReaper>().SingleInstance();
 
         //Transient viewmodels
         builder.RegisterType<AlbumsListViewModel>();

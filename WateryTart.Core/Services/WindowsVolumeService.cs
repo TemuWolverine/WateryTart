@@ -2,7 +2,7 @@
 using SharpHook.Providers;
 
 namespace WateryTart.Core.Services;
-
+/*
 public class WindowsVolumeService : IVolumeService, IReaper
 {
     private readonly IPlayersService playerService;
@@ -49,3 +49,4 @@ public class WindowsVolumeService : IVolumeService, IReaper
         _hook?.Dispose();
     }
 }
+*/
