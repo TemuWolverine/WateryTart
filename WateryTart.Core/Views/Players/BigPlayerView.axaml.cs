@@ -14,8 +14,8 @@ namespace WateryTart.Core.Views.Players;
 
 public partial class BigPlayerView : ReactiveUserControl<BigPlayerViewModel>
 {
-    private const double SmallDisplayBreakpointWidth = 800.0;
-    private const double SmallDisplayBreakpointHeight = 480;
+    private const double SmallDisplayBreakpointWidth = 801;
+    private const double SmallDisplayBreakpointHeight = 481;
     private bool _isSmallDisplay;
 
     public BigPlayerView()
