@@ -13,7 +13,7 @@ namespace WateryTart.Core.ViewModels;
 
 public class TrackViewModel : ReactiveObject, IViewModelBase, IDisposable
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly IPlayersService _playersService;
     private readonly IScreen _screen;
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -44,7 +44,7 @@ public class TrackViewModel : ReactiveObject, IViewModelBase, IDisposable
     public RelayCommand TrackFullViewCommand { get; }
     public string? UrlPathSegment { get; } = "Track/ID";
 
-    public TrackViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService, Item? t = null)
+    public TrackViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService, Item? t = null)
     {
         _massClient = massClient;
         _screen = screen;

@@ -18,7 +18,7 @@ public class FromLoginMessage()
 }
 public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposable
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly ISettings _settings;
     private readonly IMassServerDiscovery _discovery;
     private bool _disposed;
@@ -53,7 +53,7 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
     public AsyncRelayCommand LoginCommand { get; }
     public AsyncRelayCommand RefreshServersCommand { get; }
 
-    public LoginViewModel(IScreen screen, IWsClient massClient, ISettings settings, IMassServerDiscovery? discovery = null)
+    public LoginViewModel(IScreen screen, MusicAssistantClient massClient, ISettings settings, IMassServerDiscovery? discovery = null)
     {
         _massClient = massClient;
         _settings = settings;
@@ -191,7 +191,8 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
 
     private async Task Login()
     {
-        var x = await _massClient.Login(Username, Password, Server);
+        _massClient.SetBaseUrl(Server);
+        var x = await _massClient.WithWs().GetAuthToken(Username, Password);
 
         if (x.Success)
         {

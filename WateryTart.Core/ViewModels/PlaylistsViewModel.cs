@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
 using CommunityToolkit.Mvvm.Input;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -15,7 +15,7 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
 {
     public string? UrlPathSegment { get; } = "Playlists";
     public IScreen HostScreen { get; }
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly IPlayersService _playersService;
     private readonly ILogger _logger;
 
@@ -32,7 +32,7 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
 
-    public PlaylistsViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService, ILogger logger)
+    public PlaylistsViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService, ILogger logger)
     {
         _massClient = massClient;
         _playersService = playersService;
@@ -90,7 +90,7 @@ public partial class PlaylistsViewModel : ReactiveObject, IViewModelBase
         {
             IsLoading = true;
             
-            var response = await _massClient.PlaylistsGetAsync(limit: PageSize, offset: CurrentOffset);
+            var response = await _massClient.WithWs().GetPlaylistsAsync(limit: PageSize, offset: CurrentOffset);
             
             if (response?.Result != null)
             {

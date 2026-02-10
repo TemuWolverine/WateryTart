@@ -17,13 +17,13 @@ using WateryTart.Core.Settings;
 using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Responses;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
 public partial class SearchViewModel : ReactiveObject, IViewModelBase
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly ISettings _settings;
     private readonly IPlayersService _playersService;
     private readonly ILogger<SearchViewModel> _logger;
@@ -57,7 +57,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
     public ReadOnlyObservableCollection<TrackViewModel> SearchItem => searchItem;
     public ReadOnlyObservableCollection<PlaylistViewModel> SearchPlaylist => searchPlaylist;
 
-    public SearchViewModel(IWsClient massClient, ISettings settings, IPlayersService playersService, IScreen screen, ILoggerFactory loggerFactory)
+    public SearchViewModel(MusicAssistantClient massClient, ISettings settings, IPlayersService playersService, IScreen screen, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         _settings = settings;
@@ -135,7 +135,7 @@ public partial class SearchViewModel : ReactiveObject, IViewModelBase
             {
                 if (!string.IsNullOrEmpty(SearchTerm))
                 {
-                    SearchResponse results = await (_massClient.SearchAsync(SearchTerm));
+                    SearchResponse results = await (_massClient.WithWs().SearchAsync(SearchTerm));
                     var searchResponse = results;
                     _searchResults.Clear();
 #pragma warning disable CS8604 // Possible null reference argument.

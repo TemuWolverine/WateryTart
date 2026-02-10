@@ -19,7 +19,7 @@ namespace WateryTart.Core.Services
 
         ColourChosen LastPick { get; set; }
 
-        Color ColourAccent { get; set; }
+        SolidColorBrush ColourAccent { get; set; }
 
         string LastId { get; set; }
 

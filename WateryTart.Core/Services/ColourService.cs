@@ -19,7 +19,7 @@ public partial class ColourService : ReactiveObject, IColourService
     [Reactive] public partial Color ColourB { get; set; }
     [Reactive] public partial Color ColourC { get; set; }
     [Reactive] public partial Color ColourD { get; set; }
-    [Reactive] public partial Color ColourAccent { get; set; }
+    [Reactive] public partial SolidColorBrush ColourAccent { get; set; }
     [Reactive] public partial ColourChosen LastPick { get; set; }
 
     [Reactive] public partial string LastId { get; set; } = string.Empty;
@@ -32,7 +32,7 @@ public partial class ColourService : ReactiveObject, IColourService
         //ColourB = FromHex("FF1C1C1E");
         ColourA = FromHex("092127");
         ColourB = FromHex("144753");
-        ColourAccent = FromHex("FFFFFF");
+        ColourAccent = new SolidColorBrush(FromHex("FFFFFF"));
         LastPick = ColourChosen.AB;
     }
 
@@ -76,7 +76,7 @@ public partial class ColourService : ReactiveObject, IColourService
                 App.Logger?.LogInformation("Last colours {ColourA} & {ColourB}", ColourA, ColourB);
             }
 
-            ColourAccent = GetTriadColor(colors[2]);
+            ColourAccent = new SolidColorBrush(GetTriadColor(colors[2]));
         }
         catch (Exception ex)
         {

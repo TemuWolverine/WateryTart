@@ -7,14 +7,14 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
 public partial class AlbumsListViewModel : ReactiveObject, IViewModelBase
 {
     private const int PageSize = 50;
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly IPlayersService _playersService;
     public ObservableCollection<AlbumViewModel> Albums { get; set; }
     [Reactive] public partial int CurrentOffset { get; set; } = 0;
@@ -29,7 +29,7 @@ public partial class AlbumsListViewModel : ReactiveObject, IViewModelBase
     [Reactive] public partial string Title { get; set; } = string.Empty;
     public string? UrlPathSegment { get; } = "AlbumsList";
 
-    public AlbumsListViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService)
+    public AlbumsListViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService)
     {
         _massClient = massClient;
         _playersService = playersService;
@@ -62,7 +62,7 @@ public partial class AlbumsListViewModel : ReactiveObject, IViewModelBase
         {
             IsLoading = true;
 
-            var response = await _massClient.MusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset);
+            var response = await _massClient.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset);
 
             if (response?.Result != null)
             {

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 using WateryTart.MusicAssistant.Models;
 using CommunityToolkit.Mvvm.Input;
 
@@ -17,7 +17,7 @@ namespace WateryTart.Core.ViewModels
     {
         public string? UrlPathSegment => "playlist";
         public IScreen HostScreen { get; }
-        private readonly IWsClient _massClient;
+        private readonly MusicAssistantClient _massClient;
         private readonly IPlayersService _playersService;
         public bool ShowMiniPlayer => true; 
         public bool ShowNavigation => true;
@@ -28,7 +28,7 @@ namespace WateryTart.Core.ViewModels
         public RelayCommand<Item> PlayCommand { get; }
         public RelayCommand PlaylistAltMenuCommand { get; }
         public RelayCommand PlaylistFullViewCommand { get; }
-        public PlaylistViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService, Playlist? playlist = null)
+        public PlaylistViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService, Playlist? playlist = null)
         {
             _massClient = massClient;
             _playersService = playersService;
@@ -63,7 +63,7 @@ namespace WateryTart.Core.ViewModels
         {
             try
             {
-                var playlistResponse = await _massClient.PlaylistGetAsync(id, provider);
+                var playlistResponse = await _massClient.WithWs().GetPlaylistAsync(id, provider);
                 if (playlistResponse?.Result != null)
                 {
                     Playlist = playlistResponse.Result;
@@ -77,7 +77,7 @@ namespace WateryTart.Core.ViewModels
 
             try
             {
-                var tracksResponse = await _massClient.PlaylistTracksGetAsync(id, provider);
+                var tracksResponse = await _massClient.WithWs().GetPlaylistTracksAsync(id, provider);
                 if (tracksResponse?.Result != null)
                 {
                     foreach (var t in tracksResponse.Result)

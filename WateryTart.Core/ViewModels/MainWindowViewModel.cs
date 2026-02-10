@@ -18,7 +18,7 @@ namespace WateryTart.Core.ViewModels;
 
 public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatableViewModel
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly SendSpinClient _sendSpinClient;
     private readonly ISettings _settings;
     private readonly ILogger<MainWindowViewModel> _logger;
@@ -49,7 +49,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     [Reactive] public partial ReactiveObject? SlideupMenu { get; set; } = new();
     [Reactive] public partial string Title { get; set; }
 
-    public MainWindowViewModel(IWsClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService, SendSpinClient sendSpinClient, ILoggerFactory loggerFactory)
+    public MainWindowViewModel(MusicAssistantClient massClient, IPlayersService playersService, ISettings settings, IColourService colourService, SendSpinClient sendSpinClient, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         PlayersService = playersService;
@@ -159,7 +159,9 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
         }
 
         _logger.LogInformation("Attempting to connect to MassClient");
-        var connected = await _massClient.Connect(_settings.Credentials);
+        _massClient.SetBaseUrl(_settings.Credentials.BaseUrl);
+        _massClient.SetToken(_settings.Credentials.Token);
+        var connected = await _massClient.WithWs().Connect();
 
         if (!connected)
         {

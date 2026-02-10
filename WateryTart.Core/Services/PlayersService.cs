@@ -20,13 +20,13 @@ using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Events;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.Services;
 
 public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncReaper
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly ISettings _settings;
     private readonly IColourService _colourService;
     private readonly ILoggerFactory _loggerFactory;
@@ -64,7 +64,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     private async Task FetchPlayerQueueAsync(string id)
     {
-        var pq = await _massClient.PlayerActiveQueueAsync(id);
+        var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(id);
         SelectedPlayerQueueId = pq.Result.QueueId;
         SelectedQueue = pq.Result;
         await FetchQueueContentsAsync();
@@ -72,7 +72,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     private async Task FetchQueueContentsAsync()
     {
-        var items = await _massClient.PlayerQueueItemsAsync(SelectedPlayerQueueId);
+        var items = await _massClient.WithWs().GetPlayerQueueItemsAsync(SelectedPlayerQueueId);
         try
         {
             if (items.Result != null)
@@ -89,7 +89,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     private DispatcherTimer _timer;
 
-    public PlayersService(IWsClient massClient, ISettings settings, IColourService colourService, ILoggerFactory loggerFactory)
+    public PlayersService(MusicAssistantClient massClient, ISettings settings, IColourService colourService, ILoggerFactory loggerFactory)
     {
         _massClient = massClient;
         _settings = settings;
@@ -98,7 +98,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         _logger = loggerFactory.CreateLogger<PlayersService>();
 
         /* Subscribe to the relevant websocket events from MASS */
-        _subscriptions.Add(_massClient.Events
+        _subscriptions.Add(_massClient.WithWs().Events
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(e => Observable.FromAsync(() => OnEvents(e)))
             .Subscribe());
@@ -215,14 +215,14 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     {
         try
         {
-            var playersResponse = await _massClient.PlayersAllAsync();
+            var playersResponse = await _massClient.WithWs().GetPlayersAllAsync();
             foreach (var y in playersResponse.Result)
             {
                 if (y != null)
                     Players.Add(y);
             }
 
-            var queuesResponse = await _massClient.PlayerQueuesAllAsync();
+            var queuesResponse = await _massClient.WithWs().GetPlayerQueuesAllAsync();
             foreach (var y in queuesResponse.Result)
             {
                 Queues.Add(y);
@@ -248,7 +248,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             try
             {
-                await _massClient.PlayerGroupVolumeDownAsync(p.PlayerId);
+                await _massClient.WithWs().PlayerGroupVolumeDownAsync(p.PlayerId);
             }
             catch (Exception ex)
             {
@@ -265,7 +265,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             try
             {
-                await _massClient.PlayerGroupVolumeUpAsync(p.PlayerId);
+                await _massClient.WithWs().PlayerGroupVolumeUpAsync(p.PlayerId);
             }
             catch (Exception ex)
             {
@@ -279,7 +279,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         p ??= SelectedPlayer;
         try
         {
-            await _massClient.PlayerPlayPauseAsync(p.PlayerId);
+            await _massClient.WithWs().PlayerPlayPauseAsync(p.PlayerId);
         }
         catch (Exception ex)
         {
@@ -302,8 +302,8 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             try
             {
                 _logger.LogInformation($"Playing {t.Name}"); 
-                var pq = await _massClient.PlayerActiveQueueAsync(p.PlayerId);
-                await _massClient.PlayAsync(pq.Result.QueueId, t, mode, RadioMode);
+                var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(p.PlayerId);
+                await _massClient.WithWs().PlayAsync(pq.Result.QueueId, t, mode, RadioMode);
             }
             catch (Exception ex)
             {
@@ -320,7 +320,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         try
         {
 #pragma warning disable CS4014
-            _ = _massClient.PlayerNextAsync(p.PlayerId);
+            _ = _massClient.WithWs().PlayerNextAsync(p.PlayerId);
 #pragma warning restore CS4014
         }
         catch (Exception ex)
@@ -337,7 +337,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         try
         {
 #pragma warning disable CS4014
-            _ = _massClient.PlayerPreviousAsync(p.PlayerId);
+            _ = _massClient.WithWs().PlayerPreviousAsync(p.PlayerId);
 #pragma warning restore CS4014
         }
         catch (Exception ex)
@@ -366,7 +366,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         
         try
         {
-            await _massClient.DisconnectAsync();
+            await _massClient.WithWs().DisconnectAsync();
         }
         catch (Exception ex)
         {
@@ -390,7 +390,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
         try
         {
-            var disconnectTask = _massClient.DisconnectAsync();
+            var disconnectTask = _massClient.WithWs().DisconnectAsync();
             disconnectTask.Wait(TimeSpan.FromSeconds(10));
         }
         catch (Exception ex)

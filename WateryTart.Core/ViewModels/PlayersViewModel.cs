@@ -27,7 +27,7 @@ public partial class PlayersViewModel : ReactiveObject, IViewModelBase
         }
     }
 
-    public PlayersViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService)
+    public PlayersViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService)
     {
         _playersService = playersService;
         HostScreen = screen;

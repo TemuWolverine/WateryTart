@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -15,7 +15,7 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
 {
     public string? UrlPathSegment { get; } = "ArtistsList";
     public IScreen HostScreen { get; }
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly IPlayersService _playersService;
 
     [Reactive] public partial string Title { get; set; }
@@ -31,7 +31,7 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
     public bool ShowMiniPlayer => true;
     public bool ShowNavigation => true;
 
-    public ArtistsViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService)
+    public ArtistsViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService)
     {
         _massClient = massClient;
         _playersService = playersService;
@@ -75,7 +75,7 @@ public partial class ArtistsViewModel : ReactiveObject, IViewModelBase
         {
             IsLoading = true;
             
-            var response = await _massClient.ArtistsGetAsync(limit: PageSize, offset: CurrentOffset);
+            var response = await _massClient.WithWs().GetArtistsAsync(limit: PageSize, offset: CurrentOffset);
 
             if (response?.Result != null)
             {

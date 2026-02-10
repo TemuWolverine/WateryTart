@@ -132,14 +132,14 @@ public partial class App : Application
         //Services
         /* Explicit interface definitions so .AsImplemented() isn't call, which isn't AOT compatible */
         builder.Register(c => new MainWindowViewModel(
-            c.Resolve<IWsClient>(),
+            c.Resolve<MusicAssistantClient>(),
             c.Resolve<IPlayersService>(),
             c.Resolve<ISettings>(),
             c.Resolve<IColourService>(),
             c.Resolve<SendSpinClient>(),
             c.Resolve<ILoggerFactory>()
         )).As<IScreen>().As<IActivatableViewModel>().SingleInstance();
-        builder.RegisterType<WsClient>().As<IWsClient>().SingleInstance();
+        builder.RegisterType<MusicAssistantClient>().As<MusicAssistantClient>().SingleInstance();
         builder.RegisterType<PlayersService>().As<IPlayersService>().As<IAsyncReaper>().SingleInstance();
         builder.RegisterType<ColourService>().As<IColourService>().SingleInstance();
 

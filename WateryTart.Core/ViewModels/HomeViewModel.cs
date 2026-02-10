@@ -13,14 +13,14 @@ using WateryTart.Core.Settings;
 using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels
 {
     public class HomeViewModel : ReactiveObject, IViewModelBase
     {
         private readonly ObservableCollection<RecommendationDisplayModel> _displayRecommendations;
-        private readonly IWsClient _massClient;
+        private readonly MusicAssistantClient _massClient;
         private readonly IPlayersService _playersService;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ISettings _settings;
@@ -38,7 +38,7 @@ namespace WateryTart.Core.ViewModels
 
         private List<Recommendation> SourceRecommendations { get; set; }
 
-        public HomeViewModel(IScreen screen, IWsClient massClient, ISettings settings, IPlayersService playersService, ILoggerFactory loggerFactory)
+        public HomeViewModel(IScreen screen, MusicAssistantClient massClient, ISettings settings, IPlayersService playersService, ILoggerFactory loggerFactory)
         {
             Title = "Home";
             _massClient = massClient;
@@ -101,7 +101,7 @@ namespace WateryTart.Core.ViewModels
 
         private async Task Load()
         {
-            var recommendationResponse = await _massClient.MusicRecommendationsAsync();
+            var recommendationResponse = await _massClient.WithWs().GetMusicRecommendationsAsync();
             if (recommendationResponse?.Result == null)
             {
                 return;

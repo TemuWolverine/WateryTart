@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
 using Xaml.Behaviors.SourceGenerators;
@@ -17,7 +17,7 @@ namespace WateryTart.Core.ViewModels
 {
     public partial class ArtistViewModel : ReactiveObject, IViewModelBase
     {
-        private readonly IWsClient _massClient;
+        private readonly MusicAssistantClient _massClient;
         private readonly IPlayersService _playersService;
         [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
         public RelayCommand<Artist> AltMenuCommand { get; }
@@ -35,7 +35,7 @@ namespace WateryTart.Core.ViewModels
         public ObservableCollection<Item>? Tracks { get; set; }
         public string? UrlPathSegment { get; } = "Artist/ID";
 
-        public ArtistViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService, Artist? artist = null)
+        public ArtistViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService, Artist? artist = null)
         {
             _massClient = massClient;
             _playersService = playersService;
@@ -121,7 +121,7 @@ namespace WateryTart.Core.ViewModels
 
         private async Task LoadArtist(string id, string provider)
         {
-            var artistResponse = await _massClient.ArtistGetAsync(id, provider);
+            var artistResponse = await _massClient.WithWs().GetArtistAsync(id, provider);
 
             Artist = artistResponse.Result;
             if (Artist?.Name != null)
@@ -133,7 +133,7 @@ namespace WateryTart.Core.ViewModels
         private async Task LoadArtistAlbum(string id, string provider)
         {
             Albums.Clear();
-            var albumArtistResponse = await _massClient.ArtistAlbumsAsync(id, provider);
+            var albumArtistResponse = await _massClient.WithWs().GetArtistAlbumsAsync(id, provider);
             if (albumArtistResponse.Result != null)
                 foreach (var r in albumArtistResponse.Result.OrderByDescending(a => a.Year ?? 0).ThenBy(a => a.Name))
                     Albums.Add(new AlbumViewModel(_massClient, HostScreen, _playersService, r));

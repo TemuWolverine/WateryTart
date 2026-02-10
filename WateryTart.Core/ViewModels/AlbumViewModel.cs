@@ -10,13 +10,13 @@ using WateryTart.Core.ViewModels.Menus;
 using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.WebSocketExtensions;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
 public partial class AlbumViewModel : ReactiveObject, IViewModelBase
 {
-    private readonly IWsClient _massClient;
+    private readonly MusicAssistantClient _massClient;
     private readonly IPlayersService _playersService;
     public string? UrlPathSegment { get; } = "Album/ID";
     public IScreen HostScreen { get; }
@@ -31,7 +31,7 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     public RelayCommand AlbumAltMenuCommand { get; }
 
     public RelayCommand AlbumFullViewCommand { get; }
-    public AlbumViewModel(IWsClient massClient, IScreen screen, IPlayersService playersService, Album? a = null)
+    public AlbumViewModel(MusicAssistantClient massClient, IScreen screen, IPlayersService playersService, Album? a = null)
     {
         _massClient = massClient;
         _playersService = playersService;
@@ -93,7 +93,7 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     {
         try
         {
-            var albumResponse = await _massClient.MusicAlbumGetAsync(id, provider);
+            var albumResponse = await _massClient.WithWs().GetMusicAlbumAsync(id, provider);
             Album = albumResponse.Result;
             if (Album != null && Album.Name != null)
                 Title = Album.Name;
@@ -105,7 +105,7 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
 
         try
         {
-            var tracksResponse = await _massClient.MusicAlbumTracksAsync(id, provider);
+            var tracksResponse = await _massClient.WithWs().GetMusicAlbumTracksAsync(id, provider);
             if (tracksResponse.Result != null)
                 foreach (var t in tracksResponse.Result)
                     Tracks.Add(new TrackViewModel(_massClient, HostScreen, _playersService, t));
@@ -120,7 +120,7 @@ public partial class AlbumViewModel : ReactiveObject, IViewModelBase
     {
         try
         {
-            var tracksResponse = await _massClient.MusicAlbumTracksAsync(id, provider);
+            var tracksResponse = await _massClient.WithWs().GetMusicAlbumTracksAsync(id, provider);
             if (tracksResponse.Result != null)
                 foreach (var t in tracksResponse.Result)
                     Tracks.Add(new TrackViewModel(_massClient, HostScreen, _playersService, t));
