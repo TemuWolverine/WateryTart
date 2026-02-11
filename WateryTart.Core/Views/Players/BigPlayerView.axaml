@@ -1,318 +1,450 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-			 xmlns:vm="clr-namespace:WateryTart.Core.ViewModels"
-			 xmlns:app="clr-namespace:WateryTart.Core"
-			 xmlns:asyncImageLoader="using:AsyncImageLoader"
-			 xmlns:converters="using:WateryTart.Core.Converters"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:materialIcons="using:Material.Icons.Avalonia"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:controls="clr-namespace:WateryTart.Core.Controls"
-			 xmlns:players="clr-namespace:WateryTart.Core.ViewModels.Players"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 x:Class="WateryTart.Core.Views.Players.BigPlayerView"
-			 x:DataType="players:BigPlayerViewModel"
-			 Margin="0,20,0,0">
-	<UserControl.Resources>
-		<converters:FriendlyTimeConverter x:Key="FriendlyTimeConverter" />
-		<converters:MetadataImageConverter x:Key="MetadataImageConverter" />
-		<converters:PlaybackStateToIconConverter x:Key="PlaybackStateToIconConverter" />
-		<x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
-		<converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
-		<converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
-		<converters:AudioFormatCodecConverter x:Key="AudioFormatCodecConverter" />
-		<converters:AudioFormatSampleRateConverter x:Key="AudioFormatSampleRateConverter" />
-		<converters:AudioFormatBitDepthConverter x:Key="AudioFormatBitDepthConverter" />
-	</UserControl.Resources>
+﻿<UserControl
+          x:Class="WateryTart.Core.Views.Players.BigPlayerView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:WateryTart.Core"
+          xmlns:asyncImageLoader="using:AsyncImageLoader"
+          xmlns:controls="clr-namespace:WateryTart.Core.Controls"
+          xmlns:converters="using:WateryTart.Core.Converters"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:loc="using:WateryTart.Core.Views.Players"
+          xmlns:materialIcons="using:Material.Icons.Avalonia"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:players="clr-namespace:WateryTart.Core.ViewModels.Players"
+          xmlns:vm="clr-namespace:WateryTart.Core.ViewModels"
+          Margin="0,20,0,0"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="players:BigPlayerViewModel"
+          mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:FriendlyTimeConverter x:Key="FriendlyTimeConverter" />
+        <converters:MetadataImageConverter x:Key="MetadataImageConverter" />
+        <converters:PlaybackStateToIconConverter x:Key="PlaybackStateToIconConverter" />
+        <x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
+        <converters:ToUpperValueConverter x:Key="ToUpperValueConverter" />
+        <converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />
+        <converters:AudioFormatCodecConverter x:Key="AudioFormatCodecConverter" />
+        <converters:AudioFormatSampleRateConverter x:Key="AudioFormatSampleRateConverter" />
+        <converters:AudioFormatBitDepthConverter x:Key="AudioFormatBitDepthConverter" />
 
-	<Grid>
-		<!-- Normal Display Mode -->
-		<controls:ResponsiveColumnPanel Breakpoint="600" IsVisible="{Binding !IsSmallDisplay}">
-			<controls:ResponsiveColumnPanel.FirstColumn>
-				<StackPanel Margin="10" Spacing="10">
-					<Border Margin="20,0,20,0"
-							BoxShadow="0 0 20 0 Black"
-							MaxHeight="300"
-							MaxWidth="300">
-						<Border ClipToBounds="True" CornerRadius="5">
-							<Panel>
-								<!-- Placeholder rectangle uses cached dimensions -->
-								<Rectangle Fill="#1A1A1A"
-										   Width="{Binding CachedImageWidth}"
-										   Height="{Binding CachedImageHeight}" />
+        <x:Double x:Key="SliderTrackThemeHeight">20</x:Double>
+    </UserControl.Resources>
 
-								<Grid>
-									<Image Source="../../Assets/cover_dark.png"></Image>
+    <Grid>
+        <!--  Normal Display Mode  -->
+        <controls:ResponsiveColumnPanel Breakpoint="600" IsVisible="{Binding !IsSmallDisplay}">
+            <controls:ResponsiveColumnPanel.FirstColumn>
+                <StackPanel Margin="10" Spacing="10">
+                    <Border
+                              MaxWidth="300"
+                              MaxHeight="300"
+                              Margin="20,0,20,0"
+                              BoxShadow="0 0 20 0 Black">
+                        <Border ClipToBounds="True" CornerRadius="5">
+                            <Panel>
+                                <!--  Placeholder rectangle uses cached dimensions  -->
+                                <Rectangle
+                                          Width="{Binding CachedImageWidth}"
+                                          Height="{Binding CachedImageHeight}"
+                                          Fill="#1A1A1A" />
 
-									<!-- Album art image -->
-									<asyncImageLoader:AdvancedImage
-									Name="imgAlbumArt"
-									Loader="{x:Static app:App.ImageLoaderInstance}"
-									Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}" />
-								</Grid>
+                                <Grid>
+                                    <Image Source="../../Assets/cover_dark.png" />
 
-								<!-- Loading indicator -->
-								<StackPanel HorizontalAlignment="Center"
-											VerticalAlignment="Center"
-											IsVisible="{Binding Path=#imgAlbumArt.IsLoading}">
-									<materialIcons:MaterialIcon Kind="MusicNote"
-																Width="60"
-																Height="60"
-																Foreground="#CCCCCC"
-																Classes="spinner"
-																RenderTransformOrigin="50%,50%">
-										<materialIcons:MaterialIcon.RenderTransform>
-											<RotateTransform/>
-										</materialIcons:MaterialIcon.RenderTransform>
-									</materialIcons:MaterialIcon>
-								</StackPanel>
-							</Panel>
-						</Border>
-					</Border>
+                                    <!--  Album art image  -->
+                                    <asyncImageLoader:AdvancedImage
+                                              Name="imgAlbumArt"
+                                              Loader="{x:Static app:App.ImageLoaderInstance}"
+                                              Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}" />
+                                </Grid>
 
-					<Grid Margin="20" MaxWidth="400">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.ElapsedTime, Converter={StaticResource FriendlyTimeConverter}}" />
-						<ProgressBar Grid.Column="1" Margin="10,0,10,0"  Foreground="{Binding ColourService.ColourAccent}" Height="15" Value="{Binding PlayersService.Progress}" Minimum="0" Maximum="100" />
-						<TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Duration, Converter={StaticResource FriendlyTimeConverter}}" />
-					</Grid>
+                                <!--  Loading indicator  -->
+                                <StackPanel
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          IsVisible="{Binding Path=#imgAlbumArt.IsLoading}">
+                                    <materialIcons:MaterialIcon
+                                              Width="60"
+                                              Height="60"
+                                              Classes="spinner"
+                                              Foreground="#CCCCCC"
+                                              Kind="MusicNote"
+                                              RenderTransformOrigin="50%,50%">
+                                        <materialIcons:MaterialIcon.RenderTransform>
+                                            <RotateTransform />
+                                        </materialIcons:MaterialIcon.RenderTransform>
+                                    </materialIcons:MaterialIcon>
+                                </StackPanel>
+                            </Panel>
+                        </Border>
+                    </Border>
 
-					<StackPanel Margin="0,5,0,5" Background="Transparent">
-						<Interaction.Behaviors>
-							<EventTriggerBehavior EventName="Tapped">
-								<vm:ClickAction  Command="{Binding PlayingAltMenuCommand }" />
-							</EventTriggerBehavior>
-						</Interaction.Behaviors>
+                    <Grid MaxWidth="400" Margin="20,20,20,-5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.ElapsedTime, Converter={StaticResource FriendlyTimeConverter}}" />
 
-						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Artists[0].Name}" FontSize="18"/>
-						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Name}" FontSize="20" FontWeight="Bold" />
-						<TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Album.Name}" />
+                        <controls:BindableCommandSlider
+                                  Grid.Column="1"
+                                  Height="32"
+                                  Margin="10,0,10,0"
+                                  Maximum="100"
+                                  Minimum="0"
+                                  PointerPressedCommand="{Binding SeekCommand}"
+                                  PointerReleasedCommand="{Binding SeekCommand}"
+                                  Value="{Binding PlayersService.Progress, Mode=TwoWay}" />
 
-						<!-- Quality Badges - Each as separate tag -->
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6" Margin="0,10,0,0">
-							<!-- Codec Badge (FLAC, MP3, OPUS, etc.) -->
-							<Border Background="#1A1A1A"
-									BorderBrush="#1DB954"
-									BorderThickness="1"
-									CornerRadius="4"
-									Padding="8,3"
-									IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatCodecConverter}}"
-										   FontSize="11"
-										   FontWeight="Bold"
-										   Foreground="#1DB954" />
-							</Border>
+                        <TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Duration, Converter={StaticResource FriendlyTimeConverter}}" />
+                    </Grid>
 
-							<!-- Sample Rate Badge (44.1kHz, 48kHz, etc.) -->
-							<Border Background="#1A1A1A"
-									BorderBrush="#64B5F6"
-									BorderThickness="1"
-									CornerRadius="4"
-									Padding="8,3"
-									IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatSampleRateConverter}}"
-										   FontSize="11"
-										   FontWeight="Bold"
-										   Foreground="#64B5F6" />
-							</Border>
+                    <StackPanel Margin="0,0,0,5" Background="Transparent">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="Tapped">
+                                <vm:ClickAction Command="{Binding PlayingAltMenuCommand}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
 
-							<!-- Bit Depth Badge (16bit, 24bit, etc.) -->
-							<Border Background="#1A1A1A"
-									BorderBrush="#FFB74D"
-									BorderThickness="1"
-									CornerRadius="4"
-									Padding="8,3"
-									IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatBitDepthConverter}}"
-										   FontSize="11"
-										   FontWeight="Bold"
-										   Foreground="#FFB74D" />
-							</Border>
-						</StackPanel>
-					</StackPanel>
+                        <TextBlock
+                                  HorizontalAlignment="Center"
+                                  FontSize="18"
+                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Artists[0].Name}" />
+                        <TextBlock
+                                  HorizontalAlignment="Center"
+                                  FontSize="20"
+                                  FontWeight="Bold"
+                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Name}" />
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Album.Name}" />
 
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-						<Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}" Margin="3,0,3,0"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="25" Height="25" /></Button>
-						<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}" Margin="3,0,3,0">
-							<materialIcons:MaterialIcon Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" Width="25" Height="25" />
-						</Button>
-						<Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}" Margin="3,0,20,0"><materialIcons:MaterialIcon Kind="SkipNext" Width="25" Height="25" /></Button>
-					</StackPanel>
+                        <!--  Quality Badges - Each as separate tag  -->
+                        <StackPanel
+                                  Margin="0,10,0,0"
+                                  HorizontalAlignment="Center"
+                                  Orientation="Horizontal"
+                                  Spacing="6">
+                            <!--  Codec Badge (FLAC, MP3, OPUS, etc.)  -->
+                            <Border
+                                      Padding="8,3"
+                                      Background="#1A1A1A"
+                                      BorderBrush="#1DB954"
+                                      BorderThickness="1"
+                                      CornerRadius="4"
+                                      IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <TextBlock
+                                          FontSize="11"
+                                          FontWeight="Bold"
+                                          Foreground="#1DB954"
+                                          Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatCodecConverter}}" />
+                            </Border>
 
-					<Grid MaxWidth="400">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Text="0" />
-						<ProgressBar Grid.Column="1" Margin="10,0,10,0"  Foreground="{Binding ColourService.ColourAccent}" Height="5" Value="{Binding PlayersService.SelectedPlayer.VolumeLevel}" Minimum="0" Maximum="100" />
-						<TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
-					</Grid>
-				</StackPanel>
-			</controls:ResponsiveColumnPanel.FirstColumn>
+                            <!--  Sample Rate Badge (44.1kHz, 48kHz, etc.)  -->
+                            <Border
+                                      Padding="8,3"
+                                      Background="#1A1A1A"
+                                      BorderBrush="#64B5F6"
+                                      BorderThickness="1"
+                                      CornerRadius="4"
+                                      IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <TextBlock
+                                          FontSize="11"
+                                          FontWeight="Bold"
+                                          Foreground="#64B5F6"
+                                          Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatSampleRateConverter}}" />
+                            </Border>
 
-			<controls:ResponsiveColumnPanel.SecondColumn>
-				<TabControl >
-					<TabControl.Styles>
-						<Style Selector="TabControl">
-							<Setter Property="ItemsPanel">
-								<ItemsPanelTemplate>
-									<UniformGrid Columns="{Binding $parent[TabControl].Items.Count}"/>
-								</ItemsPanelTemplate>
-							</Setter>
-						</Style>
-						<Style Selector="TabItem">
-							<Setter Property="HeaderTemplate">
-								<DataTemplate>
-									<TextBlock
-									FontWeight="Bold"
-									FontSize="16"
-									Text="{Binding Converter={StaticResource ToUpperValueConverter}}"
-									TextAlignment="Center"/>
-								</DataTemplate>
-							</Setter>
-						</Style>
+                            <!--  Bit Depth Badge (16bit, 24bit, etc.)  -->
+                            <Border
+                                      Padding="8,3"
+                                      Background="#1A1A1A"
+                                      BorderBrush="#FFB74D"
+                                      BorderThickness="1"
+                                      CornerRadius="4"
+                                      IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <TextBlock
+                                          FontSize="11"
+                                          FontWeight="Bold"
+                                          Foreground="#FFB74D"
+                                          Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatBitDepthConverter}}" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
 
-						<Style Selector="TabItem">
-							<Setter Property="Padding" Value="0"/>
-						</Style>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button
+                                  Margin="3,0,3,0"
+                                  Classes="iconButton navButton"
+                                  Command="{Binding PlayPreviousCommand}">
+                            <materialIcons:MaterialIcon
+                                      Width="25"
+                                      Height="25"
+                                      Kind="SkipPrevious" />
+                        </Button>
+                        <Button
+                                  Margin="3,0,3,0"
+                                  Classes="iconButton navButton"
+                                  Command="{Binding PlayerPlayPauseCommand}">
+                            <materialIcons:MaterialIcon
+                                      Width="25"
+                                      Height="25"
+                                      Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" />
+                        </Button>
+                        <Button
+                                  Margin="3,0,20,0"
+                                  Classes="iconButton navButton"
+                                  Command="{Binding PlayerNextCommand}">
+                            <materialIcons:MaterialIcon
+                                      Width="25"
+                                      Height="25"
+                                      Kind="SkipNext" />
+                        </Button>
+                    </StackPanel>
 
-						<Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
-							<Setter Property="Background" Value="White"/>
-						</Style>
+                    <Grid MaxWidth="400">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="0" />
+                        <ProgressBar
+                                  Grid.Column="1"
+                                  Height="5"
+                                  Margin="10,0,10,0"
+                                  Foreground="{Binding ColourService.ColourAccent}"
+                                  Maximum="100"
+                                  Minimum="0"
+                                  Value="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
+                        <TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
+                    </Grid>
+                </StackPanel>
+            </controls:ResponsiveColumnPanel.FirstColumn>
 
-						<Style Selector="TabItem:not(:selected) /template/ Border#PART_SelectedPipe">
-							<Setter Property="Background" Value="#70FFFFFF"/>
-							<Setter Property="IsVisible" Value="True"/>
-						</Style>
-					</TabControl.Styles>
-					<TabItem Header="Queue">
-						<ItemsControl ItemsSource="{Binding PlayersService.CurrentQueue}" Background="Transparent" ItemTemplate="{StaticResource trackSmallReusableTemplate}" />
-					</TabItem>
-					<TabItem Header="Played">
-						<ItemsControl ItemsSource="{Binding PlayersService.PlayedQueue}"  Background="Transparent" ItemTemplate="{StaticResource trackSmallReusableTemplate}" />
-					</TabItem>
-				</TabControl>
-			</controls:ResponsiveColumnPanel.SecondColumn>
-		</controls:ResponsiveColumnPanel>
+            <controls:ResponsiveColumnPanel.SecondColumn>
+                <TabControl>
+                    <TabControl.Styles>
+                        <Style Selector="TabControl">
+                            <Setter Property="ItemsPanel">
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="{Binding $parent[TabControl].Items.Count}" />
+                                </ItemsPanelTemplate>
+                            </Setter>
+                        </Style>
+                        <Style Selector="TabItem">
+                            <Setter Property="HeaderTemplate">
+                                <DataTemplate>
+                                    <TextBlock
+                                              FontSize="16"
+                                              FontWeight="Bold"
+                                              Text="{Binding Converter={StaticResource ToUpperValueConverter}}"
+                                              TextAlignment="Center" />
+                                </DataTemplate>
+                            </Setter>
+                        </Style>
 
-		<!-- Small Display Mode -->
-		<Grid IsVisible="{Binding IsSmallDisplay}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+                        <Style Selector="TabItem">
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
 
-			<Border Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Top"
-					BoxShadow="0 0 10 0 Black"
-					MaxHeight="300"
-					MaxWidth="300">
-				<Border ClipToBounds="True" CornerRadius="5">
-					<Panel>
-						<asyncImageLoader:AdvancedImage
-						Name="imgAlbumArtSmall"
-						Loader="{x:Static app:App.ImageLoaderInstance}"
-						Stretch="Uniform"
-						MaxHeight="300"
-						MaxWidth="300"
-						Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}" />
-					</Panel>
-				</Border>
-			</Border>
+                        <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+                            <Setter Property="Background" Value="White" />
+                        </Style>
 
-			<!-- Track Info -->
-			<StackPanel Grid.Column="1" Margin="10" Spacing="5"  VerticalAlignment="Top" Background="Transparent">
+                        <Style Selector="TabItem:not(:selected) /template/ Border#PART_SelectedPipe">
+                            <Setter Property="Background" Value="#70FFFFFF" />
+                            <Setter Property="IsVisible" Value="True" />
+                        </Style>
+                    </TabControl.Styles>
+                    <TabItem Header="Queue">
+                        <ItemsControl
+                                  Background="Transparent"
+                                  ItemTemplate="{StaticResource trackSmallReusableTemplate}"
+                                  ItemsSource="{Binding PlayersService.CurrentQueue}" />
+                    </TabItem>
+                    <TabItem Header="Played">
+                        <ItemsControl
+                                  Background="Transparent"
+                                  ItemTemplate="{StaticResource trackSmallReusableTemplate}"
+                                  ItemsSource="{Binding PlayersService.PlayedQueue}" />
+                    </TabItem>
+                </TabControl>
+            </controls:ResponsiveColumnPanel.SecondColumn>
+        </controls:ResponsiveColumnPanel>
 
-				<StackPanel Background="Transparent">
+        <!--  Small Display Mode  -->
+        <Grid IsVisible="{Binding IsSmallDisplay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                      Grid.Column="0"
+                      MaxWidth="300"
+                      MaxHeight="300"
+                      Margin="10"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Top"
+                      BoxShadow="0 0 10 0 Black">
+                <Border ClipToBounds="True" CornerRadius="5">
+                    <Panel>
+                        <asyncImageLoader:AdvancedImage
+                                  Name="imgAlbumArtSmall"
+                                  MaxWidth="300"
+                                  MaxHeight="300"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}"
+                                  Stretch="Uniform" />
+                    </Panel>
+                </Border>
+            </Border>
+
+            <!--  Track Info  -->
+            <StackPanel
+                      Grid.Column="1"
+                      Margin="10"
+                      VerticalAlignment="Top"
+                      Background="Transparent"
+                      Spacing="5">
+
+                <StackPanel Background="Transparent">
                     <Interaction.Behaviors>
                         <EventTriggerBehavior EventName="Tapped">
-                            <vm:ClickAction  Command="{Binding PlayingAltMenuCommand }" />
+                            <vm:ClickAction Command="{Binding PlayingAltMenuCommand}" />
                         </EventTriggerBehavior>
                     </Interaction.Behaviors>
 
-                    <TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Name}"  FontWeight="Bold" TextTrimming="CharacterEllipsis" />
-                    <TextBlock HorizontalAlignment="Center" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Artists[0].Name}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock
+                              HorizontalAlignment="Center"
+                              FontWeight="Bold"
+                              Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Name}"
+                              TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                              HorizontalAlignment="Center"
+                              Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Artists[0].Name}"
+                              TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-				<!-- Quality Badges for Small Display - Each as separate tag -->
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4" Margin="0,5,0,0">
-					<!-- Codec Badge -->
-					<Border Background="#1A1A1A"
-							BorderBrush="#1DB954"
-							BorderThickness="1"
-							CornerRadius="3"
-							Padding="5,2"
-							IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatCodecConverter}}"
-								   FontSize="9"
-								   FontWeight="Bold"
-								   Foreground="#1DB954" />
-					</Border>
+                <!--  Quality Badges for Small Display - Each as separate tag  -->
+                <StackPanel
+                          Margin="0,5,0,0"
+                          HorizontalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="4">
+                    <!--  Codec Badge  -->
+                    <Border
+                              Padding="5,2"
+                              Background="#1A1A1A"
+                              BorderBrush="#1DB954"
+                              BorderThickness="1"
+                              CornerRadius="3"
+                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <TextBlock
+                                  FontSize="9"
+                                  FontWeight="Bold"
+                                  Foreground="#1DB954"
+                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatCodecConverter}}" />
+                    </Border>
 
-					<!-- Sample Rate Badge -->
-					<Border Background="#1A1A1A"
-							BorderBrush="#64B5F6"
-							BorderThickness="1"
-							CornerRadius="3"
-							Padding="5,2"
-							IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatSampleRateConverter}}"
-								   FontSize="9"
-								   FontWeight="Bold"
-								   Foreground="#64B5F6" />
-					</Border>
+                    <!--  Sample Rate Badge  -->
+                    <Border
+                              Padding="5,2"
+                              Background="#1A1A1A"
+                              BorderBrush="#64B5F6"
+                              BorderThickness="1"
+                              CornerRadius="3"
+                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <TextBlock
+                                  FontSize="9"
+                                  FontWeight="Bold"
+                                  Foreground="#64B5F6"
+                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatSampleRateConverter}}" />
+                    </Border>
 
-					<!-- Bit Depth Badge -->
-					<Border Background="#1A1A1A"
-							BorderBrush="#FFB74D"
-							BorderThickness="1"
-							CornerRadius="3"
-							Padding="5,2"
-							IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<TextBlock Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatBitDepthConverter}}"
-								   FontSize="9"
-								   FontWeight="Bold"
-								   Foreground="#FFB74D" />
-					</Border>
-				</StackPanel>
+                    <!--  Bit Depth Badge  -->
+                    <Border
+                              Padding="5,2"
+                              Background="#1A1A1A"
+                              BorderBrush="#FFB74D"
+                              BorderThickness="1"
+                              CornerRadius="3"
+                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <TextBlock
+                                  FontSize="9"
+                                  FontWeight="Bold"
+                                  Foreground="#FFB74D"
+                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatBitDepthConverter}}" />
+                    </Border>
+                </StackPanel>
 
-				<!-- Compact Progress Bar -->
-				<Grid Margin="5,10,5,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Column="0" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.ElapsedTime, Converter={StaticResource FriendlyTimeConverter}}" />
-					<ProgressBar Grid.Column="1" Margin="5,0"  Foreground="{Binding ColourService.ColourAccent}" Height="10" Value="{Binding PlayersService.Progress}" Minimum="0" Maximum="100" />
-					<TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Duration, Converter={StaticResource FriendlyTimeConverter}}"  />
-				</Grid>
+                <!--  Compact Progress Bar  -->
+                <Grid Margin="5,10,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.ElapsedTime, Converter={StaticResource FriendlyTimeConverter}}" />
+                    <ProgressBar
+                              Grid.Column="1"
+                              Height="10"
+                              Margin="5,0"
+                              Foreground="{Binding ColourService.ColourAccent}"
+                              Maximum="100"
+                              Minimum="0"
+                              Value="{Binding PlayersService.Progress}" />
+                    <TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Duration, Converter={StaticResource FriendlyTimeConverter}}" />
+                </Grid>
 
 
-				<!-- Compact Controls -->
-				<StackPanel Grid.Row="2" Margin="10" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-					<Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}"><materialIcons:MaterialIcon Kind="SkipPrevious" Width="30" Height="30" /></Button>
-					<Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}"><materialIcons:MaterialIcon Kind="PlayPause" Width="30" Height="30" /></Button>
-					<Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}"><materialIcons:MaterialIcon Kind="SkipNext" Width="30" Height="30" /></Button>
-				</StackPanel>
+                <!--  Compact Controls  -->
+                <StackPanel
+                          Grid.Row="2"
+                          Margin="10"
+                          HorizontalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="10">
+                    <Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}">
+                        <materialIcons:MaterialIcon
+                                  Width="30"
+                                  Height="30"
+                                  Kind="SkipPrevious" />
+                    </Button>
+                    <Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}">
+                        <materialIcons:MaterialIcon
+                                  Width="30"
+                                  Height="30"
+                                  Kind="PlayPause" />
+                    </Button>
+                    <Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}">
+                        <materialIcons:MaterialIcon
+                                  Width="30"
+                                  Height="30"
+                                  Kind="SkipNext" />
+                    </Button>
+                </StackPanel>
 
 
-				<Grid MaxWidth="400" Margin="0,20,0,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Column="0" Text="0" />
-					<ProgressBar Grid.Column="1" Margin="10,0,10,0"  Foreground="{Binding ColourService.ColourAccent}" Height="5" Value="{Binding PlayersService.SelectedPlayer.VolumeLevel}" Minimum="0" Maximum="100" />
-					<TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
-				</Grid>
-			</StackPanel>
-		</Grid>
-	</Grid>
+                <Grid MaxWidth="400" Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="0" />
+                    <ProgressBar
+                              Grid.Column="1"
+                              Height="5"
+                              Margin="10,0,10,0"
+                              Foreground="{Binding ColourService.ColourAccent}"
+                              Maximum="100"
+                              Minimum="0"
+                              Value="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
+                    <TextBlock Grid.Column="2" Text="{Binding PlayersService.SelectedPlayer.VolumeLevel}" />
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </UserControl>

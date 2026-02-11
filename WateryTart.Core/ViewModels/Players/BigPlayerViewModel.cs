@@ -8,6 +8,8 @@ using Material.Icons;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.MusicAssistant.Models;
+using System.Diagnostics;
+using System;
 
 namespace WateryTart.Core.ViewModels.Players;
 
@@ -41,8 +43,19 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
     public ICommand PlayPreviousCommand { get; set; }
     public ICommand PlayingAltMenuCommand { get; set; }
 
+    public RelayCommand<double> SeekCommand { get; }
+
     public BigPlayerViewModel(IPlayersService playersService, IScreen screen, IColourService colourService)
     {
+        SeekCommand = new RelayCommand<double>((s) =>
+        {
+            if (s == 0)
+                return;
+            var duration = _playersService?.SelectedQueue?.CurrentItem?.Duration;
+            var newPosition = duration * (s / 100);
+            _playersService?.PlayerSeek(null, (int)newPosition);
+        });
+
         PlayPreviousCommand = new RelayCommand(() => PlayersService.PlayerPrevious());
         PlayerNextCommand = new RelayCommand(() => PlayersService.PlayerNext());
         PlayerPlayPauseCommand = new RelayCommand(() => PlayersService.PlayerPlayPause());

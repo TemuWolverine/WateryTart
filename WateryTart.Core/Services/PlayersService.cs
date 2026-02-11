@@ -65,6 +65,9 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     private async Task FetchPlayerQueueAsync(string id)
     {
         var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(id);
+        if (pq?.Result == null)
+            return;
+
         SelectedPlayerQueueId = pq.Result.QueueId;
         SelectedQueue = pq.Result;
         await FetchQueueContentsAsync();
@@ -330,6 +333,22 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
     }
 
+    public async Task PlayerSeek(Player? p, int position)
+    {
+        p ??= SelectedPlayer;
+        if (p?.PlayerId == null)
+            return;
+        try
+        {
+#pragma warning disable CS4014
+            _ = _massClient.WithWs().PlayerSeekAsync(p.PlayerId, position);
+#pragma warning restore CS4014
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing previous on player {PlayerId}", p?.PlayerId);
+        }
+    }
     public async Task PlayerPrevious(Player? p)
     {
         p ??= SelectedPlayer;

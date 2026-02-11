@@ -24,4 +24,6 @@ public interface IPlayersService
     Task PlayerNext(Player? p = null);
     Task PlayerPrevious(Player? p = null);
     Task PlayArtistRadio(Artist artist);
+
+    Task PlayerSeek(Player? p, int position);
 }
