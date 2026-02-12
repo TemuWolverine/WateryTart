@@ -82,12 +82,6 @@ jobs:
         run: echo "The version is ${{ needs.generate-version.outputs.version }}"
       - run: dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/win-x64
 
-      - name: Remove Android, VS, and other large workloads
-        run: |
-          Remove-Item -Recurse -Force "$env:USERPROFILE\.nuget\packages"
-          Remove-Item -Recurse -Force "C:\hostedtoolcache\windows"
-        shell: pwsh
-
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
