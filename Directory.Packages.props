@@ -57,6 +57,7 @@
     <PackageVersion Include="Websocket.Client" Version="5.3.0" />
     <PackageVersion Include="Xaml.Behaviors.Interactions" Version="11.3.9.4" />
     <PackageVersion Include="Xaml.Behaviors.SourceGenerators" Version="11.3.9.4" />
+    <PackageVersion Include="XVolume" Version="0.1.1" />
     <PackageVersion Include="Zeroconf" Version="3.7.16" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.1" />
     <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="11.3.9.5" />

@@ -63,7 +63,7 @@ public partial class ColourService : ReactiveObject, IColourService
             if (LastPick == ColourChosen.AB)
             {
                 ColourC = colors[0];
-                ColourD = colors[2];
+                ColourD = colors[1];
                 LastPick = ColourChosen.CD;
 
                 App.Logger?.LogInformation("Last colours {ColourC} & {ColourD}", ColourC, ColourD);
@@ -71,7 +71,7 @@ public partial class ColourService : ReactiveObject, IColourService
             else
             {
                 ColourA = colors[0];
-                ColourB = colors[2];
+                ColourB = colors[1];
                 LastPick = ColourChosen.AB;
                 App.Logger?.LogInformation("Last colours {ColourA} & {ColourB}", ColourA, ColourB);
             }

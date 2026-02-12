@@ -18,7 +18,7 @@ public class MassImageImageConverter : IValueConverter
             return image.Path;
         else if (image.Path != null)
             if (image.Provider != null)
-                return ProxyString(image.Path, image.Provider);
+                return ImagePathHelper.ProxyString(image.Path, image.Provider);
 
         return string.Empty;
     }
@@ -27,8 +27,11 @@ public class MassImageImageConverter : IValueConverter
     {
         return value;
     }
+}
 
-    private static string ProxyString(string path, string provider)
+public static class ImagePathHelper
+{
+    public static string ProxyString(string path, string provider)
     {
         return string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(path), provider);
     }

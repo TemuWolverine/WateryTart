@@ -198,7 +198,7 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
         {
             _settings.Credentials = new MusicAssistantCredentials()
             {
-                BaseUrl = x.Credentials.BaseUrl,
+                BaseUrl = GetJustHost(x.Credentials.BaseUrl),
                 Token = x.Credentials.Token,
                 Username = Username
             };
@@ -208,6 +208,17 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
             return;
         }
         SetError(x.Error);
+    }
+
+    private string GetJustHost(string urlOrHost)
+    {
+        if (Uri.TryCreate(urlOrHost, UriKind.Absolute, out var uri))
+        {
+            // If the port is not specified, use the default port for the scheme
+            int port = uri.IsDefaultPort ? (uri.Scheme == Uri.UriSchemeHttps ? 443 : 80) : uri.Port;
+            return $"{uri.Host}:{port}";
+        }
+        return urlOrHost;
     }
 
     private async Task ExecuteLogin()

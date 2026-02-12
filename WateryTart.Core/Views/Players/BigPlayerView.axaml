@@ -55,6 +55,7 @@
                                     <!--  Album art image  -->
                                     <asyncImageLoader:AdvancedImage
                                               Name="imgAlbumArt"
+                                              Stretch="UniformToFill"
                                               Loader="{x:Static app:App.ImageLoaderInstance}"
                                               Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}" />
                                 </Grid>

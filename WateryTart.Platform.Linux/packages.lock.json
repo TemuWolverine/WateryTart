@@ -615,10 +615,19 @@
           "SharpHook": "[7.1.1, )",
           "SkiaSharp": "[2.88.9, )",
           "System.Device.Gpio": "[4.1.0, )",
-          "WateryTart.MusicAssistant": "[2.0.0, )",
+          "WateryTart.MusicAssistant": "[1.0.0, )",
+          "XVolume": "[0.1.1, )",
           "Xaml.Behaviors.Avalonia": "[11.3.9.5, )",
           "Xaml.Behaviors.Interactivity": "[11.3.9.5, )",
           "Zeroconf": "[3.7.16, )"
+        }
+      },
+      "waterytart.musicassistant": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "[10.0.2, )",
+          "Microsoft.Extensions.Logging.Console": "[10.0.2, )",
+          "Websocket.Client": "[5.3.0, )"
         }
       },
       "AsyncImageLoader.Avalonia": {
@@ -813,17 +822,6 @@
         "resolved": "6.1.0",
         "contentHash": "M5cCC1ZMkZr9jbSQGTHnVkb5TDN67qWCV7AP8TAHdGkvDlu0puT5NzemESNn9+HkYIDpWpocP68/i+/ame2/2w=="
       },
-      "WateryTart.MusicAssistant": {
-        "type": "CentralTransitive",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "HM+Q5fuwuQTPnkzqKfkO3sdq9kzPbT5tbnPCg6cIkaga9ydxi3Yhl5PdR4d2L21Iz2w/IoGhhqjVgEICts6qrw==",
-        "dependencies": {
-          "Microsoft.Extensions.Logging": "10.0.2",
-          "Microsoft.Extensions.Logging.Console": "10.0.2",
-          "Websocket.Client": "5.3.0"
-        }
-      },
       "Websocket.Client": {
         "type": "CentralTransitive",
         "requested": "[5.3.0, )",
@@ -852,6 +850,15 @@
         "contentHash": "MTkrL/OEurretVt/kqY5e8K6lClQk3ee59RzhQMixZlmzyUMWhlrIyfHlvYrahky5vsoqmPp4a6+Tg9s8FKUKQ==",
         "dependencies": {
           "Avalonia": "11.3.9"
+        }
+      },
+      "XVolume": {
+        "type": "CentralTransitive",
+        "requested": "[0.1.1, )",
+        "resolved": "0.1.1",
+        "contentHash": "Y6dUw6NW2HzD81TSahClwDJUPWMVBIT+Y4n/4OMHCNovsR8CsxsRbqf+fZulFVgwqxrB/BcQdx/41eZS4KZqCw==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.5"
         }
       },
       "Zeroconf": {

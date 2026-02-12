@@ -1,14 +1,14 @@
 ﻿<Application
-    x:Class="WateryTart.Core.App"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:app="clr-namespace:WateryTart.Core"
-    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-    xmlns:converters="using:WateryTart.Core.Converters"
-    xmlns:materialIcons="using:Material.Icons.Avalonia"
-    xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
-    Name="WateryTart"
-    RequestedThemeVariant="Dark">
+          x:Class="WateryTart.Core.App"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:WateryTart.Core"
+          xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+          xmlns:converters="using:WateryTart.Core.Converters"
+          xmlns:materialIcons="using:Material.Icons.Avalonia"
+          xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
+          Name="WateryTart"
+          RequestedThemeVariant="Dark">
     <Application.Resources>
 
         <ResourceDictionary>
@@ -38,7 +38,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Controls/ResponsiveColumnPanel.axaml" />
-                <!--<ResourceInclude Source="/Controls/ResourceDictionary1.axaml"/>-->
+                <ResourceInclude Source="/Controls/BindableCommandSlider.axaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!--  These templates are used in any "small results" such as search, home, playlist etc  -->
@@ -51,16 +51,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Border
-                        Grid.Column="0"
-                        Margin="-10,0,0,0"
-                        ClipToBounds="True"
-                        CornerRadius="5">
+                              Grid.Column="0"
+                              Margin="-10,0,0,0"
+                              ClipToBounds="True"
+                              CornerRadius="5">
                         <asyncImageLoader:AdvancedImage
-                            Width="50"
-                            Height="50"
-                            FallbackImage="{x:Static app:App.FallbackImage}"
-                            Loader="{x:Static app:App.ImageLoaderInstance}"
-                            Source="{Binding Path=Album, Converter={StaticResource MetadataImageConverter}}">
+                                  Width="50"
+                                  Height="50"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Album, Converter={StaticResource MetadataImageConverter}}">
                             <Interaction.Behaviors>
                                 <EventTriggerBehavior EventName="Tapped">
                                     <InvokeCommandAction Command="{Binding AlbumFullViewCommand}" />
@@ -69,9 +69,9 @@
                         </asyncImageLoader:AdvancedImage>
                     </Border>
                     <StackPanel
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        Background="Transparent">
+                              Grid.Column="1"
+                              Margin="10,0,0,0"
+                              Background="Transparent">
                         <Interaction.Behaviors>
                             <EventTriggerBehavior EventName="Tapped">
                                 <InvokeCommandAction Command="{Binding AlbumFullViewCommand}" />
@@ -81,13 +81,13 @@
                     </StackPanel>
 
                     <Button
-                        Grid.Column="2"
-                        Classes="iconButton navButton"
-                        Command="{Binding AlbumAltMenuCommand}">
+                              Grid.Column="2"
+                              Classes="iconButton navButton"
+                              Command="{Binding AlbumAltMenuCommand}">
                         <materialIcons:MaterialIcon
-                            Width="25"
-                            Height="25"
-                            Kind="MoreVert" />
+                                  Width="25"
+                                  Height="25"
+                                  Kind="MoreVert" />
                     </Button>
                 </Grid>
             </DataTemplate>
@@ -101,16 +101,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Border
-                        Grid.Column="0"
-                        Margin="-10,0,0,0"
-                        ClipToBounds="True"
-                        CornerRadius="5">
+                              Grid.Column="0"
+                              Margin="-10,0,0,0"
+                              ClipToBounds="True"
+                              CornerRadius="5">
                         <asyncImageLoader:AdvancedImage
-                            Width="50"
-                            Height="50"
-                            FallbackImage="{x:Static app:App.FallbackImage}"
-                            Loader="{x:Static app:App.ImageLoaderInstance}"
-                            Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
+                                  Width="50"
+                                  Height="50"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
                             <Interaction.Behaviors>
                                 <EventTriggerBehavior EventName="Tapped">
                                     <InvokeCommandAction Command="{Binding TrackFullViewCommand}" />
@@ -119,34 +119,34 @@
                         </asyncImageLoader:AdvancedImage>
                     </Border>
                     <Grid
-                        Grid.Column="1"
-                        Margin="0,0,0,0"
-                        ColumnDefinitions="Auto,*">
+                              Grid.Column="1"
+                              Margin="0,0,0,0"
+                              ColumnDefinitions="Auto,*">
                         <materialIcons:MaterialIcon
-                            Grid.Column="0"
-                            Width="20"
-                            Height="20"
-                            Margin="5,0,0,0"
-                            VerticalAlignment="Top"
-                            IsVisible="{Binding IsNowPlaying}"
-                            Kind="VolumeHigh" />
+                                  Grid.Column="0"
+                                  Width="20"
+                                  Height="20"
+                                  Margin="5,0,0,0"
+                                  VerticalAlignment="Top"
+                                  IsVisible="{Binding IsNowPlaying}"
+                                  Kind="VolumeHigh" />
 
                         <TextBlock
-                            Grid.Column="1"
-                            Margin="10,0,0,0"
-                            Text="{Binding Track.Name}"
-                            TextTrimming="CharacterEllipsis" />
+                                  Grid.Column="1"
+                                  Margin="10,0,0,0"
+                                  Text="{Binding Track.Name}"
+                                  TextTrimming="CharacterEllipsis" />
                     </Grid>
 
 
                     <Button
-                        Grid.Column="2"
-                        Classes="iconButton navButton"
-                        Command="{Binding TrackAltMenuCommand}">
+                              Grid.Column="2"
+                              Classes="iconButton navButton"
+                              Command="{Binding TrackAltMenuCommand}">
                         <materialIcons:MaterialIcon
-                            Width="25"
-                            Height="25"
-                            Kind="MoreVert" />
+                                  Width="25"
+                                  Height="25"
+                                  Kind="MoreVert" />
                     </Button>
                 </Grid>
 
@@ -161,16 +161,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Border
-                        Grid.Column="0"
-                        Margin="-10,0,0,0"
-                        ClipToBounds="True"
-                        CornerRadius="5">
+                              Grid.Column="0"
+                              Margin="-10,0,0,0"
+                              ClipToBounds="True"
+                              CornerRadius="5">
                         <asyncImageLoader:AdvancedImage
-                            Width="50"
-                            Height="50"
-                            FallbackImage="{x:Static app:App.FallbackImage}"
-                            Loader="{x:Static app:App.ImageLoaderInstance}"
-                            Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}">
+                                  Width="50"
+                                  Height="50"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}">
                             <Interaction.Behaviors>
                                 <EventTriggerBehavior EventName="Tapped">
                                     <InvokeCommandAction Command="{Binding PlaylistFullViewCommand}" />
@@ -179,9 +179,9 @@
                         </asyncImageLoader:AdvancedImage>
                     </Border>
                     <StackPanel
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        Background="Transparent">
+                              Grid.Column="1"
+                              Margin="10,0,0,0"
+                              Background="Transparent">
                         <Interaction.Behaviors>
                             <EventTriggerBehavior EventName="Tapped">
                                 <InvokeCommandAction Command="{Binding PlaylistFullViewCommand}" />
@@ -191,13 +191,13 @@
                     </StackPanel>
 
                     <Button
-                        Grid.Column="2"
-                        Classes="iconButton navButton"
-                        Command="{Binding PlaylistAltMenuCommand}">
+                              Grid.Column="2"
+                              Classes="iconButton navButton"
+                              Command="{Binding PlaylistAltMenuCommand}">
                         <materialIcons:MaterialIcon
-                            Width="25"
-                            Height="25"
-                            Kind="MoreVert" />
+                                  Width="25"
+                                  Height="25"
+                                  Kind="MoreVert" />
                     </Button>
                 </Grid>
             </DataTemplate>
@@ -211,9 +211,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Ellipse
-                        Grid.Column="0"
-                        Width="50"
-                        Height="50">
+                              Grid.Column="0"
+                              Width="50"
+                              Height="50">
                         <Ellipse.Fill>
                             <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding Path=Artist, Converter={StaticResource MetadataImageConverter}}" />
 
@@ -225,9 +225,9 @@
                         </Interaction.Behaviors>
                     </Ellipse>
                     <StackPanel
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        Background="Transparent">
+                              Grid.Column="1"
+                              Margin="10,0,0,0"
+                              Background="Transparent">
                         <Interaction.Behaviors>
                             <EventTriggerBehavior EventName="Tapped">
                                 <InvokeCommandAction Command="{Binding ArtistFullViewCommand}" />
@@ -238,13 +238,13 @@
                     </StackPanel>
 
                     <Button
-                        Grid.Column="2"
-                        Classes="iconButton navButton"
-                        Command="{Binding AltMenuCommand}">
+                              Grid.Column="2"
+                              Classes="iconButton navButton"
+                              Command="{Binding AltMenuCommand}">
                         <materialIcons:MaterialIcon
-                            Width="25"
-                            Height="25"
-                            Kind="MoreVert" />
+                                  Width="25"
+                                  Height="25"
+                                  Kind="MoreVert" />
                     </Button>
                 </Grid>
             </DataTemplate>

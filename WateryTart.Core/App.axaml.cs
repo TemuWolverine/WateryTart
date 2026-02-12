@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using UnitsNet;
 using WateryTart.Core.Playback;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
@@ -18,6 +19,7 @@ using WateryTart.Core.ViewModels;
 using WateryTart.Core.ViewModels.Players;
 using WateryTart.Core.Views;
 using WateryTart.MusicAssistant;
+using XVolume.Factory;
 using ColourService = WateryTart.Core.Services.ColourService;
 using PlayersService = WateryTart.Core.Services.PlayersService;
 
@@ -38,6 +40,7 @@ public partial class App : Application
     private static readonly string AppDataPath = Path.Combine(BaseAppDataPath, "Cache");
     private static readonly Lazy<DiskCachedWebImageLoader> LazyImageLoader = new(() => new DiskCachedWebImageLoader(AppDataPath));
     private static string? _cachedBaseUrl;
+    private static ISettings? _cachedSettings;
     private static IEnumerable<IReaper>? _reapers;
     private static bool _isShuttingDown;
     private static ILoggerFactory? _loggerFactory;
@@ -55,6 +58,15 @@ public partial class App : Application
                 _cachedBaseUrl = Container.Resolve<ISettings>().Credentials.BaseUrl;
             }
             return _cachedBaseUrl;
+        }
+    }
+
+    public static ISettings Settings
+    {
+        get
+        {
+            _cachedSettings ??= Container.Resolve<ISettings>();
+            return _cachedSettings;
         }
     }
 
@@ -127,6 +139,7 @@ public partial class App : Application
                 }
             }
         });
+        var volumeController = VolumeSubsystemFactory.Create();
 
         _logger = _loggerFactory.CreateLogger("WateryTart.Core");
 
@@ -149,6 +162,7 @@ public partial class App : Application
 
         //View models that are singleton
         builder.RegisterType<SettingsViewModel>().SingleInstance();
+        builder.RegisterType<GeneralSettingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<ServerSettingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<PlayersViewModel>().SingleInstance();
         builder.RegisterType<MiniPlayerViewModel>().AsSelf().SingleInstance();

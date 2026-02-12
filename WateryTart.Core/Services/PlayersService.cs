@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using WateryTart.Core.Converters;
 using WateryTart.Core.Extensions;
 using WateryTart.Core.Settings;
 using WateryTart.Core.ViewModels;
@@ -35,8 +36,10 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     private ReadOnlyObservableCollection<TrackViewModel> playedQueue;
     private CompositeDisposable _subscriptions = new CompositeDisposable();
     private readonly Dictionary<string, TrackViewModel> _trackViewModelCache = new Dictionary<string, TrackViewModel>();
+    private bool _isFetchingQueueContents = false;
+    private DispatcherTimer _timer;
 
-    [Reactive] public partial SourceList<QueuedItem> QueuedItems { get; set; } = new SourceList<QueuedItem>();
+    [Reactive] public partial SourceCache<QueuedItem, string> QueuedItems { get; set; } = new SourceCache<QueuedItem, string>(x => x.QueueItemId);
     [Reactive] public partial ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
     [Reactive] public partial ObservableCollection<PlayerQueue> Queues { get; set; } = new ObservableCollection<PlayerQueue>();
     [Reactive] public partial string SelectedPlayerQueueId { get; set; } = string.Empty;
@@ -45,6 +48,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
     public ReadOnlyObservableCollection<TrackViewModel> PlayedQueue { get => playedQueue; }
 
     [Reactive] public partial double Progress { get; set; }
+
     public Player? SelectedPlayer
     {
         get => field;
@@ -70,27 +74,59 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
         SelectedPlayerQueueId = pq.Result.QueueId;
         SelectedQueue = pq.Result;
-        await FetchQueueContentsAsync();
+        FetchQueueContentsAsync();
     }
 
     private async Task FetchQueueContentsAsync()
     {
+        if (_isFetchingQueueContents)
+            return;
+
         var items = await _massClient.WithWs().GetPlayerQueueItemsAsync(SelectedPlayerQueueId);
         try
         {
             if (items.Result != null)
             {
-                QueuedItems.Clear();
-                QueuedItems.AddRange(items.Result);
+                // Build dictionaries for fast lookup
+                var newItemsDict = items.Result.ToDictionary(i => i.QueueItemId);
+                var currentItemsDict = QueuedItems.Items.ToDictionary(i => i.QueueItemId);
+
+                // Remove items not in the new result
+                var toRemove = QueuedItems.Items.Where(i => !newItemsDict.ContainsKey(i.QueueItemId)).ToList();
+                foreach (var item in toRemove)
+                    QueuedItems.Remove(item);
+
+                // Update existing items
+                foreach (var item in QueuedItems.Items)
+                {
+                    if (newItemsDict.TryGetValue(item.QueueItemId, out var newItem))
+                    {
+                        // Update properties as needed
+                        item.SortIndex = newItem.SortIndex;
+                        item.MediaItem = newItem.MediaItem;
+                        // Add more property updates if needed
+                    }
+                }
+
+                // Add new items not already present
+                var currentIds = currentItemsDict.Keys;
+                var toAdd = items.Result.Where(i => !currentIds.Contains(i.QueueItemId)).ToList();
+                if (toAdd.Count > 0)
+                    foreach (var item in toAdd)
+                        QueuedItems.AddOrUpdate(item);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching queue contents");
         }
+        finally
+        {
+            _isFetchingQueueContents = false;
+        }
     }
 
-    private DispatcherTimer _timer;
+
 
     public PlayersService(MusicAssistantClient massClient, ISettings settings, IColourService colourService, ILoggerFactory loggerFactory)
     {
@@ -109,20 +145,28 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         /* This takes care of filtering the two lists */
         _subscriptions.Add(QueuedItems
                 .Connect()
+                .AutoRefresh(x => x.SortIndex)
+                .AutoRefresh(x => x.MediaItem)
                 .Sort(SortExpressionComparer<QueuedItem>.Ascending(t => t.SortIndex))
                 .Filter(i => SelectedQueue != null && (i.SortIndex > SelectedQueue.CurrentIndex || i.MediaItem?.ItemId == SelectedQueue.CurrentItem?.MediaItem?.ItemId))
                 .Transform(i => GetOrCreateTrackViewModel(i))   //transform is expensive since the list is reset to 0, and despite caching still means the visual tree is recreated
                 .Bind(out currentQueue)
                 .Subscribe());
 
-
+        
         _subscriptions.Add(QueuedItems
                 .Connect()
+                .AutoRefresh(x => x.SortIndex)
+                .AutoRefresh(x => x.MediaItem)
                 .Sort(SortExpressionComparer<QueuedItem>.Descending(t => t.SortIndex))
                 .Filter(i => SelectedQueue != null && i.SortIndex < SelectedQueue.CurrentIndex)
                 .Transform(i => GetOrCreateTrackViewModel(i))
                 .Bind(out playedQueue)
                 .Subscribe());
+
+        this.WhenAnyValue(x => x.SelectedQueue.CurrentIndex)
+            .Where(_ => SelectedQueue != null)
+            .Subscribe(_ => QueuedItems.Refresh());
 
         _timer = new DispatcherTimer();
         _timer.Interval = new TimeSpan(0, 0, 1);
@@ -148,6 +192,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         PlayerQueueEventResponse queueEvent;
         PlayerQueueTimeUpdatedEventResponse timeEvent;
         MediaItemEventResponse mediaEvent;
+        Debug.WriteLine(e.EventName);
         switch (e.EventName)
         {
             case EventType.MediaItemPlayed:
@@ -156,6 +201,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
                     if (mediaEvent.data.SecondsPlayed != null)
                         SelectedQueue?.CurrentItem?.MediaItem?.ElapsedTime = mediaEvent.data.SecondsPlayed.Value;
                 break;
+
             case EventType.QueueTimeUpdated:
                 timeEvent = (PlayerQueueTimeUpdatedEventResponse)e;
                 if (SelectedQueue != null && e.object_id == SelectedQueue.QueueId)
@@ -189,26 +235,27 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
             case EventType.QueueUpdated:
                 queueEvent = (PlayerQueueEventResponse)e;
-                if (SelectedQueue != null && queueEvent.data.QueueId == SelectedQueue.QueueId)
+                if (SelectedQueue != null && queueEvent?.data?.QueueId == SelectedQueue.QueueId)
                 {
                     SelectedQueue.CurrentIndex = queueEvent.data.CurrentIndex;
                     SelectedQueue.CurrentItem = queueEvent.data.CurrentItem;
-
                     var currentItem = SelectedQueue.CurrentItem;
                     if (currentItem == null)
                         break;
+
+                    //Get the new background colours
                     if (currentItem.Image != null && currentItem.Image.RemotelyAccessible)
                         _ = _colourService.Update(currentItem.MediaItem.ItemId, currentItem.Image.Path);
                     else
                     {
-                        var url = string.Format("http://{0}/imageproxy?path={1}&provider={2}&checksum=&size=256", App.BaseUrl, Uri.EscapeDataString(currentItem.Image.Path), currentItem.Image.Provider);
+                        var url = ImagePathHelper.ProxyString(currentItem.Image.Path, currentItem.Image.Provider);
                         _ = _colourService.Update(currentItem.MediaItem.ItemId, url);
                     }
                 }
-
-                await FetchQueueContentsAsync();
                 break;
-
+            case EventType.QueueItemsUpdated:
+                FetchQueueContentsAsync();
+                break;
             default:
                 break;
         }
@@ -292,11 +339,11 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
 
     public async Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Replace, bool RadioMode = false)
     {
-
         p ??= SelectedPlayer;
 
         if (p == null)
         {
+            _logger.LogInformation("No player was selected, present popup to pick");
             var players = MenuHelper.AddPlayers(this, t);
             var menu = new MenuViewModel(players);
             MessageBus.Current.SendMessage(menu);
@@ -305,7 +352,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         {
             try
             {
-                _logger.LogInformation($"Playing {t.Name}"); 
+                _logger.LogInformation($"Playing {t.Name}");
                 var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(p.PlayerId);
                 await _massClient.WithWs().PlayAsync(pq.Result.QueueId, t, mode, RadioMode);
             }
@@ -349,6 +396,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             _logger.LogError(ex, "Error playing previous on player {PlayerId}", p?.PlayerId);
         }
     }
+
     public async Task PlayerPrevious(Player? p)
     {
         p ??= SelectedPlayer;
@@ -376,14 +424,14 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         _timer?.Stop();
         QueuedItems?.Dispose();
         _subscriptions?.Dispose();
-        
+
         // Clean up cached ViewModels
         foreach (var vm in _trackViewModelCache.Values)
         {
             vm.Dispose();
         }
         _trackViewModelCache.Clear();
-        
+
         try
         {
             await _massClient.WithWs().DisconnectAsync();
@@ -425,7 +473,7 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
             return null;
 
         var cacheKey = queuedItem.QueueItemId;
-        
+
         if (_trackViewModelCache.TryGetValue(cacheKey, out var cachedViewModel))
         {
             return cachedViewModel;

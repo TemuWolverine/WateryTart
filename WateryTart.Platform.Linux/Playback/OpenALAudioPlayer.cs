@@ -3,6 +3,7 @@
 // </copyright>
 
 using Microsoft.Extensions.Logging;
+using Sendspin.Core.Audio;
 using Sendspin.SDK.Audio;
 using Sendspin.SDK.Models;
 using Silk.NET.OpenAL;
@@ -11,7 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Sendspin.Core.Audio;
+using WateryTart.Core.Settings;
+using XVolume.Abstractions;
+using XVolume.Factory;
 
 namespace Sendspin.Platform.Linux.Audio;
 
@@ -78,7 +81,7 @@ public sealed class OpenALAudioPlayer : IAudioPlayer, IAudioDeviceEnumerator
 
     public event EventHandler<AudioPlayerState>? StateChanged;
     public event EventHandler<AudioPlayerError>? ErrorOccurred;
-
+    IVolumeSubsystem volumeController  = VolumeSubsystemFactory.Create();
     public unsafe Task InitializeAsync(AudioFormat format, CancellationToken ct)
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
@@ -345,8 +348,14 @@ public sealed class OpenALAudioPlayer : IAudioPlayer, IAudioDeviceEnumerator
     //TODO: Implement flag for app or systemwide volume setting
     private void ApplyVolume()
     {
-        if (_al == null) return;
-        _al.SetSourceProperty(_source, SourceFloat.Gain, _isMuted ? 0f : _volume);
+        if (_al == null) 
+            return;
+
+        if (WateryTart.Core.App.Settings.VolumeEventControl == VolumeEventControl.AppVolume)
+            _al.SetSourceProperty(_source, SourceFloat.Gain, _isMuted ? 0f : _volume);
+        else
+            volumeController.SetVolumeSmooth((int)(_volume * 100), durationMs: 1000);
+
     }
 
     private unsafe void CleanupOpenAL()

@@ -14,7 +14,7 @@ public interface IPlayersService
     ObservableCollection<Player> Players { get; }
     ReadOnlyObservableCollection<TrackViewModel> CurrentQueue { get; }
     ReadOnlyObservableCollection<TrackViewModel> PlayedQueue { get; }
-    SourceList<QueuedItem> QueuedItems { get; set; }
+    SourceCache<QueuedItem, string> QueuedItems { get; set; }
     Player? SelectedPlayer { get; set; }
     Task GetPlayers();
     Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Play, bool RadioMode = false);

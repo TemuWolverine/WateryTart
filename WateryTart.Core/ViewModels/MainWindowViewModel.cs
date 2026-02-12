@@ -29,7 +29,6 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
     private bool _canNavigateToSettings = true;
     private bool _canNavigateToPlayers = true;
     private bool _canNavigateBack = true;
-
     public ViewModelActivator? Activator { get; }
     public RelayCommand CloseSlideupCommand { get; }
     public IColourService ColourService { get; }
@@ -78,6 +77,7 @@ public partial class MainWindowViewModel : ReactiveObject, IScreen, IActivatable
             _canNavigateToSettings = vm is not SettingsViewModel;
             _canNavigateToPlayers = vm is not PlayersViewModel;
             _canNavigateBack = Router.NavigationStack.Count > 1;
+
 
             // Notify commands to re-evaluate their canExecute predicates
             GoBack.NotifyCanExecuteChanged();
