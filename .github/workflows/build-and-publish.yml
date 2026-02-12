@@ -45,7 +45,7 @@ jobs:
         run: dotnet restore src/WateryTart.Platform.Linux
       - name: Print version (for debug)
         run: echo "The version is ${{ needs.generate-version.outputs.version }}"
-        run: |
+      - run: |
           dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-arm64
           dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=Linux-x64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-x64
           chmod +x ./output/linux-x64/WateryTartLinux
