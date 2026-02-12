@@ -47,11 +47,11 @@ mkdir ./staging_folder/usr/share/icons/hicolor/scalable/apps
 cp ../../Assets/logo.svg ./staging_folder/usr/share/icons/hicolor/scalable/apps/WateryTart.svg
 
 # Make x64 .deb file
-dpkg-deb --root-owner-group --build --nocheck ./staging_folder/ ./WateryTart_Linux_amd64.deb
+dpkg-deb --root-owner-group --build --nocheck ./staging_folder/ ../../output/WateryTart_Linux_amd64.deb
 
 #make arm64 .deb file
 rm -rf ./staging_folder/usr/lib/WateryTart
 cp -f -a ./out/linux-arm64/. ./staging_folder/usr/lib/WateryTart/ # copies all files from publish dir
 chmod -R a+rX ./staging_folder/usr/lib/WateryTart/ # set read permissions to all files
 chmod +x ./staging_folder/usr/lib/WateryTart/WateryTartLinux # set executable permissions to main executable
-dpkg-deb --root-owner-group --build --nocheck ./staging_folder/ ./WateryTart_Linux_arm64.deb
+dpkg-deb --root-owner-group --build --nocheck ./staging_folder/ ../../output/WateryTart_Linux_arm64.deb

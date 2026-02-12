@@ -80,10 +80,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\WateryTart.MusicAssistant\src\WateryTart.MusicAssistant\WateryTart.MusicAssistant.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Compile Update="Controls\ResponsiveColumnPanel.axaml.cs">
 			<DependentUpon>ResponsiveColumnPanel.axaml</DependentUpon>
 		</Compile>
