@@ -60,6 +60,15 @@
         "resolved": "1.23.1",
         "contentHash": "gZIbksInoiXbJZmepYnTs5O6Edg5O5k86c1+Uus0zSaVnQx5WRbInGz2VTlvudbs0qAqXs/asL1YvJzco/nfAQ=="
       },
+      "Velopack": {
+        "type": "Direct",
+        "requested": "[0.0.1298, )",
+        "resolved": "0.0.1298",
+        "contentHash": "PJ6Nm28qJ4ChsHYzgHUJ8g+DGyyHes2+bwxY709+znMhgi8fMp8M1FTF8x6pZMjnsPCWVwoMlxVEyq0NLeRZtA==",
+        "dependencies": {
+          "NuGet.Versioning": "6.14.0"
+        }
+      },
       "Xaml.Behaviors.Avalonia": {
         "type": "Direct",
         "requested": "[11.3.9.5, )",
@@ -391,6 +400,11 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
+      "NuGet.Versioning": {
+        "type": "Transitive",
+        "resolved": "6.14.0",
+        "contentHash": "4v4blkhCv8mpKtfx+z0G/X0daVCzdIaHSC51GkUspugi5JIMn2Bo8xm5PdZYF0U68gOBfz/+aPWMnpRd85Jbow=="
+      },
       "ReactiveUI.SourceGenerators.Analyzers.CodeFixes": {
         "type": "Transitive",
         "resolved": "2.6.1",
@@ -615,6 +629,7 @@
           "SharpHook": "[7.1.1, )",
           "SkiaSharp": "[2.88.9, )",
           "System.Device.Gpio": "[4.1.0, )",
+          "Velopack": "[0.0.1298, )",
           "WateryTart.MusicAssistant": "[1.0.0, )",
           "XVolume": "[0.1.1, )",
           "Xaml.Behaviors.Avalonia": "[11.3.9.5, )",

@@ -403,3 +403,4 @@ WateryTart.Platform.Linux/WateryTart_Linux_arm64.deb
 *.deb
 *.parcel
 /.idea
+src/WateryTart.Platform.Linux/staging_folder/
