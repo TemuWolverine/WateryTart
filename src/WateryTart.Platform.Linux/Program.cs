@@ -4,6 +4,7 @@ using ReactiveUI.Avalonia;
 using System;
 using System.Reflection;
 using System.Threading;
+using Velopack;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
 using WateryTart.Core.Services;
@@ -21,6 +22,7 @@ sealed class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        VelopackApp.Build().Run();
         var builder = BuildAvaloniaApp();
         if (args.Contains("--drm"))
         {

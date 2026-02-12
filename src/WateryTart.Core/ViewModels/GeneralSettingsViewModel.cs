@@ -1,4 +1,5 @@
 ﻿using Material.Icons;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -18,6 +19,7 @@ namespace WateryTart.Core.ViewModels
         private UpdateInfo _update;
         public IEnumerable<VolumeEventControl> VolumeEventOptions { get; } = (VolumeEventControl[])Enum.GetValues(typeof(VolumeEventControl));
         private readonly ISettings _settings;
+        private readonly ILogger _logger;
 
         public VolumeEventControl SelectedVolumeEvent
         {
@@ -41,21 +43,40 @@ namespace WateryTart.Core.ViewModels
 
         public MaterialIconKind Icon => MaterialIconKind.Cog;
 
-        public GeneralSettingsViewModel(ISettings settings)
+        public GeneralSettingsViewModel(ISettings settings, ILoggerFactory loggerFactory)
         {
             _settings = settings;
-            _um = new UpdateManager(new GithubSource("https://github.com/TemuWolverine/WateryTart/", null, false));
-            CheckForUpdates();
+            _logger = loggerFactory.CreateLogger<GeneralSettingsViewModel>();
+            try
+            {
+                _um = new UpdateManager(new GithubSource("https://github.com/TemuWolverine/WateryTart/", null, false));
+                CheckForUpdates();
 
-            InstalledVersion = _um.IsInstalled ? _um.CurrentVersion.ToString() : "(n/a - not installed)";
+                InstalledVersion = _um.IsInstalled ? _um.CurrentVersion.ToString() : "(n/a - not installed)";
+            }
+            catch (Exception ex)
+            {
+                LatestVersion = $"Error checking for updates: {ex.Message}";
+                InstalledVersion = "(n/a - not installed)";
+                _logger.LogError(ex, "Failed to initialize UpdateManager");
+            }
         }
         public async Task CheckForUpdates()
         {
-            if (_um.IsInstalled)
+            try
             {
-                _update = await _um.CheckForUpdatesAsync().ConfigureAwait(true);
-                LatestVersion = _update.TargetFullRelease.Version.ToString();
-            } else LatestVersion = "(n/a - not installed)";
+                if (_um.IsInstalled)
+                {
+                    _update = await _um.CheckForUpdatesAsync().ConfigureAwait(true);
+                    LatestVersion = _update.TargetFullRelease.Version.ToString();
+                }
+                else LatestVersion = "(n/a - not installed)";
+            }
+            catch (Exception ex)
+            {
+                LatestVersion = $"Error checking for updates: {ex.Message}";
+                _logger.LogError(ex, "Failed to initialize UpdateManager");
+            }
         }
 
         [Reactive] public partial string LatestVersion { get; set; }

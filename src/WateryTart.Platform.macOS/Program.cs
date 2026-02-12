@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Velopack;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
 
@@ -63,6 +64,8 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        VelopackApp.Build().Run();
+
         // Set the process name for macOS menu bar display
         SetMacOSProcessName("WateryTart");
 
