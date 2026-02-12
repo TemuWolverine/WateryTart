@@ -171,7 +171,10 @@ jobs:
           path: linux-arm64
 
       - name: Get last release
-        run: vpk download github --repoUrl https://github.com/${{ github.repository }}
+        run: |  
+          vpk download github --repoUrl https://github.com/${{ github.repository }} -c win-x64 -o ./releases
+          vpk download github --repoUrl https://github.com/${{ github.repository }} -c linux-x64 -o ./releases
+          vpk download github --repoUrl https://github.com/${{ github.repository }} -c linux-arm64 -o ./releases
       - name: Create Velopack Release
         working-directory: ${{ github.workspace }}
         run: |    
