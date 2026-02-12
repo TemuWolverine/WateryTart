@@ -167,9 +167,6 @@ public partial class App : Application
                 }
             }
         });
-        var volumeController = VolumeSubsystemFactory.Create();
-        volumeController.SetVolumeSmooth((int)(0.5 * 100), durationMs: 1000);
-
         _logger = _loggerFactory.CreateLogger("WateryTart.Core");
 
         // Register the logger factory for DI
