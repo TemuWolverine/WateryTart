@@ -26,7 +26,7 @@ jobs:
             echo "version=0.0.1" >> $GITHUB_OUTPUT
           fi
 
-  linuxbuild:
+  linuxbuild: # this handles linux and windows builds
     needs:
       - generate-version
     runs-on: ubuntu-latest
@@ -43,46 +43,25 @@ jobs:
           cache-dependency-path: './src/WateryTart.Platform.Linux/packages.lock.json'
       - name: Install dependencies
         run: dotnet restore src/WateryTart.Platform.Linux
-      - name: Print version (for debug)
-        run: echo "The version is ${{ needs.generate-version.outputs.version }}"
       - run: |
           dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-arm64
           dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=Linux-x64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-x64
+          dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/win-x64
+      - name: Set permissions
+        run: |
           chmod +x ./output/linux-x64/WateryTartLinux
           chmod +x ./output/linux-arm64/WateryTartLinux
       - name: Upload Linux arm64 artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-arm64-build
-          path: output/linux-arm64
+          path: ./output/linux-arm64
 
       - name: Upload Linux x64 artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64-build
           path: ./output/linux-x64
-
-  windowsbuild:
-    needs:
-      - generate-version
-      - linuxbuild # to make it sequential due to file space issues
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '10.0.x' ]
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup .NET 10.x
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.x'
-          cache: true
-          cache-dependency-path: './src/WateryTart.Platform.Linux/packages.lock.json'
-      - name: Install dependencies
-        run: dotnet restore src/WateryTart.Platform.Windows
-      - name: Print version (for debug)
-        run: echo "The version is ${{ needs.generate-version.outputs.version }}"
-      - run: dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/win-x64
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -94,7 +73,7 @@ jobs:
   macosbuild:
     needs:
       - generate-version
-      - windowsbuild # to make it sequential due to file space issues
+      - linuxbuild # to make it sequential due to file space issues
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
@@ -151,7 +130,6 @@ jobs:
     needs:
       - generate-version
       - linuxbuild
-      - windowsbuild
       - macosbuild
     runs-on: ubuntu-latest
     steps:
@@ -180,17 +158,22 @@ jobs:
           name: linux-arm64-build
           path: linux-arm64
 
+      - name: Set permissions
+        run: |
+          chmod +x /home/runner/work/WateryTart/WateryTart/linux-x64/WateryTartLinux
+          chmod +x /home/runner/work/WateryTart/WateryTart/linux-arm64/WateryTartLinux
       - name: Get last release
         run: |  
           vpk download github --repoUrl https://github.com/${{ github.repository }} -c win-x64 -o ./releases
           vpk download github --repoUrl https://github.com/${{ github.repository }} -c linux-x64 -o ./releases
           vpk download github --repoUrl https://github.com/${{ github.repository }} -c linux-arm64 -o ./releases
+
       - name: Create Velopack Release
         working-directory: ${{ github.workspace }}
         run: |    
           vpk [win] pack --packId WateryTart --runtime win-x64 --channel win-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/win-x64 --mainExe WateryTartDesktop.exe --icon Assets/logo_square.ico --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --mainExe WateryTartLinux --icon Assets/logo_square.ico --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --mainExe WateryTartLinux --icon Assets/logo_square.ico --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
       
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
