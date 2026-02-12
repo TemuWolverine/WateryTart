@@ -14,19 +14,19 @@
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<EnableXamlCompilation>true</EnableXamlCompilation>
-		<ApplicationIcon>..\Assets\logo_square.ico</ApplicationIcon>
+		<ApplicationIcon>..\..\Assets\logo_square.ico</ApplicationIcon>
 
 
 	</PropertyGroup>
 	<ItemGroup>
-		<Resource Include="..\Assets\logo_square.ico" />
+		<Resource Include="..\..Assets\logo_square.ico" />
 	</ItemGroup>
 	<PropertyGroup>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AssemblyName>WateryTartDesktop</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Include="..\Assets\logo-128.png">
+		<None Include="..\..Assets\logo-128.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
