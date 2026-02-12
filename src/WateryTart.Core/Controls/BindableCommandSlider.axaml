@@ -5,16 +5,16 @@
           xmlns:sys="using:System"
           x:ClassModifier="internal">
 
-    <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness>
-    <GridLength x:Key="SliderPreContentMargin">15</GridLength>
-    <GridLength x:Key="SliderPostContentMargin">15</GridLength>
-    <x:Double x:Key="SliderHorizontalHeight">32</x:Double>
-    <x:Double x:Key="SliderVerticalWidth">32</x:Double>
-    <CornerRadius x:Key="SliderThumbCornerRadius">0</CornerRadius>
-    <x:Double x:Key="SliderHorizontalThumbWidth">1</x:Double>
-    <x:Double x:Key="SliderHorizontalThumbHeight">20</x:Double>
-    <x:Double x:Key="SliderTrackThemeHeight">20</x:Double>
-    <ControlTheme x:Key="FluentSliderHorizontalRepeatButton" TargetType="RepeatButton">
+    <Thickness x:Key="BindableSliderTopHeaderMargin">0,0,0,4</Thickness>
+    <GridLength x:Key="BindableSliderPreContentMargin">15</GridLength>
+    <GridLength x:Key="BindableSliderPostContentMargin">15</GridLength>
+    <x:Double x:Key="BindableSliderHorizontalHeight">32</x:Double>
+    <x:Double x:Key="BindableSliderVerticalWidth">32</x:Double>
+    <CornerRadius x:Key="BindableSliderThumbCornerRadius">0</CornerRadius>
+    <x:Double x:Key="BindableSliderHorizontalThumbWidth">1</x:Double>
+    <x:Double x:Key="BindableSliderHorizontalThumbHeight">20</x:Double>
+    <x:Double x:Key="BindableSliderTrackThemeHeight">20</x:Double>
+    <ControlTheme x:Key="BindableFluentBindableSliderHorizontalRepeatButton" TargetType="RepeatButton">
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid>
@@ -24,7 +24,7 @@
                               Background="Transparent" />
                     <Border
                               Name="TrackBackground"
-                              Height="{DynamicResource SliderTrackThemeHeight}"
+                              Height="{DynamicResource BindableSliderTrackThemeHeight}"
                               VerticalAlignment="Center"
                               Background="{TemplateBinding Background}"
                               CornerRadius="{DynamicResource ControlCornerRadius}" />
@@ -33,19 +33,19 @@
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="FluentSliderThumbTheme" TargetType="Thumb">
+    <ControlTheme x:Key="BindableFluentBindableSliderThumbTheme" TargetType="Thumb">
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
-                          CornerRadius="{DynamicResource SliderThumbCornerRadius}" />
+                          CornerRadius="{DynamicResource BindableSliderThumbCornerRadius}" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type controls:BindableCommandSlider}" TargetType="Slider">
+    <ControlTheme x:Key="{x:Type controls:BindableCommandSlider}" TargetType="controls:BindableCommandSlider">
         <Setter Property="Background" Value="{DynamicResource SliderTrackFill}" />
         <Setter Property="BorderThickness" Value="{DynamicResource SliderBorderThemeThickness}" />
         <Setter Property="Foreground" Value="{DynamicResource SliderTrackValueFill}" />
@@ -69,12 +69,12 @@
                                 </Grid.Styles>
                                 <Grid
                                           x:Name="HorizontalTemplate"
-                                          MinHeight="{DynamicResource SliderHorizontalHeight}"
+                                          MinHeight="{DynamicResource BindableSliderHorizontalHeight}"
                                           ColumnDefinitions="Auto,Auto,*">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="{DynamicResource SliderPreContentMargin}" />
+                                        <RowDefinition Height="{DynamicResource BindableSliderPreContentMargin}" />
                                         <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="{DynamicResource SliderPostContentMargin}" />
+                                        <RowDefinition Height="{DynamicResource BindableSliderPostContentMargin}" />
                                     </Grid.RowDefinitions>
                                     <Track
                                               Name="PART_Track"
@@ -91,25 +91,25 @@
                                                       Name="PART_DecreaseButton"
                                                       Background="{TemplateBinding Foreground}"
                                                       Focusable="False"
-                                                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}" />
+                                                      Theme="{StaticResource BindableFluentBindableSliderHorizontalRepeatButton}" />
                                         </Track.DecreaseButton>
                                         <Track.IncreaseButton>
                                             <RepeatButton
                                                       Name="PART_IncreaseButton"
                                                       Background="{TemplateBinding Background}"
                                                       Focusable="False"
-                                                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}" />
+                                                      Theme="{StaticResource BindableFluentBindableSliderHorizontalRepeatButton}" />
                                         </Track.IncreaseButton>
                                         <Thumb
                                                   Name="thumb"
-                                                  Width="{DynamicResource SliderHorizontalThumbWidth}"
-                                                  Height="{DynamicResource SliderHorizontalThumbHeight}"
+                                                  Width="{DynamicResource BindableSliderHorizontalThumbWidth}"
+                                                  Height="{DynamicResource BindableSliderHorizontalThumbHeight}"
                                                   Margin="0"
                                                   Padding="0"
-                                                  Background="{DynamicResource SliderThumbBackground}"
+                                                  Background="{DynamicResource BindableSliderThumbBackground}"
                                                   BorderThickness="0"
                                                   DataContext="{TemplateBinding Value}"
-                                                  Theme="{StaticResource FluentSliderThumbTheme}" />
+                                                  Theme="{StaticResource BindableFluentBindableSliderThumbTheme}" />
                                     </Track>
                                 </Grid>
                             </Grid>
@@ -147,7 +147,7 @@
 			</Style>-->
 
             <Style Selector="^ /template/ Thumb">
-                <Setter Property="Background" Value="{DynamicResource SliderThumbBackgroundPointerOver}" />
+                <Setter Property="Background" Value="{DynamicResource BindableSliderThumbBackgroundPointerOver}" />
             </Style>
 
             <Style Selector="^ /template/ Grid#SliderContainer">
@@ -173,7 +173,7 @@
             </Style>
 
             <Style Selector="^ /template/ Thumb">
-                <Setter Property="Background" Value="{DynamicResource SliderThumbBackgroundPressed}" />
+                <Setter Property="Background" Value="{DynamicResource BindableSliderThumbBackgroundPressed}" />
             </Style>
         </Style>
 
@@ -188,7 +188,7 @@
             </Style>
 
             <Style Selector="^ /template/ Thumb">
-                <Setter Property="Background" Value="{DynamicResource SliderThumbBackgroundDisabled}" />
+                <Setter Property="Background" Value="{DynamicResource BindableSliderThumbBackgroundDisabled}" />
             </Style>
 
             <Style Selector="^ /template/ TickBar">

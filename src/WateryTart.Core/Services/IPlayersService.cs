@@ -18,6 +18,8 @@ public interface IPlayersService
     Player? SelectedPlayer { get; set; }
     Task GetPlayers();
     Task PlayItem(MediaItemBase t, Player? p = null, PlayerQueue? q = null, PlayMode mode = PlayMode.Play, bool RadioMode = false);
+    
+    Task PlayerVolume(int volume, Player? p = null);
     Task PlayerVolumeDown(Player? p = null);
     Task PlayerVolumeUp(Player? p = null);
     Task PlayerPlayPause(Player? p = null);

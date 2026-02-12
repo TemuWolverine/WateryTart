@@ -10,6 +10,8 @@ using WateryTart.Core.ViewModels.Menus;
 using WateryTart.MusicAssistant.Models;
 using System.Diagnostics;
 using System;
+using Xaml.Behaviors.SourceGenerators;
+using Avalonia.Controls.Primitives;
 
 namespace WateryTart.Core.ViewModels.Players;
 
@@ -42,8 +44,34 @@ public partial class BigPlayerViewModel : ReactiveObject, IViewModelBase
     public ICommand PlayerPlayPauseCommand { get; set; }
     public ICommand PlayPreviousCommand { get; set; }
     public ICommand PlayingAltMenuCommand { get; set; }
-
     public RelayCommand<double> SeekCommand { get; }
+
+    private System.Timers.Timer? _volumeDebounceTimer;
+    private double _pendingVolume;
+
+    [GenerateTypedAction]
+    public void VolumeChanged(object sender, object parameter)
+    {
+        //Debouncing inside itself so it doesnt' get into a loop fighting with MA sending back the new volume
+        if (parameter is RangeBaseValueChangedEventArgs args)
+        {
+            if (args.NewValue == args.OldValue)
+                return;
+
+            _pendingVolume = args.NewValue;
+
+            _volumeDebounceTimer?.Stop();
+            _volumeDebounceTimer?.Dispose();
+
+            _volumeDebounceTimer = new System.Timers.Timer(200); 
+            _volumeDebounceTimer.AutoReset = false;
+            _volumeDebounceTimer.Elapsed += (s, e) =>
+            {
+                _playersService.PlayerVolume((int)_pendingVolume);
+            };
+            _volumeDebounceTimer.Start();
+        }
+    }
 
     public BigPlayerViewModel(IPlayersService playersService, IScreen screen, IColourService colourService)
     {

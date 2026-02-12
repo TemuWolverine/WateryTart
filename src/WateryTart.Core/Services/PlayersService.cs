@@ -290,6 +290,23 @@ public partial class PlayersService : ReactiveObject, IPlayersService, IAsyncRea
         }
     }
 
+    public async Task PlayerVolume(int volume, Player? p = null)
+    {
+        p ??= SelectedPlayer;
+
+        if (p != null)
+        {
+            try
+            {
+               var result = await _massClient.WithWs().SetPlayerGroupVolumeAsync(p.PlayerId, volume);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adjusting volume down for player {PlayerId}", p.PlayerId);
+            }
+        }
+    }
+
     public async Task PlayerVolumeDown(Player? p)
     {
         p ??= SelectedPlayer;
