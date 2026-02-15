@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/TemuWolverine/WateryTart/compare/v1.0.10...v1.0.11) (2026-02-15)
+
+
+### Bug Fixes
+
+* stopped being gaslit by copilot ([3bc1e20](https://github.com/TemuWolverine/WateryTart/commit/3bc1e208c0fb8875839195d2b3ba29187c103bdf))
+
 ## [1.0.10](https://github.com/TemuWolverine/WateryTart/compare/v1.0.9...v1.0.10) (2026-02-15)
 
 
