@@ -196,5 +196,6 @@ jobs:
         with:
           files: |
             releases/*.*
+            tag_name: v${{ needs.release-please.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
