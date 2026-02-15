@@ -1,32 +1,34 @@
+name: build-and-publish2
+
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch: {}
+  release:
+    types: [published]
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
   id-token: write
-
-name: release-please
+  contents: write
 
 jobs:
-  release-please:
+  generate-version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.release.outputs.version }}
-      release_created: ${{ steps.release.outputs.release_created }}
+      version: ${{ steps.set_version.outputs.version }}
     steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          release-type: simple
+      - name: Set Version Variable (handles tags and non-tags)
+        id: set_version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            VER="${{ github.ref_name }}"
+            VER="${VER#v}"
+            echo "version=$VER" >> $GITHUB_OUTPUT
+          else
+            echo "version=0.0.1" >> $GITHUB_OUTPUT
+          fi
 
   linuxbuild: # this handles linux and windows builds
-    if: ${{ needs.release-please.outputs.release_created }}
     needs:
-      - release-please
+      - generate-version
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,9 +44,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore src/WateryTart.Platform.Linux
       - run: |
-          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.release-please.outputs.version }} -o ./output/linux-arm64
-          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=Linux-x64 /p:Version=${{ needs.release-please.outputs.version }} -o ./output/linux-x64
-          dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.release-please.outputs.version }} -o ./output/win-x64
+          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-arm64
+          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=Linux-x64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-x64
+          dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/win-x64
       - name: Set permissions
         run: |
           chmod +x ./output/linux-x64/WateryTartLinux
@@ -70,21 +72,10 @@ jobs:
   #this doesn't use Velopack just yet because I have no way of testing it, or even knowing what it creates
   macosbuild:
     needs:
-      - release-please
-    #  - linuxbuild # to make it sequential due to file space issues
-    if: ${{ needs.release-please.outputs.release_created }}
+      - generate-version
+      - linuxbuild # to make it sequential due to file space issues
     runs-on: macos-latest
     steps:
-      - name: Free up disk space
-        run: |
-          sudo rm -rf /usr/local/share/boost
-          sudo rm -rf /usr/local/share/gtk-doc
-          sudo rm -rf /usr/local/share/man
-          sudo rm -rf /usr/local/share/doc
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/Homebrew
-          df -h
       - uses: actions/checkout@v6
       - name: Setup .NET 10.x
         uses: actions/setup-dotnet@v5
@@ -93,7 +84,7 @@ jobs:
       - name: Install dependencies
         run: dotnet restore src/WateryTart.Platform.macOS
       - name: Publish
-        run: dotnet publish src/WateryTart.Platform.macOS -p:PublishProfile=MacOSArm64 /p:Version=${{ needs.release-please.outputs.version }}
+        run: dotnet publish src/WateryTart.Platform.macOS -p:PublishProfile=MacOSArm64 /p:Version=${{ needs.generate-version.outputs.version }}
       - name: Free up disk space
         run: |
           sudo rm -rf /usr/local/share/boost
@@ -137,10 +128,9 @@ jobs:
 
   velopack:
     needs:
-      - release-please
+      - generate-version
       - linuxbuild
       - macosbuild
-    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
 
@@ -181,9 +171,9 @@ jobs:
       - name: Create Velopack Release
         working-directory: ${{ github.workspace }}
         run: |    
-          vpk [win] pack --packId WateryTart --runtime win-x64 --channel win-x64 --packVersion ${{ needs.release-please.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/win-x64 --mainExe WateryTartDesktop.exe --icon Assets/logo_square.ico --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.release-please.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.release-please.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [win] pack --packId WateryTart --runtime win-x64 --channel win-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/win-x64 --mainExe WateryTartDesktop.exe --icon Assets/logo_square.ico --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
       
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
@@ -196,6 +186,5 @@ jobs:
         with:
           files: |
             releases/*.*
-            tag_name: v${{ needs.release-please.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
