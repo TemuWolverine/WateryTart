@@ -351,70 +351,17 @@
                               FontWeight="Bold"
                               Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Name}"
                               TextTrimming="CharacterEllipsis" />
+                     <TextBlock
+                              HorizontalAlignment="Center"
+                              FontSize="24"
+                              Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Album.Name}"
+                              TextTrimming="CharacterEllipsis" />
                     <TextBlock
                               HorizontalAlignment="Center"
                               FontSize="24"
                               Text="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Artists[0].Name}"
                               TextTrimming="CharacterEllipsis" />
                 </StackPanel>
-
-                <!--  Quality Badges for Small Display - Each as separate tag  -->
-                <!-- <StackPanel
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Center"
-                          Orientation="Horizontal"
-                          Spacing="4">
-                -->
-                <!--  Codec Badge  -->
-                <!--
-                    <Border
-                              Padding="5,2"
-                              Background="#1A1A1A"
-                              BorderBrush="#1DB954"
-                              BorderThickness="1"
-                              CornerRadius="3"
-                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <TextBlock
-                                  FontSize="9"
-                                  FontWeight="Bold"
-                                  Foreground="#1DB954"
-                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatCodecConverter}}" />
-                    </Border>
-
-                -->
-                <!--  Sample Rate Badge  -->
-                <!--
-                    <Border
-                              Padding="5,2"
-                              Background="#1A1A1A"
-                              BorderBrush="#64B5F6"
-                              BorderThickness="1"
-                              CornerRadius="3"
-                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <TextBlock
-                                  FontSize="9"
-                                  FontWeight="Bold"
-                                  Foreground="#64B5F6"
-                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatSampleRateConverter}}" />
-                    </Border>
-
-                -->
-                <!--  Bit Depth Badge  -->
-                <!--
-                    <Border
-                              Padding="5,2"
-                              Background="#1A1A1A"
-                              BorderBrush="#FFB74D"
-                              BorderThickness="1"
-                              CornerRadius="3"
-                              IsVisible="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <TextBlock
-                                  FontSize="9"
-                                  FontWeight="Bold"
-                                  Foreground="#FFB74D"
-                                  Text="{Binding PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat, Converter={StaticResource AudioFormatBitDepthConverter}}" />
-                    </Border>
-                </StackPanel>-->
 
                 <!--  Compact Progress Bar  -->
                 <Grid Margin="5,10,5,0">
@@ -457,7 +404,7 @@
                         <materialIcons:MaterialIcon
                                   Width="45"
                                   Height="45"
-                                  Kind="PlayPause" />
+                                  Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" />
                     </Button>
                     <Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}">
                         <materialIcons:MaterialIcon
