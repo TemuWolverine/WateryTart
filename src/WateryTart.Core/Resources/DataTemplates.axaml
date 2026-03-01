@@ -5,6 +5,7 @@
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:converters="using:WateryTart.Core.Converters"
           xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:lottie="using:Avalonia.Labs.Lottie"
           xmlns:menus="using:WateryTart.Core.Views.Menus"
           xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
           xmlns:views="using:WateryTart.Core"
@@ -208,7 +209,7 @@
 
             <Ellipse Width="125" Height="125">
                 <Ellipse.Fill>
-                    <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding Path=ArtistThumb, Converter={StaticResource MassImageImageConverter}}" />
+                    <ImageBrush asyncImageLoader:ImageBrushLoader.FallbackImage="{x:Static app:App.FallbackImage}" asyncImageLoader:ImageBrushLoader.Source="{Binding Path=ArtistThumb, Converter={StaticResource MassImageImageConverter}}" />
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -298,14 +299,14 @@
 
             <!--  Track Info  -->
             <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
-                <iconPacks:PackIconMaterial
+                <!--                <iconPacks:PackIconMaterial
                           Grid.Column="0"
                           Width="20"
                           Height="20"
                           Margin="5,0,0,0"
                           VerticalAlignment="Top"
                           IsVisible="{Binding IsNowPlaying}"
-                          Kind="VolumeHigh" />
+                          Kind="VolumeHigh" />-->
 
                 <TextBlock
                           Grid.Column="1"
@@ -325,7 +326,22 @@
             <TextBlock
                       Grid.Column="2"
                       Foreground="{StaticResource FadedTextColourBrush}"
+                      IsVisible="{Binding !IsNowPlaying}"
                       Text="{Binding Track.Duration, Converter={StaticResource SecondsToMinutesConverter}}" />
+
+            <Viewbox
+                      Grid.Column="2"
+                      Width="24"
+                      Height="24"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      IsVisible="{Binding IsNowPlaying}"
+                      Stretch="Uniform">
+                <lottie:Lottie
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Path="/Assets/nowplaying.json" />
+            </Viewbox>
 
             <Button
                       Grid.Column="3"

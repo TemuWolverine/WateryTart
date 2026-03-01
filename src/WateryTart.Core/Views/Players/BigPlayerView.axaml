@@ -274,14 +274,26 @@
                     <TabItem Header="Queue">
                         <ItemsControl
                                   Background="Transparent"
-                                  ItemTemplate="{StaticResource trackSmallReusableTemplate}"
-                                  ItemsSource="{Binding PlayersService.CurrentQueue}" />
+                                  ItemTemplate="{StaticResource trackMediumReusableTemplate}"
+                                  ItemsSource="{Binding PlayersService.CurrentQueue}">
+                            <ItemsControl.Styles>
+                                <Style Selector="ContentPresenter">
+                                    <Setter Property="Padding" Value="0,10,0,10" />
+                                </Style>
+                            </ItemsControl.Styles>
+                        </ItemsControl>
                     </TabItem>
                     <TabItem Header="Played">
                         <ItemsControl
                                   Background="Transparent"
-                                  ItemTemplate="{StaticResource trackSmallReusableTemplate}"
-                                  ItemsSource="{Binding PlayersService.PlayedQueue}" />
+                                  ItemTemplate="{StaticResource trackMediumReusableTemplate}"
+                                  ItemsSource="{Binding PlayersService.PlayedQueue}">
+                            <ItemsControl.Styles>
+                                <Style Selector="ContentPresenter">
+                                    <Setter Property="Padding" Value="0,10,0,10" />
+                                </Style>
+                            </ItemsControl.Styles>
+                        </ItemsControl>
                     </TabItem>
                     <TabItem Header="Lyrics" />
                 </TabControl>
