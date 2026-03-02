@@ -173,10 +173,16 @@
                       Kind="Sort" />
 
             <ComboBox
-                      Width="150"
+                      
                       ItemsSource="{Binding SortingOptions}"
                       SelectedIndex="0"
-                      SelectedItem="{Binding SelectedSortingOption}" />
+                      SelectedItem="{Binding SelectedSortingOption}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Menu>
                 <MenuItem Header="Filters">
                     <!--  Global filters  -->

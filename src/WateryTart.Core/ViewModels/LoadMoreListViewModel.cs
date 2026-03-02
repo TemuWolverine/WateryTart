@@ -29,7 +29,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     [Reactive] public override partial bool IsLoading { get; set; }
     [Reactive] public partial ObservableCollection<IViewModelBase> Items { get; set; }
 
-    public IEnumerable<OrderBy> SortingOptions { get; } = Enum.GetValues<OrderBy>();
+    public IEnumerable<OrderBy> SortingOptions { get; } = Enum.GetValues<OrderBy>().Skip(1);
     [Reactive] public partial OrderBy SelectedSortingOption { get; set; } = OrderBy.name;
     public AsyncRelayCommand LoadMoreCommand { get; }
     ICommand ILoadMoreListViewModel.LoadMoreCommand => LoadMoreCommand;
@@ -58,7 +58,6 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
 
         // React to sorting changes with debounce to avoid rapid repeated loads
         this.WhenAnyValue(x => x.SelectedSortingOption)
-            .Skip(1)
             .Throttle(TimeSpan.FromMilliseconds(150)) // Debounce rapid changes
             .ObserveOn(RxApp.TaskpoolScheduler)
             .SelectMany(_ => Observable.FromAsync(() => LoadInitialAsync()))
