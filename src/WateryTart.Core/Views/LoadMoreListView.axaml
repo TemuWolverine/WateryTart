@@ -61,7 +61,8 @@
                                   Height="195"
                                   FallbackImage="{x:Static app:App.FallbackImage}"
                                   Loader="{x:Static app:App.ImageLoaderInstance}"
-                                  Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}" />
+                                  Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}"
+                                  Stretch="UniformToFill" />
                     </Border>
                 </Border>
                 <TextBlock

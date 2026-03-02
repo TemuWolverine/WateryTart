@@ -16,13 +16,19 @@
 
     <StackPanel Margin="10,0,0,0">
         <StackPanel HorizontalAlignment="Center" Spacing="20">
-            <Border Margin="0,10,0,0" BoxShadow="0 0 20 0 Black">
+            <Border
+                      Width="240"
+                      Height="240"
+                      Margin="0,10,0,0"
+                      BoxShadow="0 0 20 0 Black">
                 <Border
                           Width="240"
                           Height="240"
                           ClipToBounds="True"
                           CornerRadius="8">
                     <asyncImageLoader:AdvancedImage
+                              Width="240"
+                              Height="240"
                               FallbackImage="{x:Static app:App.FallbackImage}"
                               Loader="{x:Static app:App.ImageLoaderInstance}"
                               Source="{Binding Playlist, Converter={StaticResource MetadataImageConverter}}"
