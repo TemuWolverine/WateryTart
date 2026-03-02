@@ -621,7 +621,7 @@
       "waterytart.core": {
         "type": "Project",
         "dependencies": {
-          "AsyncImageLoader.Avalonia": "[3.6.0, )",
+          "AsyncImageLoader.Avalonia": "[3.7.0, )",
           "Autofac": "[9.0.0, )",
           "Avalonia": "[11.3.12, )",
           "Avalonia.Diagnostics": "[11.3.12, )",
@@ -664,9 +664,9 @@
       },
       "AsyncImageLoader.Avalonia": {
         "type": "CentralTransitive",
-        "requested": "[3.6.0, )",
-        "resolved": "3.6.0",
-        "contentHash": "MXZjvfVM1RGFisN6HkVZqpA9qXI1NBszwZ68TGrJY0dZB/zYCqlo8lbkIYj6LU3eRHHPt4IHJbWoKIFTqSINIw==",
+        "requested": "[3.7.0, )",
+        "resolved": "3.7.0",
+        "contentHash": "sWMrKrAUYQdIk4iE6hU3ieWgBT2N2lv0ElYgw3wBAWlkHyeSOZrOnXjhCcfHxGLU5HiZwz/t6ZcD3TDAJ9tuKg==",
         "dependencies": {
           "Avalonia": "11.1.0"
         }
