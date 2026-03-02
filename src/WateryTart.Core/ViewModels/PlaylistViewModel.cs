@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace WateryTart.Core.ViewModels
 {
-    public partial class PlaylistViewModel : ViewModelBase<PlaylistViewModel>
+    public partial class PlaylistViewModel : ViewModelBase<PlaylistViewModel>, ILoadAsync
     {
         public RelayCommand<Item> PlayCommand { get; }
         public RelayCommand<Item> PlayShuffleCommand { get; }
@@ -23,7 +23,7 @@ namespace WateryTart.Core.ViewModels
         [Reactive] public partial Playlist Playlist { get; set; }
         public RelayCommand PlaylistAltMenuCommand { get; }
         public RelayCommand PlaylistFullViewCommand { get; }
-        public ObservableCollection<TrackViewModel>? Tracks { get; set; }
+        [Reactive] public partial ObservableCollection<TrackViewModel>? Tracks { get; set; }
 
         private string _runningTime;
         public string RunningTime
@@ -60,6 +60,12 @@ namespace WateryTart.Core.ViewModels
                 _ = _playersService?.PlayItem(Playlist as MediaItemBase);
                 _ = _playersService?.PlayerShuffle(null, true);
             });
+        }
+
+        public async Task LoadAsync()
+        {
+            Tracks = [];
+            _ = LoadPlaylistDataAsync(Playlist.ItemId, Playlist.Provider);
         }
 
         public void LoadFromId(string id, string provider)
@@ -105,5 +111,7 @@ namespace WateryTart.Core.ViewModels
 
             IsLoading = false;
         }
+
+
     }
 }

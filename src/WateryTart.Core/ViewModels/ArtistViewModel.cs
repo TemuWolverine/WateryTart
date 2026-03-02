@@ -19,7 +19,7 @@ using Xaml.Behaviors.SourceGenerators;
 
 namespace WateryTart.Core.ViewModels
 {
-    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>, INeedsLoadingViewModel
+    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>, ILoadAsync
     {
         private readonly ProviderService _providerservice;
         [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();

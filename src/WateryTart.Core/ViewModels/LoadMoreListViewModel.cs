@@ -22,7 +22,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     public RelayCommand GoToItem { get; }
     [Reactive] public partial bool HasMoreItems { get; set; } = true;
     [Reactive] public override partial bool IsLoading { get; set; }
-    [Reactive] public ObservableCollection<IViewModelBase> Items { get; set; }
+    [Reactive] public partial ObservableCollection<IViewModelBase> Items { get; set; }
     public AsyncRelayCommand LoadMoreCommand { get; }
     ICommand ILoadMoreListViewModel.LoadMoreCommand => LoadMoreCommand;
     public IViewModelBase? SelectedItem { get; set; }
@@ -41,9 +41,9 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
             if (SelectedItem != null)
             {
                 screen.Router.Navigate.Execute(SelectedItem);
-                if (SelectedItem is INeedsLoadingViewModel)
+                if (SelectedItem is ILoadAsync)
                 {
-                    _ = ((INeedsLoadingViewModel)SelectedItem).LoadAsync();
+                    _ = ((ILoadAsync)SelectedItem).LoadAsync();
                 }
             }
         });

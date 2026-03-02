@@ -2,7 +2,7 @@
 
 namespace WateryTart.Core.ViewModels
 {
-    public interface INeedsLoadingViewModel
+    public interface ILoadAsync
     {
         Task LoadAsync();
     }
