@@ -1,0 +1,147 @@
+<UserControl
+          x:Class="WateryTart.Core.Views.LoadMoreListView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="using:WateryTart.Core"
+          xmlns:asyncImageLoader="using:AsyncImageLoader"
+          xmlns:behaviors="using:WateryTart.Core.Behaviors"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:reactiveui="using:ReactiveUI"
+          xmlns:vm="using:WateryTart.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="{x:Type vm:ILoadMoreListViewModel}"
+          mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="vm:AlbumViewModel">
+            <StackPanel>
+                <Border
+                          Width="195"
+                          Height="195"
+                          Margin="0,0,0,5"
+                          BoxShadow="0 0 10 0 Black">
+                    <Border ClipToBounds="True" CornerRadius="5">
+                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Album, Converter={StaticResource MetadataImageConverter}}" />
+                    </Border>
+                </Border>
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          Text="{Binding Album.Name}"
+                          TextTrimming="CharacterEllipsis" />
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          Opacity="0.7"
+                          Text="{Binding Album.Artists, Converter={StaticResource ArtistsToStringConverter}}"
+                          TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:ArtistViewModel">
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource artistMediumReusableTemplate}" />
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:TrackViewModel">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                          Grid.Column="0"
+                          Margin="0,0,10,0"
+                          ClipToBounds="True"
+                          CornerRadius="5">
+                    <asyncImageLoader:AdvancedImage
+                              Width="60"
+                              Height="60"
+                              FallbackImage="{x:Static app:App.FallbackImage}"
+                              Loader="{x:Static app:App.ImageLoaderInstance}"
+                              Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
+                        <!--<Interaction.Behaviors>
+                                    <EventTriggerBehavior EventName="Tapped">
+                                        <InvokeCommandAction Command="{Binding #lbTracks.((vm:TracksViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
+                                    </EventTriggerBehavior>
+                                </Interaction.Behaviors>-->
+                    </asyncImageLoader:AdvancedImage>
+                </Border>
+
+                <StackPanel
+                          Grid.Column="1"
+                          Margin="0,0,10,0"
+                          VerticalAlignment="Center"
+                          Background="Transparent">
+                    <!-- <Interaction.Behaviors>
+                                <EventTriggerBehavior EventName="Tapped">
+                                    <InvokeCommandAction Command="{Binding #lbTracks.((vm:TracksViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
+                                </EventTriggerBehavior>
+                            </Interaction.Behaviors>-->
+                    <TextBlock
+                              FontWeight="SemiBold"
+                              Text="{Binding Track.Name}"
+                              TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                              FontSize="12"
+                              Opacity="0.7"
+                              Text="{Binding Track.Artists, Converter={StaticResource ArtistsToStringConverter}}"
+                              TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <TextBlock
+                          Grid.Column="2"
+                          Margin="0,0,15,0"
+                          VerticalAlignment="Center"
+                          Opacity="0.7"
+                          Text="{Binding Track.Duration, Converter={StaticResource FriendlyTimeConverter}}" />
+
+                <Button
+                          Grid.Column="3"
+                          VerticalAlignment="Center"
+                          Classes="iconButton navButton"
+                          Command="{Binding TrackAltMenuCommand}">
+                    <iconPacks:PackIconMaterial
+                              Width="20"
+                              Height="22"
+                              Kind="DotsVertical" />
+                </Button>
+            </Grid>
+
+        </DataTemplate>
+
+    </UserControl.DataTemplates>
+    <UserControl.Resources>
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel ItemSpacing="15" ItemWidth="200" />
+        </ItemsPanelTemplate>
+
+        <ItemsPanelTemplate x:Key="StackPanelTemplate">
+            <StackPanel />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+
+    <ListBox
+              Name="ItemsListBox"
+              Background="Transparent"
+              ItemsSource="{Binding Items}"
+              SelectedItem="{Binding SelectedItem}">
+
+        <Interaction.Behaviors>
+            <behaviors:GridScrollBehavior
+                      HasMoreItems="{Binding HasMoreItems}"
+                      IsLoading="{Binding IsLoading}"
+                      LoadMoreCommand="{Binding LoadMoreCommand}" />
+            <EventTriggerBehavior EventName="SelectionChanged" SourceObject="ItemsListBox">
+                <InvokeCommandAction Command="{Binding GoToItem}" />
+            </EventTriggerBehavior>
+        </Interaction.Behaviors>
+    </ListBox>
+</UserControl>

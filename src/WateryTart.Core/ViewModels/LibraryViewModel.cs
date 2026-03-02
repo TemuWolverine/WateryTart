@@ -6,6 +6,7 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.WsExtensions;
@@ -20,7 +21,8 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
     public LibraryViewModel(
         MusicAssistantClient massClient,
         IScreen screen,
-        ILoggerFactory loggerFactory) : base(loggerFactory, massClient)
+        ILoggerFactory loggerFactory,
+        PlayersService playersService) : base(loggerFactory, massClient, playersService)
     {
         HostScreen = screen;
         Title = "Library";
@@ -30,7 +32,10 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Title = "Artists",
             ClickedCommand = new RelayCommand(() =>
             {
-                var vm = App.Container.Resolve<ArtistsViewModel>();
+                //var vm = App.Container.Resolve<ArtistsViewModel>();
+                //screen.Router.Navigate.Execute(vm);
+
+                var vm = new LoadMoreListViewModel<ArtistViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Artists", true);
                 screen.Router.Navigate.Execute(vm);
             })
         };
@@ -41,7 +46,8 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Album,
             ClickedCommand = new RelayCommand(() =>
             {
-                var vm = App.Container.Resolve<AlbumsListViewModel>();
+                //var vm = App.Container.Resolve<AlbumsListViewModel>();
+                var vm = new LoadMoreListViewModel<AlbumViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Albums", true);
                 screen.Router.Navigate.Execute(vm);
             })
         };
@@ -52,7 +58,9 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.MusicNoteEighth,
             ClickedCommand = new RelayCommand(() =>
             {
-                var vm = App.Container.Resolve<TracksViewModel>();
+                //var vm = App.Container.Resolve<TracksViewModel>();
+                //screen.Router.Navigate.Execute(vm);
+                var vm = new LoadMoreListViewModel<TrackViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Tracks", false);
                 screen.Router.Navigate.Execute(vm);
             })
         };

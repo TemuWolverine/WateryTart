@@ -8,6 +8,7 @@ using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Core.Views;
 using WateryTart.Core.Views.Players;
 using WateryTart.Core.Views.Menus;
+using ReactiveUI;
 
 namespace WateryTart.Core;
 
@@ -39,6 +40,9 @@ public class ViewLocator : IDataTemplate
         [typeof(RecommendationViewModel)] = () => new RecommendationView(),
         [typeof(SearchResultsViewModel)] = () => new SearchResultsView(),
         [typeof(SimilarTracksViewModel)] = () => new SimilarTracksView(),
+        [typeof(LoadMoreListViewModel<TrackViewModel>)] = () => new LoadMoreListView(),
+        [typeof(LoadMoreListViewModel<AlbumViewModel>)] = () => new LoadMoreListView(),
+        [typeof(LoadMoreListViewModel<ArtistViewModel>)] = () => new LoadMoreListView(),
 
         // Player views
         [typeof(MiniPlayerViewModel)] = () => new MiniPlayerView(),
