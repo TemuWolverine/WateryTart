@@ -5,11 +5,16 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
+using WateryTart.MusicAssistant.Models.Enums;
 using WateryTart.MusicAssistant.Responses;
 using WateryTart.MusicAssistant.WsExtensions;
 
@@ -23,6 +28,9 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     [Reactive] public partial bool HasMoreItems { get; set; } = true;
     [Reactive] public override partial bool IsLoading { get; set; }
     [Reactive] public partial ObservableCollection<IViewModelBase> Items { get; set; }
+
+    public IEnumerable<OrderBy> SortingOptions { get; } = Enum.GetValues<OrderBy>();
+    [Reactive] public partial OrderBy SelectedSortingOption { get; set; } = OrderBy.name;
     public AsyncRelayCommand LoadMoreCommand { get; }
     ICommand ILoadMoreListViewModel.LoadMoreCommand => LoadMoreCommand;
     public IViewModelBase? SelectedItem { get; set; }
@@ -48,9 +56,15 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
             }
         });
 
-        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading && HasMoreItems);
+        // React to sorting changes with debounce to avoid rapid repeated loads
+        this.WhenAnyValue(x => x.SelectedSortingOption)
+            .Skip(1)
+            .Throttle(TimeSpan.FromMilliseconds(150)) // Debounce rapid changes
+            .ObserveOn(RxApp.TaskpoolScheduler)
+            .SelectMany(_ => Observable.FromAsync(() => LoadInitialAsync()))
+            .Subscribe();
 
-        _ = LoadInitialAsync();
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading && HasMoreItems);
     }
 
     public async Task LoadAsync()
@@ -105,23 +119,26 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
 
     private async Task LoadAlbumsAsync() =>
         await LoadItemsAsync<Album, AlbumsResponse>(
-            () => _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset),
+            () => _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset, order: SelectedSortingOption),
             album => new AlbumViewModel(_client, HostScreen, _playersService, album));
 
     private async Task LoadArtistsAsync() =>
         await LoadItemsAsync<Artist, ArtistsResponse>(
-            () => _client.WithWs().GetArtistsAsync(limit: PageSize, offset: CurrentOffset),
+            () => _client.WithWs().GetArtistsAsync(limit: PageSize, offset: CurrentOffset, order: SelectedSortingOption),
             artist => new ArtistViewModel(_client, HostScreen, _playersService!, artist));
 
     private async Task LoadInitialAsync()
     {
         CurrentOffset = 0;
-        Items.Clear();
+        
+        // Clear on UI thread
+        await Observable.Start(() => Items.Clear(), RxApp.MainThreadScheduler);
+        
         await LoadAsync();
     }
 
     private async Task LoadItemsAsync<TItem, TResponse>(
-                    Func<Task<TResponse>> fetchFunc,
+        Func<Task<TResponse>> fetchFunc,
         Func<TItem, IViewModelBase> createViewModel)
         where TResponse : ResponseBase<List<TItem>>
     {
@@ -129,10 +146,19 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
 
         if (response?.Result != null)
         {
-            foreach (var item in response.Result)
+            // Build list off UI thread
+            var newItems = response.Result
+                .Select(item => createViewModel(item))
+                .ToList();
+
+            // Single UI thread update - convert observable to task
+            await Observable.Start(() =>
             {
-                Items.Add(createViewModel(item));
-            }
+                foreach (var item in newItems)
+                {
+                    Items.Add(item);
+                }
+            }, RxApp.MainThreadScheduler);
 
             HasMoreItems = response.Result.Count == PageSize;
 
@@ -153,12 +179,12 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     }
 
     private async Task LoadPlaylistsAsync() =>
-            await LoadItemsAsync<Playlist, PlaylistsResponse>(
-            () => _client.WithWs().GetPlaylistsAsync(limit: PageSize, offset: CurrentOffset),
+        await LoadItemsAsync<Playlist, PlaylistsResponse>(
+            () => _client.WithWs().GetPlaylistsAsync(limit: PageSize, offset: CurrentOffset, orderby: SelectedSortingOption),
             playlist => new PlaylistViewModel(_client, HostScreen, _playersService!, playlist));
 
     private async Task LoadTracksAsync() =>
         await LoadItemsAsync<Item, TracksResponse>(
-            () => _client.WithWs().GetTracksAsync(limit: PageSize, offset: CurrentOffset),
+            () => _client.WithWs().GetTracksAsync(limit: PageSize, offset: CurrentOffset, order: SelectedSortingOption),
             track => new TrackViewModel(_client, _playersService!, track));
 }

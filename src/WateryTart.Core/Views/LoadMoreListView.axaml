@@ -158,20 +158,63 @@
         </ItemsPanelTemplate>
     </UserControl.Resources>
 
-    <ListBox
-              Name="ItemsListBox"
-              Background="Transparent"
-              ItemsSource="{Binding Items}"
-              SelectedItem="{Binding SelectedItem}">
+    <StackPanel>
 
-        <Interaction.Behaviors>
-            <behaviors:GridScrollBehavior
-                      HasMoreItems="{Binding HasMoreItems}"
-                      IsLoading="{Binding IsLoading}"
-                      LoadMoreCommand="{Binding LoadMoreCommand}" />
-            <EventTriggerBehavior EventName="SelectionChanged" SourceObject="ItemsListBox">
-                <InvokeCommandAction Command="{Binding GoToItem}" />
-            </EventTriggerBehavior>
-        </Interaction.Behaviors>
-    </ListBox>
+        <!--  Sorting and Filtering Options  -->
+        <StackPanel
+                  Margin="0,0,0,10"
+                  Orientation="Horizontal"
+                  Spacing="10">
+
+            <iconPacks:PackIconMaterial
+                      Width="18"
+                      Height="18"
+                      VerticalAlignment="Center"
+                      Kind="Sort" />
+
+            <ComboBox
+                      Width="150"
+                      ItemsSource="{Binding SortingOptions}"
+                      SelectedIndex="0"
+                      SelectedItem="{Binding SelectedSortingOption}" />
+            <Menu>
+                <MenuItem Header="Filters">
+                    <!--  Global filters  -->
+                    <MenuItem Header="Favourite Only" ToggleType="CheckBox" />
+                    <Separator />
+
+                    <!--  Options should load in based on the type  -->
+                    <MenuItem
+                              Header="Album"
+                              IsChecked="True"
+                              ToggleType="CheckBox" />
+                    <MenuItem Header="Single" ToggleType="CheckBox" />
+                    <MenuItem Header="EP" ToggleType="CheckBox" />
+                    <MenuItem Header="Compilation" ToggleType="CheckBox" />
+                    <MenuItem Header="Live" ToggleType="CheckBox" />
+                    <MenuItem Header="Soundtrack" ToggleType="CheckBox" />
+                    <Separator />
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+
+        <!--  Items List  -->
+        <ListBox
+                  Name="ItemsListBox"
+                  Background="Transparent"
+                  ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem}">
+
+            <Interaction.Behaviors>
+                <behaviors:GridScrollBehavior
+                          HasMoreItems="{Binding HasMoreItems}"
+                          IsLoading="{Binding IsLoading}"
+                          LoadMoreCommand="{Binding LoadMoreCommand}" />
+                <EventTriggerBehavior EventName="SelectionChanged" SourceObject="ItemsListBox">
+                    <InvokeCommandAction Command="{Binding GoToItem}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+        </ListBox>
+
+    </StackPanel>
 </UserControl>
