@@ -31,18 +31,15 @@ public class ViewLocator : IDataTemplate
         
         // Content views
         [typeof(AlbumViewModel)] = () => new AlbumView(),
-        [typeof(AlbumsListViewModel)] = () => new AlbumsListView(),
         [typeof(ArtistViewModel)] = () => new ArtistView(),
-        [typeof(ArtistsViewModel)] = () => new ArtistsView(),
         [typeof(PlaylistViewModel)] = () => new PlaylistView(),
-        [typeof(PlaylistsViewModel)] = () => new PlaylistsView(),
-        [typeof(TracksViewModel)] = () => new TracksView(),
         [typeof(RecommendationViewModel)] = () => new RecommendationView(),
         [typeof(SearchResultsViewModel)] = () => new SearchResultsView(),
         [typeof(SimilarTracksViewModel)] = () => new SimilarTracksView(),
         [typeof(LoadMoreListViewModel<TrackViewModel>)] = () => new LoadMoreListView(),
         [typeof(LoadMoreListViewModel<AlbumViewModel>)] = () => new LoadMoreListView(),
         [typeof(LoadMoreListViewModel<ArtistViewModel>)] = () => new LoadMoreListView(),
+        [typeof(LoadMoreListViewModel<PlaylistViewModel>)] = () => new LoadMoreListView(),
 
         // Player views
         [typeof(MiniPlayerViewModel)] = () => new MiniPlayerView(),

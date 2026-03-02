@@ -3,11 +3,14 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
+using WateryTart.MusicAssistant.Models;
+using WateryTart.MusicAssistant.Responses;
 using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
@@ -36,7 +39,13 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         GoToItem = new RelayCommand(() =>
         {
             if (SelectedItem != null)
+            {
                 screen.Router.Navigate.Execute(SelectedItem);
+                if (SelectedItem is INeedsLoadingViewModel)
+                {
+                    _ = ((INeedsLoadingViewModel)SelectedItem).LoadAsync();
+                }
+            }
         });
 
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading && HasMoreItems);
@@ -68,6 +77,16 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
                     await LoadAlbumsAsync();
                     break;
 
+                case var _ when t == typeof(PlaylistViewModel):
+                    await LoadPlaylistsAsync();
+                    break;
+
+                // These are the likely candidates for future expansion, but not implemented yet:
+                // genres, (relying on MA implementation?)
+                // podcasts,
+                // radios,
+                // audiobooks
+
                 default:
                     // fallback
                     break;
@@ -75,7 +94,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error loading albums: {ex.Message}");
+            _logger.LogError(ex, $"Error loading items: {ex.Message}");
             HasMoreItems = false;
         }
         finally
@@ -84,51 +103,15 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         }
     }
 
-    private async Task LoadAlbumsAsync()
-    {
-        var response = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset);
+    private async Task LoadAlbumsAsync() =>
+        await LoadItemsAsync<Album, AlbumsResponse>(
+            () => _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: PageSize, offset: CurrentOffset),
+            album => new AlbumViewModel(_client, HostScreen, _playersService, album));
 
-        if (response?.Result != null)
-        {
-            foreach (var album in response.Result)
-            {
-                Items.Add(new AlbumViewModel(_client, HostScreen, _playersService, album));
-            }
-
-            HasMoreItems = response.Result.Count == PageSize;
-
-            if (HasMoreItems)
-            {
-                CurrentOffset += PageSize;
-            }
-        }
-        else
-        {
-            HasMoreItems = false;
-        }
-    }
-
-    private async Task LoadArtistsAsync()
-    {
-        var response = await _client.WithWs().GetArtistsAsync(limit: PageSize, offset: CurrentOffset);
-
-        if (response?.Result != null)
-        {
-            foreach (var artist in response.Result)
-            {
-                Items.Add(new ArtistViewModel(_client, HostScreen, _playersService!, artist));
-            }
-
-            HasMoreItems = response.Result.Count == PageSize;
-
-            if (HasMoreItems)
-                CurrentOffset += PageSize;
-        }
-        else
-        {
-            HasMoreItems = false;
-        }
-    }
+    private async Task LoadArtistsAsync() =>
+        await LoadItemsAsync<Artist, ArtistsResponse>(
+            () => _client.WithWs().GetArtistsAsync(limit: PageSize, offset: CurrentOffset),
+            artist => new ArtistViewModel(_client, HostScreen, _playersService!, artist));
 
     private async Task LoadInitialAsync()
     {
@@ -137,30 +120,45 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         await LoadAsync();
     }
 
-    private async Task LoadMoreAsync()
+    private async Task LoadItemsAsync<TItem, TResponse>(
+                    Func<Task<TResponse>> fetchFunc,
+        Func<TItem, IViewModelBase> createViewModel)
+        where TResponse : ResponseBase<List<TItem>>
     {
-        await LoadAsync();
-    }
-
-    private async Task LoadTracksAsync()
-    {
-        var response = await _client.WithWs().GetTracksAsync(limit: PageSize, offset: CurrentOffset);
+        var response = await fetchFunc();
 
         if (response?.Result != null)
         {
-            foreach (var track in response.Result)
+            foreach (var item in response.Result)
             {
-                Items.Add(new TrackViewModel(_client, _playersService!, track));
+                Items.Add(createViewModel(item));
             }
 
             HasMoreItems = response.Result.Count == PageSize;
 
             if (HasMoreItems)
+            {
                 CurrentOffset += PageSize;
+            }
         }
         else
         {
             HasMoreItems = false;
         }
     }
+
+    private async Task LoadMoreAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadPlaylistsAsync() =>
+            await LoadItemsAsync<Playlist, PlaylistsResponse>(
+            () => _client.WithWs().GetPlaylistsAsync(limit: PageSize, offset: CurrentOffset),
+            playlist => new PlaylistViewModel(_client, HostScreen, _playersService!, playlist));
+
+    private async Task LoadTracksAsync() =>
+        await LoadItemsAsync<Item, TracksResponse>(
+            () => _client.WithWs().GetTracksAsync(limit: PageSize, offset: CurrentOffset),
+            track => new TrackViewModel(_client, _playersService!, track));
 }

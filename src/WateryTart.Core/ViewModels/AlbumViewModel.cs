@@ -21,7 +21,7 @@ using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
-public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>
+public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, INeedsLoadingViewModel
 {
     private readonly ProviderService _providerservice;
     [Reactive] public partial Album? Album { get; set; }
@@ -138,6 +138,11 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>
         });
     }
 
+    public async Task LoadAsync()
+    {
+        _ = LoadAlbumDataAsync(Album.ItemId, Album.Provider);
+    }
+
     public void Load(Album album)
     {
         Album = album;
@@ -209,4 +214,6 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>
             IsLoading = false;
         }
     }
+
+
 }

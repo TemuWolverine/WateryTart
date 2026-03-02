@@ -19,7 +19,7 @@ using Xaml.Behaviors.SourceGenerators;
 
 namespace WateryTart.Core.ViewModels
 {
-    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>
+    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>, INeedsLoadingViewModel
     {
         private readonly ProviderService _providerservice;
         [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
@@ -122,6 +122,14 @@ namespace WateryTart.Core.ViewModels
             _ = LoadArtist(id, provider);
         }
 
+        public async Task LoadAsync()
+        {
+            IsLoading = true;
+            await LoadArtist(Artist.ItemId, Artist.Provider);
+            await LoadArtistAlbum(Artist.ItemId, Artist.Provider);
+            IsLoading = false;
+        }
+
         private async Task LoadArtist(string id, string provider)
         {
             var artistResponse = await _client.WithWs().GetArtistAsync(id, provider);
@@ -129,6 +137,7 @@ namespace WateryTart.Core.ViewModels
             Artist = artistResponse.Result;
             if (Artist?.Name != null)
                 Title = Artist.Name;
+
             this.RaisePropertyChanged(nameof(ArtistLogo));
             this.RaisePropertyChanged(nameof(ArtistThumb));
         }

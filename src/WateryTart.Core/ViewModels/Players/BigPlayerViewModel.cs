@@ -69,7 +69,6 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
     [Reactive] public partial bool IsSmallDisplay { get; set; }
     public ICommand PlayerNextCommand { get; set; }
     public ICommand PlayerPlayPauseCommand { get; set; }
-    public PlayersService PlayersService => _playersService;
     public ICommand PlayingAltMenuCommand { get; set; }
     public ICommand PlayPreviousCommand { get; set; }
     public ICommand PlayerRepeatTrack { get; set; }

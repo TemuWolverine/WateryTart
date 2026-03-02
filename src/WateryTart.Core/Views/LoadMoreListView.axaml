@@ -43,6 +43,35 @@
             </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:DataType="vm:PlaylistViewModel">
+            <StackPanel>
+                <!--                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="Tapped">
+                                <InvokeCommandAction Command="{Binding #lbPlaylists.((vm:PlaylistsViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>-->
+                <Border
+                          Width="195"
+                          Height="195"
+                          Margin="0,0,0,5"
+                          BoxShadow="0 0 10 0 Black">
+                    <Border ClipToBounds="True" CornerRadius="5">
+                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}" />
+                    </Border>
+                </Border>
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          FontWeight="SemiBold"
+                          Text="{Binding Playlist.Name}"
+                          TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:DataType="vm:ArtistViewModel">
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource artistMediumReusableTemplate}" />
         </DataTemplate>

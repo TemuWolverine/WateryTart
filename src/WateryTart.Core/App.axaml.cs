@@ -135,17 +135,13 @@ public partial class App : Application
         builder.RegisterType<ProviderService>().SingleInstance();
 
         //Transient viewmodels
-        builder.RegisterType<AlbumsListViewModel>();
         builder.RegisterType<AlbumViewModel>();
         builder.RegisterType<LoginViewModel>();
         builder.RegisterType<PlaylistViewModel>();
         builder.RegisterType<ArtistViewModel>();
-        builder.RegisterType<ArtistsViewModel>();
         builder.RegisterType<LibraryViewModel>();
         builder.RegisterType<TrackViewModel>();
         builder.RegisterType<RecommendationViewModel>();
-        builder.RegisterType<PlaylistsViewModel>();
-        builder.RegisterType<TracksViewModel>();
         builder.RegisterType<SimilarTracksViewModel>();
     }
 
