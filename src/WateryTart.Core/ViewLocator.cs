@@ -33,7 +33,6 @@ public class ViewLocator : IDataTemplate
         [typeof(AlbumViewModel)] = () => new AlbumView(),
         [typeof(ArtistViewModel)] = () => new ArtistView(),
         [typeof(PlaylistViewModel)] = () => new PlaylistView(),
-        [typeof(RecommendationViewModel)] = () => new RecommendationView(),
         [typeof(SearchResultsViewModel)] = () => new SearchResultsView(),
         [typeof(SimilarTracksViewModel)] = () => new SimilarTracksView(),
         [typeof(LoadMoreListViewModel<TrackViewModel>)] = () => new LoadMoreListView(),

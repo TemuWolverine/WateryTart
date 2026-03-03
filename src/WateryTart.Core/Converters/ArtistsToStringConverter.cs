@@ -13,6 +13,9 @@ public class ArtistsToStringConverter : IValueConverter
     {
         IList<Artist> artists = (IList<Artist>)value!;
 
+        if (artists == null || artists.Count == 0)
+            return null;
+
         StringBuilder sb = new();
         foreach (var a in artists)
             sb.Append(a.Name);
