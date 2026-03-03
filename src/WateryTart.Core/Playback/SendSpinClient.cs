@@ -1,3 +1,4 @@
+using Avalonia;
 using Microsoft.Extensions.Logging;
 using Sendspin.SDK.Audio;
 using Sendspin.SDK.Client;
@@ -5,6 +6,7 @@ using Sendspin.SDK.Connection;
 using Sendspin.SDK.Models;
 using Sendspin.SDK.Synchronization;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using WateryTart.Core.Services;
 
@@ -86,12 +88,13 @@ public class SendSpinClient : IDisposable, IReaper
                 convergenceTimeoutMs: 5000,
                 useMonotonicTimer: false);
 
+            
             var capabilities = new ClientCapabilities
             {
-                ClientName = $"WateryTart ({Environment.MachineName})",
+                ClientName = $"{Environment.MachineName} (WateryTart)",
                 ProductName = "WateryTart",
-                Manufacturer = "WateryTart",
-                SoftwareVersion = "1.0.0",
+                Manufacturer = "TemuWolverine",
+                SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString(), 
                 InitialVolume = 100,
                 InitialMuted = false
             };
