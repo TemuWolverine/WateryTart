@@ -45,11 +45,6 @@
 
         <DataTemplate x:DataType="vm:PlaylistViewModel">
             <StackPanel>
-                <!--                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="Tapped">
-                                <InvokeCommandAction Command="{Binding #lbPlaylists.((vm:PlaylistsViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>-->
                 <Border
                           Width="195"
                           Height="195"
@@ -78,73 +73,7 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="vm:TrackViewModel">
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Border
-                          Grid.Column="0"
-                          Margin="0,0,10,0"
-                          ClipToBounds="True"
-                          CornerRadius="5">
-                    <asyncImageLoader:AdvancedImage
-                              Width="60"
-                              Height="60"
-                              FallbackImage="{x:Static app:App.FallbackImage}"
-                              Loader="{x:Static app:App.ImageLoaderInstance}"
-                              Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
-                        <!--<Interaction.Behaviors>
-                                    <EventTriggerBehavior EventName="Tapped">
-                                        <InvokeCommandAction Command="{Binding #lbTracks.((vm:TracksViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
-                                    </EventTriggerBehavior>
-                                </Interaction.Behaviors>-->
-                    </asyncImageLoader:AdvancedImage>
-                </Border>
-
-                <StackPanel
-                          Grid.Column="1"
-                          Margin="0,0,10,0"
-                          VerticalAlignment="Center"
-                          Background="Transparent">
-                    <!-- <Interaction.Behaviors>
-                                <EventTriggerBehavior EventName="Tapped">
-                                    <InvokeCommandAction Command="{Binding #lbTracks.((vm:TracksViewModel)DataContext).ClickedCommand}" CommandParameter="{Binding Path=.}" />
-                                </EventTriggerBehavior>
-                            </Interaction.Behaviors>-->
-                    <TextBlock
-                              FontWeight="SemiBold"
-                              Text="{Binding Track.Name}"
-                              TextTrimming="CharacterEllipsis" />
-                    <TextBlock
-                              FontSize="12"
-                              Opacity="0.7"
-                              Text="{Binding Track.Artists, Converter={StaticResource ArtistsToStringConverter}}"
-                              TextTrimming="CharacterEllipsis" />
-                </StackPanel>
-
-                <TextBlock
-                          Grid.Column="2"
-                          Margin="0,0,15,0"
-                          VerticalAlignment="Center"
-                          Opacity="0.7"
-                          Text="{Binding Track.Duration, Converter={StaticResource FriendlyTimeConverter}}" />
-
-                <Button
-                          Grid.Column="3"
-                          VerticalAlignment="Center"
-                          Classes="iconButton navButton"
-                          Command="{Binding TrackAltMenuCommand}">
-                    <iconPacks:PackIconMaterial
-                              Width="20"
-                              Height="22"
-                              Kind="DotsVertical" />
-                </Button>
-            </Grid>
-
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource trackMediumReusableTemplate}" />
         </DataTemplate>
 
     </UserControl.DataTemplates>
@@ -173,7 +102,6 @@
                       Kind="Sort" />
 
             <ComboBox
-                      
                       ItemsSource="{Binding SortingOptions}"
                       SelectedIndex="0"
                       SelectedItem="{Binding SelectedSortingOption}">

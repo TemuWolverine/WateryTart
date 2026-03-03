@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Avalonia.Controls;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -12,20 +14,24 @@ using System.Windows.Input;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
 using WateryTart.MusicAssistant;
+using WateryTart.MusicAssistant.Models;
+using WateryTart.MusicAssistant.Responses;
 using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
+
 public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
 {
-    public override string Title => "Home";
-    [Reactive] public override partial bool IsLoading { get; set; }
-    [Reactive] public partial ObservableCollection<TrackViewModel> RecentTracks { get; set; }
+    private ILoggerFactory _loggerFactory;
     [Reactive] public partial ObservableCollection<AlbumViewModel> DiscoverAlbums { get; set; }
-    [Reactive] public partial ObservableCollection<ArtistViewModel> DiscoverArtists { get; set; }
-
-    public ICommand DiscoverArtistsCommand { get; set; }
     public ICommand DiscoverAlbumsCommand { get; set; }
+    [Reactive] public partial ObservableCollection<ArtistViewModel> DiscoverArtists { get; set; }
+    public ICommand DiscoverArtistsCommand { get; set; }
+    [Reactive] public override partial bool IsLoading { get; set; }
     public ICommand RecentlyPlayedTracksCommand { get; set; }
+    [Reactive] public partial ObservableCollection<TrackViewModel> RecentTracks { get; set; }
+    public override string Title => "Home";
+
     public Home2ViewModel(
         IScreen screen,
         MusicAssistantClient maClient,
@@ -35,6 +41,7 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
     {
         _settings = settings;
         _playersService = playersService;
+        _loggerFactory = loggerFactory;
         HostScreen = screen;
 
         DiscoverArtists = [];
@@ -42,11 +49,48 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
         RecentTracks = [];
 
         //Set all commands
-        DiscoverArtistsCommand = new RelayCommand(() => { });
-        DiscoverAlbumsCommand = new RelayCommand(() => { });
-        RecentlyPlayedTracksCommand = new RelayCommand(() => { });
+        DiscoverArtistsCommand = new RelayCommand(DiscoverArtistsClicked);
+        DiscoverAlbumsCommand = new RelayCommand(DiscoverAlbumsClicked);
+        RecentlyPlayedTracksCommand = new RelayCommand(RecentlyPlayedClicked);
 
         _ = LoadDataAsync();
+    }
+
+    private void DiscoverAlbumsClicked()
+    {
+        var artistView = new LoadMoreListViewModel<ArtistViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Discover Artists", true);
+        artistView.SetCustomDataSource<Artist, ArtistsResponse>(
+            async () =>
+            {
+                var artists = await _client.WithWs().GetArtistsAsync(limit: 50, order_by: "random", album_artists_only: true);
+                return artists;
+            },
+            a =>
+            {
+                var vm = App.Container.Resolve<ArtistViewModel>();
+                vm.Artist = a;
+                return vm;
+            });
+
+        HostScreen.Router.Navigate.Execute(artistView);
+    }
+
+    private void DiscoverArtistsClicked()
+    {
+        var artistView = new LoadMoreListViewModel<AlbumViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Discover Albums", true);
+        artistView.SetCustomDataSource<Album, AlbumsResponse>(
+            async () =>
+            {
+                var albums = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 50, order_by: "random");
+                return albums;
+            },
+            a =>
+            {
+                var vm = App.Container.Resolve<AlbumViewModel>();
+                vm.Album = a;
+                return vm;
+            });
+        HostScreen.Router.Navigate.Execute(artistView);
     }
 
     private async Task LoadDataAsync()
@@ -69,17 +113,14 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
                         if (RecentTracks.Any(t => t.Track.ItemId == r.ItemId)) // make sure no duplicates
                             continue;
                         var track = App.Container.Resolve<TrackViewModel>();
-                        track.Track = r;
-                        //The returned values are fairly basic, so we need to fetch the full track details
-                        _ = track.LoadFromId(r.ItemId!, r.Provider!);
+                        track.SetAndLoadModel(r);
                         RecentTracks.Add(track);
                     }
-
                 }),
 
                 Task.Run(async () =>
                 {
-                    //Discover Albums 
+                    //Discover Albums
                     //TODO: These should be cached for 12 hours?
                     var albums = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 10, order_by: "random");
 
@@ -92,7 +133,6 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
                     }
 
                     _logger.LogInformation("Fetching discover albums...");
-
                 }),
 
                 Task.Run(async () =>
@@ -110,7 +150,6 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
                     }
 
                     _logger.LogInformation("Fetching discover artists...");
-
                 })
             };
 
@@ -125,5 +164,24 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
         {
             IsLoading = false;
         }
+    }
+
+    private void RecentlyPlayedClicked()
+    {
+        var recentVm = new LoadMoreListViewModel<TrackViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Recently Played Tracks", false);
+        recentVm.SetCustomDataSource<Item, TracksResponse>(
+            async () =>
+            {
+                var recent = await _client.WithWs().GetRecentlyPlayedItemsAsync(limit: 50/*, offset: recentVm.CurrentOffset*/);
+                return recent;
+            },
+            t =>
+            {
+                var track = App.Container.Resolve<TrackViewModel>();
+                track.SetAndLoadModel(t);
+                return track;
+            });
+
+        HostScreen.Router.Navigate.Execute(recentVm);
     }
 }

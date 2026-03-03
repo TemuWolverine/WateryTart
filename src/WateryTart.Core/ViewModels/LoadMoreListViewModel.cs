@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -36,6 +34,24 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     public IViewModelBase? SelectedItem { get; set; }
 
     [Reactive] public partial bool UseWrapPanel { get; set; } = false;
+
+    private Func<Task>? _customLoadFunc;
+
+    /// <summary>
+    /// Sets a custom data source for loading items. This allows using the LoadMoreListViewModel
+    /// with data sources not predefined in the type switch.
+    /// </summary>
+    /// <typeparam name="TItem">The type of item returned by the API (e.g., Album, Track).</typeparam>
+    /// <typeparam name="TResponse">The response type that wraps the list of items.</typeparam>
+    /// <param name="fetchFunc">Function that fetches data from the API, using CurrentOffset and PageSize.</param>
+    /// <param name="createViewModel">Function that converts an API item to a ViewModel.</param>
+    public void SetCustomDataSource<TItem, TResponse>(
+            Func<Task<TResponse>> fetchFunc,
+            Func<TItem, IViewModelBase> createViewModel)
+            where TResponse : ResponseBase<List<TItem>>
+    {
+        _customLoadFunc = async () => await LoadItemsAsync(fetchFunc, createViewModel);
+    }
 
     public LoadMoreListViewModel(MusicAssistantClient massClient, IScreen screen, PlayersService playersService, ILoggerFactory loggerFactory, string title, bool useWrapPanel = false)
         : base(loggerFactory, massClient, playersService, screen)
@@ -75,6 +91,13 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         {
             IsLoading = true;
 
+            // Check for custom data source first
+            if (_customLoadFunc != null)
+            {
+                await _customLoadFunc();
+                return;
+            }
+
             var t = typeof(T);
             switch (t)
             {
@@ -104,6 +127,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
                     // fallback
                     break;
             }
+
         }
         catch (Exception ex)
         {
