@@ -1,10 +1,12 @@
-﻿using ReactiveUI;
+﻿using Autofac;
+using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using WateryTart.Core.Extensions;
 using WateryTart.MusicAssistant;
+using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
@@ -36,7 +38,8 @@ public partial class SimilarTracksViewModel : ReactiveObject, IViewModelBase
 
         foreach (var i in results.Result)
         {
-            var item = i.CreateViewModelForItem();
+            var item = App.Container.Resolve<TrackViewModel>();
+            item.Track = i; 
             if (item != null)
                 Tracks.Add(item);
         }

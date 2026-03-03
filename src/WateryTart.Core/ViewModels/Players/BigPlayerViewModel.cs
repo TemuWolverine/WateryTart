@@ -194,15 +194,11 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                 string provider = string.Empty;
                 if (item.Album.ProviderMappings != null)
                 {
-                    id = item.Album.ProviderMappings[0].ItemId!;
-                    provider = item.Album.ProviderMappings[0].ProviderDomain!;
+                    albumVm.Album.ItemId = item.Album.ProviderMappings[0].ItemId!;
+                    albumVm.Album.Provider = item.Album.ProviderMappings[0].ProviderDomain!;
                 }
-                else
-                {
-                    id = item.ItemId;
-                    provider = item.Provider;
-                }
-                albumVm.LoadFromId(id, provider);
+
+                _ = albumVm.LoadAsync();
                 HostScreen.Router.Navigate.Execute(albumVm);
             });
 
@@ -215,7 +211,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                     return;
 
                 var artistVm = App.Container.Resolve<ArtistViewModel>();
-                artistVm.LoadFromId(artist.ItemId, item.Provider);
+                _ = artistVm.SetAndLoadModel(artist);
                 HostScreen.Router.Navigate.Execute(artistVm);
             });
 

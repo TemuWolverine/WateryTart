@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.Material;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using SharpHook.Testing;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -21,7 +20,7 @@ using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
-public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadAsync
+public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadableViewModel<Album>, ILoadAsync
 {
     private readonly ProviderService _providerservice;
     [Reactive] public partial Album? Album { get; set; }
@@ -93,7 +92,7 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadAsync
                 if (artist.ItemId != null && artist.Provider != null)
                 {
                     var vm = new ArtistViewModel(_client, HostScreen, _playersService!);
-                    vm.LoadFromId(artist.ItemId, artist.Provider);
+                    _ = vm.SetAndLoadModel(artist);
                     screen.Router.Navigate.Execute(vm);
                 }
             }
@@ -128,7 +127,7 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadAsync
         AlbumFullViewCommand = new RelayCommand(() =>
         {
             if (Album?.ItemId != null && Album.Provider != null)
-                LoadFromId(Album.ItemId, Album.Provider);
+                _ = LoadAsync();
             screen.Router.Navigate.Execute(this);
         });
 
@@ -138,6 +137,11 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadAsync
         });
     }
 
+    public async Task SetAndLoadModel(Album item)
+    {
+        Album = item;
+        await LoadAsync();
+    }
     public async Task LoadAsync()
     {
         _ = LoadAlbumDataAsync(Album.ItemId, Album.Provider);
@@ -149,11 +153,6 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadAsync
 
         if (album.ItemId != null && album.Provider != null)
             _ = LoadAlbumDataAsync(album.ItemId, album.Provider);
-    }
-
-    public void LoadFromId(string id, string provider)
-    {
-        _ = LoadAlbumDataAsync(id, provider);
     }
 
     private async Task LoadAlbumDataAsync(string id, string provider)

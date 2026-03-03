@@ -19,7 +19,8 @@
           mc:Ignorable="d">
     <StackPanel Margin="10,0,0,0">
         <StackPanel HorizontalAlignment="Center" Spacing="20">
-            <Border Margin="0,10,0,0" BoxShadow="0 0 20 0 Black">
+            <Border Margin="0,10,0,0" BoxShadow="0 0 20 0 Black" Width="240"
+                          Height="240">
                 <Border
                           Width="240"
                           Height="240"

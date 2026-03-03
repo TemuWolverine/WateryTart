@@ -1,21 +1,22 @@
-﻿using ReactiveUI;
+﻿using Avalonia.Controls.Primitives;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WsExtensions;
-using WateryTart.MusicAssistant.Models;
-using CommunityToolkit.Mvvm.Input;
 using WateryTart.Core.ViewModels.Popups;
-using System.Linq;
+using WateryTart.MusicAssistant;
+using WateryTart.MusicAssistant.Models;
+using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels
 {
-    public partial class PlaylistViewModel : ViewModelBase<PlaylistViewModel>, ILoadAsync
+    public partial class PlaylistViewModel : ViewModelBase<PlaylistViewModel>, ILoadableViewModel<Playlist>, ILoadAsync
     {
         public RelayCommand<Item> PlayCommand { get; }
         public RelayCommand<Item> PlayShuffleCommand { get; }
@@ -25,8 +26,8 @@ namespace WateryTart.Core.ViewModels
         public RelayCommand PlaylistFullViewCommand { get; }
         [Reactive] public partial ObservableCollection<TrackViewModel>? Tracks { get; set; }
 
-        private string _runningTime;
-        public string RunningTime
+        private string? _runningTime;
+        public string? RunningTime
         {
             get => _runningTime;
             set => this.RaiseAndSetIfChanged(ref _runningTime, value);
@@ -41,7 +42,7 @@ namespace WateryTart.Core.ViewModels
             PlaylistFullViewCommand = new RelayCommand(() =>
             {
                 if (Playlist.ItemId != null && Playlist.Provider != null)
-                    LoadFromId(Playlist.ItemId, Playlist.Provider);
+                    _ = LoadAsync();
                 screen.Router.Navigate.Execute(this);
             });
 
@@ -62,24 +63,21 @@ namespace WateryTart.Core.ViewModels
             });
         }
 
+        public async Task SetAndLoadModel(Playlist item)
+        {
+            Playlist = item;
+            await LoadAsync();
+        }
         public async Task LoadAsync()
         {
-            Tracks = [];
-            _ = LoadPlaylistDataAsync(Playlist.ItemId, Playlist.Provider);
-        }
+            if (Playlist == null || Playlist.ItemId == null || Playlist.Provider == null)
+                return;
 
-        public void LoadFromId(string id, string provider)
-        {
             Tracks = [];
-            _ = LoadPlaylistDataAsync(id, provider);
-        }
-
-        private async Task LoadPlaylistDataAsync(string id, string provider)
-        {
             IsLoading = true;
             try
             {
-                var playlistResponse = await _client.WithWs().GetPlaylistAsync(id, provider);
+                var playlistResponse = await _client.WithWs().GetPlaylistAsync(Playlist.ItemId, Playlist.Provider);
                 if (playlistResponse?.Result != null)
                 {
                     Playlist = playlistResponse.Result;
@@ -93,7 +91,7 @@ namespace WateryTart.Core.ViewModels
 
             try
             {
-                var tracksResponse = await _client.WithWs().GetPlaylistTracksAsync(id, provider);
+                var tracksResponse = await _client.WithWs().GetPlaylistTracksAsync(Playlist.ItemId, Playlist.Provider);
                 if (tracksResponse?.Result != null)
                 {
                     foreach (var t in tracksResponse.Result)
@@ -111,7 +109,5 @@ namespace WateryTart.Core.ViewModels
 
             IsLoading = false;
         }
-
-
     }
 }

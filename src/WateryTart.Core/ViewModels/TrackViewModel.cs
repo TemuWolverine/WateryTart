@@ -14,7 +14,7 @@ using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
 
-public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable
+public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable, ILoadableViewModel<Item>, ILoadAsync
 {
     private readonly CompositeDisposable _disposables = [];
     private bool _isNowPlaying;
@@ -70,20 +70,37 @@ public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable
         _disposables?.Dispose();
     }
 
-    public async Task LoadFromId(string itemId, string provider)
+    /// <summary>
+    /// Used when a skeleton track is passed in with only the ItemId and Provider, this will set the track and then load the full details
+    /// </summary>
+    /// <param name="track"></param>
+    /// <returns></returns>
+    public async Task SetAndLoadModel(Item track)
     {
+        Track = track;
+        await LoadAsync();
+    }
+
+    public async Task LoadAsync()
+    {
+        if (Track == null || Track.ItemId == null || Track.Provider == null)
+            return;
+
+        IsLoading = true;
         try
-         {
-             var response = await _client.WithWs().GetLibraryItemAsync(MediaType.Track, itemId, provider);
-             if (response?.Result != null)
-             {
-                 Track = response.Result;
-                 Title = Track.Name;
-             }
-         }
-         catch (Exception ex)
-         {
-             System.Diagnostics.Debug.WriteLine($"Error loading track: {ex.Message}");
-         }
+        {
+            var response = await _client.WithWs().GetLibraryItemAsync(MediaType.Track, Track.ItemId, Track.Provider);
+            if (response?.Result != null)
+            {
+                Track = response.Result;
+                Title = Track.Name;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading track: {ex.Message}");
+        }
+
+        IsLoading = false;
     }
 }

@@ -19,7 +19,7 @@ using Xaml.Behaviors.SourceGenerators;
 
 namespace WateryTart.Core.ViewModels
 {
-    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>, ILoadAsync
+    public partial class ArtistViewModel : ViewModelBase<ArtistViewModel>, ILoadableViewModel<Artist>, ILoadAsync
     {
         private readonly ProviderService _providerservice;
         [Reactive] public partial ObservableCollection<AlbumViewModel> Albums { get; set; } = new();
@@ -29,13 +29,14 @@ namespace WateryTart.Core.ViewModels
         public Image? ArtistLogo { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.Type == ImageType.Logo); } }
         public Image? ArtistThumb { get { return Artist?.Metadata?.Images?.FirstOrDefault(i => i.Type == ImageType.Thumb); } }
         [Reactive] public partial string InputProviderIcon { get; set; } = App.BlankSvg;
+        [Reactive] public override partial bool IsLoading { get; set; }
         public RelayCommand PlayArtistCommand { get; }
         public RelayCommand PlayArtistRadioCommand { get; }
         [Reactive] public partial ProviderManifest? Provider { get; set; } = null;
+        public new string Title { get; set; } = string.Empty;
         public ICommand ToggleFavoriteCommand { get; set; }
         public ObservableCollection<Item>? Tracks { get; set; }
 
-        public new string Title { get; set; } = string.Empty;
         public ArtistViewModel(MusicAssistantClient massClient, IScreen screen, PlayersService playersService, Artist? artist = null)
             : base(null, massClient, playersService)
         {
@@ -58,7 +59,7 @@ namespace WateryTart.Core.ViewModels
                 if (Artist?.ItemId == null || Artist.Provider == null)
                     return;
 
-                LoadFromId(Artist.ItemId, Artist.Provider);
+                _ = LoadAsync();
                 screen.Router.Navigate.Execute(this);
             });
 
@@ -110,16 +111,8 @@ namespace WateryTart.Core.ViewModels
             if (Artist?.ItemId == null || Artist.Provider == null)
                 return;
 
-            LoadFromId(Artist.ItemId, Artist.Provider);
+            _ = LoadAsync();
             HostScreen.Router.Navigate.Execute(this);
-        }
-
-        public void LoadFromId(string id, string provider)
-        {
-            Tracks = [];
-
-            _ = LoadArtistAlbum(id, provider);
-            _ = LoadArtist(id, provider);
         }
 
         public async Task LoadAsync()
@@ -128,6 +121,12 @@ namespace WateryTart.Core.ViewModels
             await LoadArtist(Artist.ItemId, Artist.Provider);
             await LoadArtistAlbum(Artist.ItemId, Artist.Provider);
             IsLoading = false;
+        }
+
+        public async Task SetAndLoadModel(Artist item)
+        {
+            Artist = item;
+            await LoadAsync();
         }
 
         private async Task LoadArtist(string id, string provider)

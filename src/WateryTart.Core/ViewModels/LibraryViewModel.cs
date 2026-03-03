@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.WsExtensions;
 namespace WateryTart.Core.ViewModels;
 
