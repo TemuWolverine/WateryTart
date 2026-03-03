@@ -155,7 +155,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
             .Connect()
             .Filter(i => i is Artist)
             .Transform(i => new ArtistViewModel(_client, screen, playersService, (Artist)i))
-            .Top(5)
+            .Top(3)
             .Bind(out searchArtists)
             .Subscribe());
 
@@ -163,7 +163,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
             .Connect()
             .Filter(i => i is Album)
             .Transform(i => new AlbumViewModel(_client, screen, playersService, (Album)i))
-            .Top(5)
+            .Top(3)
             .Bind(out searchAlbums)
             .Subscribe());
 
@@ -171,7 +171,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
             .Connect()
             .Filter(i => i is Item)
             .Transform(i => new TrackViewModel(_client, playersService, (Item)i))
-            .Top(5)
+            .Top(3)
             .Bind(out searchItem)
             .Subscribe());
 
@@ -179,7 +179,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
             .Connect()
             .Filter(i => i is Playlist)
             .Transform(i => new PlaylistViewModel(_client, screen, playersService, (Playlist)i))
-            .Top(5)
+            .Top(3)
             .Bind(out searchPlaylist)
             .Subscribe());
     }

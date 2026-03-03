@@ -158,7 +158,8 @@ public partial class PlayersViewModel : ViewModelBase<PlayersViewModel>
                 try
                 {
                     _suppressVolumeUpdate = true;
-                    Volume = (double)serverVol!;
+                    if (serverVol != null)
+                        Volume = (double)serverVol!;
                 }
                 finally
                 {
@@ -200,8 +201,8 @@ public partial class PlayersViewModel : ViewModelBase<PlayersViewModel>
                     await Task.Delay(200, ct).ConfigureAwait(false);
                     await _playersService!.PlayerVolume((int)pending, player).ConfigureAwait(false);
                 }
-                catch (OperationCanceledException) 
-                { 
+                catch (OperationCanceledException)
+                {
                 }
                 catch (Exception ex)
                 {

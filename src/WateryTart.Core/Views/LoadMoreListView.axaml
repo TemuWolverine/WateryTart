@@ -111,13 +111,17 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Menu>
+            <!--<Menu>
                 <MenuItem Header="Filters">
-                    <!--  Global filters  -->
+            -->
+            <!--  Global filters  -->
+            <!--
                     <MenuItem Header="Favourite Only" ToggleType="CheckBox" />
                     <Separator />
 
-                    <!--  Options should load in based on the type  -->
+            -->
+            <!--  Options should load in based on the type  -->
+            <!--
                     <MenuItem
                               Header="Album"
                               IsChecked="True"
@@ -129,7 +133,7 @@
                     <MenuItem Header="Soundtrack" ToggleType="CheckBox" />
                     <Separator />
                 </MenuItem>
-            </Menu>
+            </Menu>-->
         </StackPanel>
 
         <!--  Items List  -->

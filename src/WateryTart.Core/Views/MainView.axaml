@@ -142,7 +142,8 @@
                               Grid.Column="0"
                               Height="45"
                               Classes="iconButton navButton"
-                              Command="{Binding GoHome}">
+                              Command="{Binding GoHome}"
+                              ToolTip.Tip="Home">
                         <iconPacks:PackIconMaterial
                                   Width="20"
                                   Height="20"
@@ -154,7 +155,8 @@
                               Grid.Column="1"
                               Height="45"
                               Classes="iconButton navButton"
-                              Command="{Binding GoMusic}">
+                              Command="{Binding GoMusic}"
+                              ToolTip.Tip="Library">
                         <iconPacks:PackIconMaterial
                                   Width="20"
                                   Height="20"
@@ -166,7 +168,8 @@
                               Grid.Column="2"
                               Height="45"
                               Classes="iconButton navButton"
-                              Command="{Binding GoSearch}">
+                              Command="{Binding GoSearch}"
+                              ToolTip.Tip="Search">
                         <iconPacks:PackIconMaterial
                                   Width="20"
                                   Height="20"
@@ -178,7 +181,8 @@
                               Grid.Column="3"
                               Height="45"
                               Classes="iconButton navButton"
-                              Command="{Binding GoPlayers}">
+                              Command="{Binding GoPlayers}"
+                              ToolTip.Tip="Players">
                         <iconPacks:PackIconMaterial
                                   Width="20"
                                   Height="20"
@@ -190,7 +194,8 @@
                               Grid.Column="4"
                               Height="45"
                               Classes="iconButton navButton"
-                              Command="{Binding GoSettings}">
+                              Command="{Binding GoSettings}"
+                              ToolTip.Tip="Settings">
                         <iconPacks:PackIconMaterial
                                   Width="20"
                                   Height="20"

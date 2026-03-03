@@ -105,6 +105,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                     try
                     {
                         _suppressVolumeUpdate = true;
+                        if (serverVol != null)
                         Volume = (int)serverVol;
                     }
                     finally
