@@ -65,6 +65,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Sendspin.SDK" />
 		<PackageReference Include="SharpHook" />
 		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="Svg.Controls.Skia.Avalonia" />
