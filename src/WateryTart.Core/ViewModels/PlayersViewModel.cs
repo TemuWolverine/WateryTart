@@ -22,6 +22,7 @@ using WateryTart.MusicAssistant.Models.Enums;
 using Xaml.Behaviors.SourceGenerators;
 using Autofac;
 using Microsoft.Extensions.Logging;
+using ReactiveUI.Avalonia;
 
 namespace WateryTart.Core.ViewModels;
 
@@ -152,7 +153,7 @@ public partial class PlayersViewModel : ViewModelBase<PlayersViewModel>
 
         // Keep VM Volume in sync with server updates, suppress round-trip
         this.WhenAnyValue(x => x._playersService!.SelectedPlayer!.VolumeLevel)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(serverVol =>
             {
                 try

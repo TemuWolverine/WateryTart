@@ -71,7 +71,10 @@ sealed class Program
         })
             .UsePlatformDetect()
             .WithInterFont()
-            .UseReactiveUI()
+            .UseReactiveUI(rxui =>
+            {
+                // Optional: add custom registration here via rxui.WithRegistration(...)
+            })
             .WithDeveloperTools()
             .LogToTrace();
 }

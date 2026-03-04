@@ -3,6 +3,7 @@ using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
+using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Concurrent;
@@ -146,7 +147,7 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
 
         /* Subscribe to the relevant websocket events from MASS */
         _subscriptions.Add(_massClient.WithWs().Events
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .SelectMany(e => Observable.FromAsync(() => OnEvents(e)))
             .Subscribe());
 

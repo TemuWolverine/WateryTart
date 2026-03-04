@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
+using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         // React to sorting changes with debounce to avoid rapid repeated loads
         this.WhenAnyValue(x => x.SelectedSortingOption)
             .Throttle(TimeSpan.FromMilliseconds(150)) // Debounce rapid changes
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .SelectMany(_ => Observable.FromAsync(() => LoadInitialAsync()))
             .Subscribe();
 
@@ -155,7 +156,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         CurrentOffset = 0;
         
         // Clear on UI thread
-        await Observable.Start(() => Items.Clear(), RxApp.MainThreadScheduler);
+        await Observable.Start(() => Items.Clear(), AvaloniaScheduler.Instance);
         
         await LoadAsync();
     }
@@ -181,7 +182,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
                 {
                     Items.Add(item);
                 }
-            }, RxApp.MainThreadScheduler);
+            }, AvaloniaScheduler.Instance);
 
             HasMoreItems = response.Result.Count == PageSize;
 

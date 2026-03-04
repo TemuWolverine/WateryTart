@@ -47,7 +47,7 @@
     <PackageVersion Include="ReactiveUI" Version="22.3.1" />
     <PackageVersion Include="ReactiveUI.AndroidSupport" Version="19.6.12" />
     <PackageVersion Include="ReactiveUI.AndroidX" Version="22.3.1" />
-    <PackageVersion Include="ReactiveUI.Avalonia" Version="11.3.8" />
+    <PackageVersion Include="ReactiveUI.Avalonia" Version="11.4.7" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.6.1" />
     <PackageVersion Include="SharpHook" Version="7.1.1" />
     <PackageVersion Include="SharpHook.R3" Version="7.1.1" />

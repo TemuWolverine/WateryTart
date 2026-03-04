@@ -1,8 +1,10 @@
-﻿using Avalonia.Controls.Primitives;
+﻿using Autofac;
+using Avalonia.Controls.Primitives;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.Material;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
+using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,6 @@ using WateryTart.Core.ViewModels.Popups;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
 using Xaml.Behaviors.SourceGenerators;
-using Autofac;
 
 namespace WateryTart.Core.ViewModels.Players;
 
@@ -98,7 +99,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
         // Keep VM Volume in sync with PlayersService.SelectedPlayer.VolumeLevel
         // When a server update drives the player model, update the VM's Volume but suppress sending it back to server.
         this.WhenAnyValue(x => x.PlayersService.SelectedPlayer.VolumeLevel)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(
                 serverVol =>
                 {
@@ -250,13 +251,13 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
         // Create a CanExecute observable that checks if a player is selected
         var canExecute = this.WhenAnyValue(x => x._playersService.SelectedPlayer)
             .Select(player => player != null)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .DistinctUntilChanged();
 
 #pragma warning disable CS8602
         // Ensure Quality property updates when the selected queue item or player changes
         this.WhenAnyValue(x => x.PlayersService.SelectedQueue.CurrentItem)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn( AvaloniaScheduler.Instance)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(Quality)));
 
         // Also update Quality when inner stream details change (bit depth, sample rate or content type)
@@ -264,7 +265,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                 x => x.PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat.BitDepth,
                 x => x.PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat.SampleRate,
                 x => x.PlayersService.SelectedQueue.CurrentItem.StreamDetails.AudioFormat.ContentType)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(Quality)));
 #pragma warning restore CS8602
     }
