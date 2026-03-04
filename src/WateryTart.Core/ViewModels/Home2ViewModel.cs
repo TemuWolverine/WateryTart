@@ -56,7 +56,7 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
         _ = LoadDataAsync();
     }
 
-    private void DiscoverAlbumsClicked()
+    private void DiscoverArtistsClicked()
     {
         var artistView = new LoadMoreListViewModel<ArtistViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Discover Artists", true);
         artistView.SetCustomDataSource<Artist, ArtistsResponse>(
@@ -75,7 +75,7 @@ public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
         HostScreen.Router.Navigate.Execute(artistView);
     }
 
-    private void DiscoverArtistsClicked()
+    private void DiscoverAlbumsClicked()
     {
         var artistView = new LoadMoreListViewModel<AlbumViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Discover Albums", true);
         artistView.SetCustomDataSource<Album, AlbumsResponse>(
