@@ -4,6 +4,7 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
@@ -22,25 +23,28 @@ public partial class GpioVolumeService : ReactiveObject, IVolumeService, IReaper
     private const int DebounceIntervalMs = 100;
     private const int MaxStepsPerDebounce = 20;
 
-    private readonly object _oldValueLock = new();
-    private ISettings _settings;
+    private readonly Lock _oldValueLock = new();
+    private readonly ISettings _settings;
 
     public GpioVolumeService(ISettings settings, PlayersService playersService)
     {
+        _settings = settings;
+        this.playersService = playersService;
+
 #if !LINUX_ARM64
         return;
 #endif
 
-        _settings = settings;
-        this.playersService = playersService;
         // Ensure pin order matches the QuadratureRotaryEncoder constructor (pinA, pinB)
 
+#pragma warning disable CS0162 // Unreachable code detected
         if (settings.CustomSettings.ContainsKey("GpioEnable") &&
     settings.CustomSettings["GpioEnable"] is bool enabled &&
     !enabled)
         {
             return;
         }
+#pragma warning restore CS0162 // Unreachable code detected
 
         Enable();
     }
@@ -113,7 +117,7 @@ public partial class GpioVolumeService : ReactiveObject, IVolumeService, IReaper
                 oldValue = pending;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Prevent unobserved exceptions from terminating the Rx pipeline.
             // Consider logging if a logging facility is available.
@@ -123,8 +127,7 @@ public partial class GpioVolumeService : ReactiveObject, IVolumeService, IReaper
 
     public void Reap()
     {
-        if (rotaryEncoder != null)
-            rotaryEncoder.Dispose();
+        rotaryEncoder?.Dispose();
 
         _pulseSubscription?.Dispose();
         _pulseSubscription = null;

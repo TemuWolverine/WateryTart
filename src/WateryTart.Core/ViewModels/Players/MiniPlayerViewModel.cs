@@ -16,11 +16,11 @@ namespace WateryTart.Core.ViewModels.Players
         [Reactive] public partial string? Title { get; set; }
         public bool ShowMiniPlayer => false;
         public bool ShowNavigation => false;
-        public bool ShowBackButton => true;
+        public static bool ShowBackButton => true;
         [Reactive] public partial PlayersService PlayersService { get; set; }
-        public ICommand PlayerNextCommand { get; set; }
-        public ICommand PlayerPlayPauseCommand { get; set; }
-        public ICommand PlayPreviousCommand { get; set; }
+        [Reactive] public partial ICommand PlayerNextCommand { get; set; }
+        [Reactive] public partial ICommand PlayerPlayPauseCommand { get; set; }
+        [Reactive] public partial ICommand PlayPreviousCommand { get; set; }
 
         [ReactiveCommand]
         private void Clicked()

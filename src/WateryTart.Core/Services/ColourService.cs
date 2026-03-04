@@ -80,7 +80,7 @@ public partial class ColourService : ReactiveObject
         if (string.IsNullOrWhiteSpace(hex))
             throw new ArgumentException("Hex string cannot be null or empty", nameof(hex));
 
-        hex = hex.StartsWith('#') ? hex.Substring(1) : hex;
+        hex = hex.StartsWith('#') ? hex[1..] : hex;
 
         if (hex.Length != 6 && hex.Length != 8)
             throw new ArgumentException("Hex string must be 6 or 8 characters long (RRGGBB or AARRGGBB)", nameof(hex));

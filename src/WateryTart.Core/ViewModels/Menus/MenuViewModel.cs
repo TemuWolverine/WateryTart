@@ -7,18 +7,12 @@ using WateryTart.Core.ViewModels.Popups;
 
 namespace WateryTart.Core.ViewModels.Menus;
 
-public partial class MenuViewModel : ReactiveObject, IPopupViewModel
+public partial class MenuViewModel(IEnumerable<IMenuItemViewModel>? menuItems = null, object? headerItem = null) : ReactiveObject, IPopupViewModel
 {
-    [Reactive] public partial object? HeaderItem { get; set; }
-    public List<IMenuItemViewModel> MenuItems { get; set; } = [];
+    [Reactive] public partial object? HeaderItem { get; set; } = headerItem;
+    public List<IMenuItemViewModel> MenuItems { get; set; } = menuItems?.ToList() ?? [];
     public string Title { get; set; } = string.Empty;
     public string Message => throw new System.NotImplementedException();
-
-    public MenuViewModel(IEnumerable<IMenuItemViewModel>? menuItems = null, object? headerItem = null)
-    {
-        HeaderItem = headerItem;
-        MenuItems = menuItems?.ToList() ?? [];
-    }
 
     public void AddMenuItem(IMenuItemViewModel menuItem)
     {

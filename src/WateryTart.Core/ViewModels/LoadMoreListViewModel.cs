@@ -66,9 +66,9 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
             if (SelectedItem != null)
             {
                 screen.Router.Navigate.Execute(SelectedItem);
-                if (SelectedItem is ILoadAsync)
+                if (SelectedItem is ILoadAsync async)
                 {
-                    _ = ((ILoadAsync)SelectedItem).LoadAsync();
+                    _ = async.LoadAsync();
                 }
             }
         });
@@ -132,7 +132,7 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error loading items: {ex.Message}");
+            _logger.LogError(ex, "Error loading items:{message}", ex.Message);
             HasMoreItems = false;
         }
         finally

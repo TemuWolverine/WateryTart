@@ -25,7 +25,7 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
     // Current connection info (read-only display)
     [Reactive] public partial string CurrentServer { get; set; } = string.Empty;
     [Reactive] public partial string CurrentUsername { get; set; } = string.Empty;
-    public string MaskedPassword => "**********";
+    public static string MaskedPassword => "**********";
 
     // New connection fields
     [Reactive] public partial string Server { get; set; } = string.Empty;
@@ -39,7 +39,7 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
     [Reactive] public partial bool IsHomeAssistantAddon { get; set; } = false;
     [Reactive] public partial bool ShowSuccess { get; set; } = false;
 
-    public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = new();
+    public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = [];
 
     public AsyncRelayCommand SaveCommand { get; }
     public AsyncRelayCommand RefreshServersCommand { get; }
@@ -139,10 +139,7 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
             {
                 SetError("No Music Assistant servers found on the network.");
             }
-            else if (SelectedServer == null)
-            {
-                SelectedServer = DiscoveredServers[0];
-            }
+            else SelectedServer ??= DiscoveredServers[0];
         }
         catch (Exception ex)
         {
@@ -262,6 +259,7 @@ public partial class ServerSettingsViewModel : ReactiveObject, IHaveSettings, ID
     public void Dispose()
     {
         if (_disposed) return;
+        GC.SuppressFinalize(this);
         _disposed = true;
 
         _discovery.ServerDiscovered -= OnServerDiscovered;

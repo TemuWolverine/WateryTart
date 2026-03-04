@@ -29,9 +29,7 @@ public partial class BigPlayerView : ReactiveUserControl<BigPlayerViewModel>
         });
 
         var advancedImage = this.Find<AdvancedImage>("imgAlbumArt");
-        if (advancedImage != null)
-        {
-            advancedImage.PropertyChanged += (s, e) =>
+        advancedImage?.PropertyChanged += (s, e) =>
             {
                 if (e.Property == AdvancedImage.CurrentImageProperty && DataContext is BigPlayerViewModel vm)
                 {
@@ -43,25 +41,20 @@ public partial class BigPlayerView : ReactiveUserControl<BigPlayerViewModel>
                     }
                 }
             };
-        }
 
         var advancedImageSmall = this.Find<AdvancedImage>("imgAlbumArtSmall");
-        if (advancedImageSmall != null)
+        advancedImageSmall?.PropertyChanged += (s, e) =>
         {
-            advancedImageSmall.PropertyChanged += (s, e) =>
+            if (e.Property == AdvancedImage.CurrentImageProperty && DataContext is BigPlayerViewModel vm)
             {
-                if (e.Property == AdvancedImage.CurrentImageProperty && DataContext is BigPlayerViewModel vm)
+                if (advancedImageSmall.CurrentImage != null &&
+                    advancedImageSmall.Width > 0 &&
+                    advancedImageSmall.Height > 0)
                 {
-                    if (advancedImageSmall.CurrentImage != null &&
-                        advancedImageSmall.Width > 0 &&
-                        advancedImageSmall.Height > 0)
-                    {
-                        vm.UpdateCachedDimensions(advancedImageSmall.Width, advancedImageSmall.Height);
-                    }
+                    vm.UpdateCachedDimensions(advancedImageSmall.Width, advancedImageSmall.Height);
                 }
-            };
-        }
-
+            }
+        };
     }
 
     private void SubscribeToWindowBounds(CompositeDisposable disposables)

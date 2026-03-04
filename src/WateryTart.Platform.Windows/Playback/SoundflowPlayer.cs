@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WateryTart.Platform.Windows.Playback;
 
-public sealed partial class SoundflowPlayer : IAudioPlayer
+public sealed partial class SoundflowPlayer(ILoggerFactory loggerFactory) : IAudioPlayer
 {
     private MiniAudioEngine? _engine;
     private Sendspin.SDK.Models.AudioFormat? _format;
@@ -69,8 +69,7 @@ public sealed partial class SoundflowPlayer : IAudioPlayer
         return ValueTask.CompletedTask;
     }
 
-    private readonly ILogger _logger;
-    public SoundflowPlayer(ILoggerFactory loggerFactory) => _logger = loggerFactory.CreateLogger<SoundflowPlayer>();
+    private readonly ILogger _logger = loggerFactory.CreateLogger<SoundflowPlayer>();
 
     public Task InitializeAsync(Sendspin.SDK.Models.AudioFormat format, CancellationToken ct = default)
     {

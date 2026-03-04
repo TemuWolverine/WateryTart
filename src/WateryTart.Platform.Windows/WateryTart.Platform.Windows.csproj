@@ -19,6 +19,9 @@
 
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Remove="C:\Users\paul\.nuget\packages\soundflow\1.4.0\contentFiles\any\net8.0\STATEMENT.md" />
+	</ItemGroup>
+	<ItemGroup>
 		<Resource Include="..\..Assets\logo_square.ico" />
 	</ItemGroup>
 	<PropertyGroup>
@@ -51,9 +54,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Fleck\src\Fleck\Fleck.csproj" />
 		<ProjectReference Include="..\WateryTart.Core\WateryTart.Core.csproj" />
-		<ProjectReference Include="..\windowsSpin\src\Sendspin.SDK\Sendspin.SDK.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

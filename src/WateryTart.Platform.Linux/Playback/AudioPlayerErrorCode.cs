@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root https://github.com/chrisuthe/sendspin-player.
 // </copyright>
 
-namespace Sendspin.Core.Audio;
+namespace WateryTart.Platform.Linux.Playback;
 public enum AudioPlayerErrorCode
 {
     Unknown,

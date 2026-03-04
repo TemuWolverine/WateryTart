@@ -3,7 +3,6 @@
 // </copyright>
 
 using Microsoft.Extensions.Logging;
-using Sendspin.Core.Audio;
 using Sendspin.SDK.Audio;
 using Sendspin.SDK.Models;
 using Silk.NET.OpenAL;
@@ -16,7 +15,7 @@ using WateryTart.Core.Settings;
 using XVolume.Abstractions;
 using XVolume.Factory;
 
-namespace Sendspin.Platform.Linux.Audio;
+namespace WateryTart.Platform.Linux.Playback;
 
 /// <summary>
 /// OpenAL-based audio player for Linux using Silk.NET.
@@ -28,7 +27,7 @@ public sealed class OpenALAudioPlayer : IAudioPlayer, IAudioDeviceEnumerator
     private const int BufferSizeMs = 25;
 
     private readonly ILogger<OpenALAudioPlayer>? _logger;
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     private AL? _al;
     private ALContext? _alc;
@@ -81,7 +80,7 @@ public sealed class OpenALAudioPlayer : IAudioPlayer, IAudioDeviceEnumerator
 
     public event EventHandler<AudioPlayerState>? StateChanged;
     public event EventHandler<AudioPlayerError>? ErrorOccurred;
-    IVolumeSubsystem volumeController  = VolumeSubsystemFactory.Create();
+    readonly IVolumeSubsystem volumeController  = VolumeSubsystemFactory.Create();
     public unsafe Task InitializeAsync(AudioFormat format, CancellationToken ct)
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
@@ -242,7 +241,7 @@ public sealed class OpenALAudioPlayer : IAudioPlayer, IAudioDeviceEnumerator
     }
 
     public AudioDeviceInfo? GetDefaultDevice() =>
-        GetDevices().FirstOrDefault(d => d.IsDefault) ?? GetDevices().FirstOrDefault();
+        GetDevices().FirstOrDefault(d => d.IsDefault) ?? GetDevices()[0];//.FirstOrDefault();
 
     private void PlaybackLoop(CancellationToken ct)
     {

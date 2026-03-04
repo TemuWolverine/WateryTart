@@ -82,9 +82,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Fleck\src\Fleck\Fleck.csproj" />
 	  <ProjectReference Include="..\WateryTart.MusicAssistant\src\WateryTart.MusicAssistant\WateryTart.MusicAssistant.csproj" />
-	  <ProjectReference Include="..\windowsSpin\src\Sendspin.SDK\Sendspin.SDK.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

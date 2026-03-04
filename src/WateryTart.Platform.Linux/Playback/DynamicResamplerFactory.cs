@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE file in the project root https://github.com/chrisuthe/sendspin-player.
 // </copyright>
 
-using Sendspin.Core.Audio;
-using Sendspin.Platform.Shared.Audio;
 
-namespace Sendspin.Platform.Linux.Audio;
+using WateryTart.Platform.Linux.Audio;
+
+namespace WateryTart.Platform.Linux.Playback;
 
 /// <summary>
 /// Factory for creating dynamic resamplers on Linux.

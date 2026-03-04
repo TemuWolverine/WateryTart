@@ -16,14 +16,8 @@ namespace WateryTart.Core.ViewModels
         public IScreen HostScreen { get; set; }
         public virtual bool IsLoading { get; set; }
 
-        public bool ShowMiniPlayer
-        {
-            get => field; set { field = value; }
-        } = true;
-        public bool ShowNavigation
-        {
-            get => field; set { field = value; }
-        } = true;
+        public bool ShowMiniPlayer { get; set; } = true;
+        public bool ShowNavigation { get; set; } = true;
 
         public PlayersService PlayersService => _playersService!;
         public virtual string Title { get; set; }

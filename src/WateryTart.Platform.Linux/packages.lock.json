@@ -45,6 +45,18 @@
           "ReactiveUI.SourceGenerators.Analyzers.CodeFixes": "2.6.1"
         }
       },
+      "Sendspin.SDK": {
+        "type": "Direct",
+        "requested": "[7.1.0, )",
+        "resolved": "7.1.0",
+        "contentHash": "J9RTw5vyiXz9a4kqenvbnpqsCPO1gXfCmYD0NYjVBV3DAti3VsQvTyCn4LUZS3qau/fIX65PlSF48Fw9V7wqHQ==",
+        "dependencies": {
+          "Concentus": "2.2.2",
+          "Makaretu.Dns.Multicast": "0.27.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Zeroconf": "3.7.16"
+        }
+      },
       "Silk.NET.OpenAL": {
         "type": "Direct",
         "requested": "[2.23.0, )",
@@ -620,19 +632,6 @@
           "Xaml.Behaviors.Interactivity": "11.3.9.5"
         }
       },
-      "fleck": {
-        "type": "Project"
-      },
-      "sendspin.sdk": {
-        "type": "Project",
-        "dependencies": {
-          "Concentus": "[2.2.2, )",
-          "Fleck": "[0.0.0.1-local, )",
-          "Makaretu.Dns.Multicast": "[0.27.0, )",
-          "Microsoft.Extensions.Logging": "[10.0.3, )",
-          "Zeroconf": "[3.7.16, )"
-        }
-      },
       "waterytart.core": {
         "type": "Project",
         "dependencies": {
@@ -647,7 +646,6 @@
           "CommunityToolkit.Mvvm": "[8.4.0, )",
           "Concentus": "[2.2.2, )",
           "Deadpikle.AvaloniaProgressRing": "[0.10.10, )",
-          "Fleck": "[0.0.0.1-local, )",
           "Iot.Device.Bindings": "[4.1.0, )",
           "Karambolo.Extensions.Logging.File": "[4.1.0, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.3, )",

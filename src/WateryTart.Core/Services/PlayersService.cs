@@ -59,7 +59,7 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
 
     public Player? SelectedPlayer
     {
-        get => field;
+        get;
         set
         {
             if (value != null)
@@ -219,46 +219,46 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
         {
             case EventType.MediaItemUpdated:
                 mediaEvent = (MediaItemEventResponse)e;
-                var item = QueuedItems.Items.FirstOrDefault(i => i.MediaItem?.Uri == mediaEvent.data!.Uri);
-                item?.MediaItem?.Favorite = mediaEvent!.data!.Favorite;
+                var item = QueuedItems.Items.FirstOrDefault(i => i.MediaItem?.Uri == mediaEvent.Data!.Uri);
+                item?.MediaItem?.Favorite = mediaEvent!.Data!.Favorite;
 
-                if (SelectedQueue?.CurrentItem?.MediaItem?.Uri == mediaEvent?.data?.Uri)
+                if (SelectedQueue?.CurrentItem?.MediaItem?.Uri == mediaEvent?.Data?.Uri)
                 {
-                    SelectedQueue?.CurrentItem?.MediaItem?.Favorite = mediaEvent!.data!.Favorite;
+                    SelectedQueue?.CurrentItem?.MediaItem?.Favorite = mediaEvent!.Data!.Favorite;
                 }
 
                 break;
             case EventType.MediaItemPlayed:
                 mediaEvent2 = (MediaItemEvent2Response)e;
-                if (mediaEvent2.object_id == SelectedQueue?.CurrentItem?.MediaItem?.Uri)
-                    if (mediaEvent2.data!.SecondsPlayed != null)
-                        SelectedQueue?.CurrentItem?.MediaItem?.ElapsedTime = mediaEvent2.data.SecondsPlayed.Value;
+                if (mediaEvent2.ObjectId == SelectedQueue?.CurrentItem?.MediaItem?.Uri)
+                    if (mediaEvent2.Data!.SecondsPlayed != null)
+                        SelectedQueue?.CurrentItem?.MediaItem?.ElapsedTime = mediaEvent2.Data.SecondsPlayed.Value;
                 break;
 
             case EventType.QueueTimeUpdated:
                 timeEvent = (PlayerQueueTimeUpdatedEventResponse)e;
-                if (SelectedQueue != null && e.object_id == SelectedQueue.QueueId)
+                if (SelectedQueue != null && e.ObjectId == SelectedQueue.QueueId)
                 {
-                    SelectedQueue.CurrentItem!.MediaItem!.ElapsedTime = timeEvent.data;
+                    SelectedQueue.CurrentItem!.MediaItem!.ElapsedTime = timeEvent.Data;
                 }
                 break;
 
             case EventType.PlayerAdded:
                 playerEvent = (PlayerEventResponse)e;
-                if (!Players.Contains((playerEvent.data!)) && playerEvent.data != null)
-                    Players.Add(playerEvent.data);
+                if (!Players.Contains((playerEvent.Data!)) && playerEvent.Data != null)
+                    Players.Add(playerEvent.Data);
                 break;
 
             case EventType.PlayerUpdated:
                 playerEvent = (PlayerEventResponse)e;
-                var player = Players.FirstOrDefault(p => p.PlayerId == playerEvent.data!.PlayerId);
+                var player = Players.FirstOrDefault(p => p.PlayerId == playerEvent.Data!.PlayerId);
 
                 if (player != null)
                 {
-                    player.PlaybackState = playerEvent.data!.PlaybackState;
-                    player.CurrentMedia = playerEvent.data.CurrentMedia;
+                    player.PlaybackState = playerEvent.Data!.PlaybackState;
+                    player.CurrentMedia = playerEvent.Data.CurrentMedia;
 
-                    var serverVol = playerEvent.data.VolumeLevel;
+                    var serverVol = playerEvent.Data.VolumeLevel;
 
                     // If we have a recent local change for this player, and server value is close, treat as echo (ack).
                     if (_pendingLocalVolumeChanges.TryGetValue(player.PlayerId!, out var pending))
@@ -288,27 +288,27 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
 
             case EventType.PlayerRemoved:
                 playerEvent = (PlayerEventResponse)e;
-                Players.RemoveAll(p => p.PlayerId == playerEvent?.data?.PlayerId);
+                Players.RemoveAll(p => p.PlayerId == playerEvent?.Data?.PlayerId);
                 break;
 
             case EventType.QueueAdded:
 
                 queueEvent = (PlayerQueueEventResponse)e;
-                var existing = Queues.FirstOrDefault(q => q!.QueueId == queueEvent?.data?.QueueId);
+                var existing = Queues.FirstOrDefault(q => q!.QueueId == queueEvent?.Data?.QueueId);
                 if (existing == null)
-                    Queues.Add(queueEvent.data!);
+                    Queues.Add(queueEvent.Data!);
                 else
-                    Queues.ReplaceOrAdd(existing, queueEvent.data);
+                    Queues.ReplaceOrAdd(existing, queueEvent.Data);
                 break;
 
             case EventType.QueueUpdated:
                 queueEvent = (PlayerQueueEventResponse)e;
-                if (SelectedQueue != null && queueEvent?.data?.QueueId == SelectedQueue.QueueId)
+                if (SelectedQueue != null && queueEvent?.Data?.QueueId == SelectedQueue.QueueId)
                 {
-                    SelectedQueue.ShuffleEnabled = queueEvent!.data!.ShuffleEnabled;
-                    SelectedQueue.RepeatMode = queueEvent.data.RepeatMode;
-                    SelectedQueue.CurrentIndex = queueEvent.data.CurrentIndex;
-                    SelectedQueue.CurrentItem = queueEvent.data.CurrentItem;
+                    SelectedQueue.ShuffleEnabled = queueEvent!.Data!.ShuffleEnabled;
+                    SelectedQueue.RepeatMode = queueEvent.Data.RepeatMode;
+                    SelectedQueue.CurrentIndex = queueEvent.Data.CurrentIndex;
+                    SelectedQueue.CurrentItem = queueEvent.Data.CurrentItem;
                     var currentItem = SelectedQueue.CurrentItem;
                     if (currentItem == null)
                         break;
@@ -477,7 +477,7 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
         {
             try
             {
-                _logger.LogInformation($"Playing {t.Name}");
+                _logger.LogInformation("Playing {name}", t.Name);
                 var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(p.PlayerId!);
                 if (pq != null && pq.Result != null && !string.IsNullOrEmpty(pq.Result.QueueId))
                     await _massClient.WithWs().PlayAsync(pq.Result.QueueId, t, mode, RadioMode);

@@ -23,6 +23,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
         ILoggerFactory loggerFactory,
         PlayersService playersService) : base(loggerFactory, massClient, playersService)
     {
+        RecentlyAdded = [];
         HostScreen = screen;
         Title = "Library";
         var artists = new LibraryItem()
@@ -31,7 +32,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Title = "Artists",
             ClickedCommand = new RelayCommand(() =>
             {
-               var vm = new LoadMoreListViewModel<ArtistViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Artists", true);
+               var vm = new LoadMoreListViewModel<ArtistViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Artists", true);
                screen.Router.Navigate.Execute(vm);
             })
         };
@@ -43,7 +44,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             ClickedCommand = new RelayCommand(() =>
             {
                 //var vm = App.Container.Resolve<AlbumsListViewModel>();
-                var vm = new LoadMoreListViewModel<AlbumViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Albums", true);
+                var vm = new LoadMoreListViewModel<AlbumViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Albums", true);
                 screen.Router.Navigate.Execute(vm);
             })
         };
@@ -54,7 +55,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.MusicNoteEighth,
             ClickedCommand = new RelayCommand(() =>
             {
-                var vm = new LoadMoreListViewModel<TrackViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Tracks", false);
+                var vm = new LoadMoreListViewModel<TrackViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Tracks", false);
                 screen.Router.Navigate.Execute(vm);
             })
         };
@@ -64,7 +65,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.PlaylistMusic,
             ClickedCommand = new RelayCommand(() =>
             {
-                var vm = new LoadMoreListViewModel<PlaylistViewModel>(_client, screen, _playersService, App.Container.Resolve<ILoggerFactory>(), "Playlists", true);
+                var vm = new LoadMoreListViewModel<PlaylistViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Playlists", true);
                 screen.Router.Navigate.Execute(vm);
             })
         };

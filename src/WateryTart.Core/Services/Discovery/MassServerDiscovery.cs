@@ -12,15 +12,15 @@ namespace WateryTart.Core.Services.Discovery;
 /// mDNS-based discovery service for Music Assistant servers.
 /// Uses the _mass._tcp service type to find servers on the local network.
 /// </summary>
-public sealed class MassServerDiscovery : IMassServerDiscovery, IDisposable
+public sealed class MassServerDiscovery(ILogger<MassServerDiscovery>? logger = null) : IMassServerDiscovery, IDisposable
 {
     // Music Assistant mDNS service type
     private const string ServiceType = "_mass._tcp.local.";
     private static readonly TimeSpan DefaultScanTime = TimeSpan.FromSeconds(5);
 
-    private readonly ILogger<MassServerDiscovery>? _logger;
-    private readonly List<DiscoveredServer> _discoveredServers = new();
-    private readonly object _lock = new();
+    private readonly ILogger<MassServerDiscovery>? _logger = logger;
+    private readonly List<DiscoveredServer> _discoveredServers = [];
+    private readonly Lock _lock = new();
     private CancellationTokenSource? _discoveryCts;
     private bool _disposed;
 
@@ -33,14 +33,9 @@ public sealed class MassServerDiscovery : IMassServerDiscovery, IDisposable
         {
             lock (_lock)
             {
-                return _discoveredServers.ToList();
+                return [.. _discoveredServers];
             }
         }
-    }
-
-    public MassServerDiscovery(ILogger<MassServerDiscovery>? logger = null)
-    {
-        _logger = logger;
     }
 
     public async Task StartDiscoveryAsync(CancellationToken cancellationToken = default)
@@ -139,7 +134,7 @@ public sealed class MassServerDiscovery : IMassServerDiscovery, IDisposable
             var address = host.IPAddresses.FirstOrDefault(ip => !ip.Contains(':'));
             if (string.IsNullOrEmpty(address))
             {
-                address = host.IPAddresses.FirstOrDefault();
+                address = host.IPAddresses[0];//.FirstOrDefault();
             }
 
             if (string.IsNullOrEmpty(address))

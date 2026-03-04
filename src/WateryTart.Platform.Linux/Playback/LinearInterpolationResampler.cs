@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root https://github.com/chrisuthe/sendspin-player.
 // </copyright>
 using System;
-using Sendspin.Core.Audio;
 
-namespace Sendspin.Platform.Shared.Audio;
+namespace WateryTart.Platform.Linux.Playback;
 
 /// <summary>
 /// Linear interpolation resampler for when native high-quality resamplers are unavailable.

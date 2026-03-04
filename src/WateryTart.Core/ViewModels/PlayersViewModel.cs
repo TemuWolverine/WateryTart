@@ -48,7 +48,7 @@ public partial class PlayersViewModel : ViewModelBase<PlayersViewModel>
 
     public Player? SelectedPlayer
     {
-        get => field;
+        get;
         set
         {
             _playersService?.SelectedPlayer = value;
@@ -207,7 +207,7 @@ public partial class PlayersViewModel : ViewModelBase<PlayersViewModel>
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Volume change error: {ex}");
+                    _logger.LogError(ex, "Volume change error: {message}", ex.Message);
                 }
             }, ct);
         }

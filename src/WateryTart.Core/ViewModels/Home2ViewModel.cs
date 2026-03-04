@@ -22,7 +22,7 @@ namespace WateryTart.Core.ViewModels;
 
 public partial class Home2ViewModel : ViewModelBase<Home2ViewModel>
 {
-    private ILoggerFactory _loggerFactory;
+    private readonly ILoggerFactory _loggerFactory;
     [Reactive] public partial ObservableCollection<AlbumViewModel> DiscoverAlbums { get; set; }
     public ICommand DiscoverAlbumsCommand { get; set; }
     [Reactive] public partial ObservableCollection<ArtistViewModel> DiscoverArtists { get; set; }

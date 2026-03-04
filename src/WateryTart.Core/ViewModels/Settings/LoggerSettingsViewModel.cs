@@ -17,8 +17,8 @@ namespace WateryTart.Core.ViewModels;
 
 public partial class LoggerSettingsViewModel : ViewModelBase<LoggerSettingsViewModel>, IHaveSettings
 {
-    public IEnumerable<LogLevel> AvailableLogLevels => new[]
-    {
+    public static IEnumerable<LogLevel> AvailableLogLevels =>
+    [
         LogLevel.Trace,
         LogLevel.Debug,
         LogLevel.Information,
@@ -26,7 +26,7 @@ public partial class LoggerSettingsViewModel : ViewModelBase<LoggerSettingsViewM
         LogLevel.Error,
         LogLevel.Critical,
         LogLevel.None
-    };
+    ];
 
     public AsyncRelayCommand BrowseLogFileCommand { get; }
     [Reactive] public partial bool EnableFileLogging { get; set; }
@@ -78,7 +78,7 @@ public partial class LoggerSettingsViewModel : ViewModelBase<LoggerSettingsViewM
         SaveSettings();
     }
 
-    private string GetDefaultLogPath()
+    private static string GetDefaultLogPath()
     {
         var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WateryTart");
         return Path.Combine(appDataPath, "waterytart.log");

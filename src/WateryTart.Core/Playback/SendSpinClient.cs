@@ -60,27 +60,27 @@ public class SendSpinClient : IDisposable, IReaper
             var clockSync = new KalmanClockSynchronizer(loggerFactory.CreateLogger<KalmanClockSynchronizer>());
             var decoderFactory = new AudioDecoderFactory();
 
-            Func<AudioFormat, IClockSynchronizer, ITimedAudioBuffer> bufferFactory =
-                (format, sync) =>
+            ITimedAudioBuffer bufferFactory(AudioFormat format, IClockSynchronizer sync)
+            {
+                var buffer = new TimedAudioBuffer(
+                    format,
+                    sync,
+                    bufferCapacityMs: 8000,
+                    syncOptions: SyncCorrectionOptions.Default,
+                    logger: loggerFactory.CreateLogger<TimedAudioBuffer>())
                 {
-                    var buffer = new TimedAudioBuffer(
-                        format,
-                        sync,
-                        bufferCapacityMs: 8000,
-                        syncOptions: SyncCorrectionOptions.Default,
-                        logger: loggerFactory.CreateLogger<TimedAudioBuffer>());
-
-                    buffer.TargetBufferMilliseconds = 250;
-                    return buffer;
+                    TargetBufferMilliseconds = 250
                 };
+                return buffer;
+            }
 
-            Func<ITimedAudioBuffer, Func<long>, IAudioSampleSource> sourceFactory = (buffer, getTime) => new BufferedAudioSampleSource(buffer, getTime);
+            IAudioSampleSource sourceFactory(ITimedAudioBuffer buffer, Func<long> getTime) => new BufferedAudioSampleSource(buffer, getTime);
 
             _audioPipeline = new AudioPipeline(
                 loggerFactory.CreateLogger<AudioPipeline>(),
                 decoderFactory,
                 clockSync,
-                bufferFactory,
+bufferFactory,
                 player.CreatePlayer,
                 sourceFactory,
                 precisionTimer: null,
@@ -204,7 +204,7 @@ public class SendSpinClient : IDisposable, IReaper
     {
         if (_disposed)
             return;
-
+        GC.SuppressFinalize(this);
         try
         {
             Stop();
@@ -215,14 +215,6 @@ public class SendSpinClient : IDisposable, IReaper
         }
 
         _disposed = true;
-    }
-
-    public void Reap()
-    {
-        _audioPipeline.DisposeAsync();
-        DisconnectAsync().GetAwaiter().GetResult();
-        Dispose();
-        
     }
 
     private void HandleGroupStateChanged(object sender, GroupState group)
@@ -237,5 +229,12 @@ public class SendSpinClient : IDisposable, IReaper
             playerState?.Volume ?? 0,
             playerState?.Muted ?? false
         );
+    }
+
+    public void Reap()
+    {
+        _ =  _audioPipeline.DisposeAsync();
+        _ =  DisconnectAsync();
+        Dispose();
     }
 }

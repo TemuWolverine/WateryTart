@@ -68,6 +68,7 @@ public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable
     public void Dispose()
     {
         _disposables?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

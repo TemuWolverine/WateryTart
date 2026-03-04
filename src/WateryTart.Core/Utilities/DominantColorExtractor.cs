@@ -23,14 +23,13 @@ namespace WateryTart.Core.Utilities
         public static async Task<List<Color>> GetDominantColorsAsync(
             IImage imageSource, 
             int sampleSize = 256, 
-            bool ensureWhiteTextContrast = false,
             double minContrastRatio = 4.5,
             int colorSimilarityThreshold = 50)
         {
             if (imageSource == null)
                 return [];
 
-            return await Task.Run(() => GetDominantColors(imageSource, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold));
+            return await Task.Run(() => GetDominantColors(imageSource, sampleSize, minContrastRatio, colorSimilarityThreshold));
         }
 
         /// <summary>
@@ -39,7 +38,6 @@ namespace WateryTart.Core.Utilities
         public static List<Color> GetDominantColors(
             IImage imageSource, 
             int sampleSize = 256, 
-            bool ensureWhiteTextContrast = false, 
             double minContrastRatio = 4.5,
             int colorSimilarityThreshold = 50)
         {
@@ -48,7 +46,7 @@ namespace WateryTart.Core.Utilities
 
             if (imageSource is Bitmap bitmap)
             {
-                return ExtractColorsFromBitmap(bitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold);
+                return ExtractColorsFromBitmap(bitmap, sampleSize, minContrastRatio, colorSimilarityThreshold);
             }
 
             return [];
@@ -57,7 +55,6 @@ namespace WateryTart.Core.Utilities
         private static List<Color> ExtractColorsFromBitmap(
             Bitmap bitmap, 
             int sampleSize, 
-            bool ensureWhiteTextContrast, 
             double minContrastRatio,
             int colorSimilarityThreshold)
         {
@@ -68,7 +65,7 @@ namespace WateryTart.Core.Utilities
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
                 using var skBitmap = SKBitmap.Decode(memoryStream);
-                return ExtractColorsFromSkBitmap(skBitmap, sampleSize, ensureWhiteTextContrast, minContrastRatio, colorSimilarityThreshold);
+                return ExtractColorsFromSkBitmap(skBitmap, sampleSize, minContrastRatio, colorSimilarityThreshold);
             }
             catch
             {
@@ -79,7 +76,6 @@ namespace WateryTart.Core.Utilities
         private static List<Color> ExtractColorsFromSkBitmap(
             SKBitmap bitmap, 
             int sampleSize, 
-            bool ensureWhiteTextContrast, 
             double minContrastRatio,
             int colorSimilarityThreshold)
         {
@@ -103,8 +99,8 @@ namespace WateryTart.Core.Utilities
                     // Quantize color to reduce color space
                     int quantized = QuantizeColor(pixel.Red, pixel.Green, pixel.Blue);
 
-                    if (colorBuckets.ContainsKey(quantized))
-                        colorBuckets[quantized]++;
+                    if (colorBuckets.TryGetValue(quantized, out int value))
+                        colorBuckets[quantized] = ++value;
                     else
                         colorBuckets[quantized] = 1;
                 }

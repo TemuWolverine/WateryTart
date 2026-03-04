@@ -6,15 +6,10 @@ using WateryTart.Platform.Windows.Playback;
 
 namespace WateryTart.Platform.Windows;
 
-public class WindowsAudioPlayerFactory : IPlayerFactory
+public class WindowsAudioPlayerFactory(Func<IAudioPlayer> create) : IPlayerFactory
 {
-    private readonly Func<IAudioPlayer> _create;
+    private readonly Func<IAudioPlayer> _create = create ?? throw new ArgumentNullException(nameof(create));
     public WindowsAudioPlayerFactory(ILoggerFactory factory) : this(() => new SoundflowPlayer(factory)) { }
-
-    public WindowsAudioPlayerFactory(Func<IAudioPlayer> create)
-    {
-        _create = create ?? throw new ArgumentNullException(nameof(create));
-    }
 
     Func<IAudioPlayer> IPlayerFactory.CreatePlayer => () =>
     {

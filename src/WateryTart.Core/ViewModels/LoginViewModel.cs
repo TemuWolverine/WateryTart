@@ -48,7 +48,7 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
 
     [Reactive] public partial bool IsHomeAssistantAddon { get; set; } = false;
 
-    public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = new();
+    public ObservableCollection<DiscoveredServer> DiscoveredServers { get; } = [];
 
     public AsyncRelayCommand LoginCommand { get; }
     public AsyncRelayCommand RefreshServersCommand { get; }
@@ -203,7 +203,7 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
         SetError(x.Error);
     }
 
-    private string GetJustHost(string urlOrHost)
+    private static string GetJustHost(string urlOrHost)
     {
         if (Uri.TryCreate(urlOrHost, UriKind.Absolute, out var uri))
         {
@@ -259,8 +259,9 @@ public partial class LoginViewModel : ReactiveObject, IViewModelBase, IDisposabl
         HasError = true;
     }
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
+        GC.SuppressFinalize(this);
         if (_disposed) return;
         _disposed = true;
 

@@ -3,7 +3,7 @@
 // </copyright>
 using System;
 
-namespace Sendspin.Core.Audio;
+namespace WateryTart.Platform.Linux.Playback;
 
 /// <summary>
 /// Interface for dynamic audio resamplers that support real-time rate adjustment.

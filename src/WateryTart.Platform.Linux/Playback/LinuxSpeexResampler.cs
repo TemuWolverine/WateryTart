@@ -3,9 +3,9 @@
 // </copyright>
 using System;
 using System.Runtime.InteropServices;
-using Sendspin.Core.Audio;
+using WateryTart.Platform.Linux.Playback;
 
-namespace Sendspin.Platform.Linux.Audio;
+namespace WateryTart.Platform.Linux.Audio;
 
 /// <summary>
 /// Native SpeexDSP resampler using P/Invoke to libspeexdsp.

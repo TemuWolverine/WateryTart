@@ -41,7 +41,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public bool TrayIcon
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -74,7 +74,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public double WindowWidth
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -85,7 +85,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public double WindowHeight
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -96,7 +96,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public double WindowPosX
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -107,7 +107,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public double WindowPosY
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -118,7 +118,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
 
     public LoggerSettings LoggerSettings
     {
-        get => field;
+        get;
         set
         {
             field = value;

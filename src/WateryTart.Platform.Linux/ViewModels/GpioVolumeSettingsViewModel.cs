@@ -13,7 +13,7 @@ public partial class GpioVolumeSettingsViewModel : ReactiveObject, IViewModelBas
     private int _pinA = 17;
     private int _pinB = 27;
     private int _pulsesPerTurn = 20;
-    private ISettings _settings;
+    private readonly ISettings _settings;
     public IScreen HostScreen { get; }
     public PackIconMaterialKind Icon => PackIconMaterialKind.DeveloperBoard;
 
@@ -62,12 +62,12 @@ public partial class GpioVolumeSettingsViewModel : ReactiveObject, IViewModelBas
 
     public bool ShowMiniPlayer => false;
     public bool ShowNavigation => true;
-    public string Title { get; set; } = "GPIO Settings";
+    public string Title => "GPIO Settings";
     public string? UrlPathSegment => null;
 
     public string Description => "GPIO pin settings for rotary encoders for volume control";
 
-    private GpioVolumeService _gpioVolumeService;
+    private readonly GpioVolumeService _gpioVolumeService;
     public GpioVolumeSettingsViewModel(ISettings settings, IScreen hostScreen, GpioVolumeService gpioVolumeService)
     {
         _gpioVolumeService = gpioVolumeService;

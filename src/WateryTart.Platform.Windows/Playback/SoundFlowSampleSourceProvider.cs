@@ -8,14 +8,14 @@ using System.Diagnostics;
 
 namespace WateryTart.Platform.Windows.Playback;
 
-public sealed class SoundFlowSampleSourceProvider : ISoundDataProvider, IDisposable
+public sealed class SoundFlowSampleSourceProvider(IAudioSampleSource source, SoundFlow.Structs.AudioFormat sfFormat, Func<float> getVolume, Func<bool> getMuted) : ISoundDataProvider, IDisposable
 {
-    private readonly Func<bool> _getMuted;
-    private readonly Func<float> _getVolume;
-    private readonly SoundFlow.Structs.AudioFormat _sfFormat;
-    private readonly IAudioSampleSource _source;
+    private readonly Func<bool> _getMuted = getMuted ?? (() => false);
+    private readonly Func<float> _getVolume = getVolume ?? (() => 1.0f);
+    private readonly SoundFlow.Structs.AudioFormat _sfFormat = sfFormat;
+    private readonly IAudioSampleSource _source = source ?? throw new ArgumentNullException(nameof(source));
     private bool _disposed;
-    private int _position;
+    private int _position = 0;
 
     public event EventHandler<EventArgs>? EndOfStreamReached;
     public event EventHandler<PositionChangedEventArgs>? PositionChanged;
@@ -29,15 +29,6 @@ public sealed class SoundFlowSampleSourceProvider : ISoundDataProvider, IDisposa
     {
         get => _sfFormat.SampleRate;
         set { /* ignore */ }
-    }
-
-    public SoundFlowSampleSourceProvider(IAudioSampleSource source, SoundFlow.Structs.AudioFormat sfFormat, Func<float> getVolume, Func<bool> getMuted)
-    {
-        _source = source ?? throw new ArgumentNullException(nameof(source));
-        _sfFormat = sfFormat;
-        _position = 0;
-        _getVolume = getVolume ?? (() => 1.0f);
-        _getMuted = getMuted ?? (() => false);
     }
 
     public void Dispose()

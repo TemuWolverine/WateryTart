@@ -7,7 +7,7 @@ using Sendspin.SDK.Models;
 using System;
 using System.Buffers;
 
-namespace Sendspin.Platform.Shared.Audio;
+namespace WateryTart.Platform.Linux.Playback;
 
 /// <summary>
 /// Bridges <see cref="ITimedAudioBuffer"/> to <see cref="IAudioSampleSource"/> with external sync correction.

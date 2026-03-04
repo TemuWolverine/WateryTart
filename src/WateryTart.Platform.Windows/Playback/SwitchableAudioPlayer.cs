@@ -25,8 +25,7 @@ public sealed partial class SwitchableAudioPlayer : IAudioPlayer
         set
         {
             _isMuted = value;
-            if (_active != null)
-                _active.IsMuted = _isMuted;
+            _active?.IsMuted = _isMuted;
         }
     }
 
@@ -39,8 +38,7 @@ public sealed partial class SwitchableAudioPlayer : IAudioPlayer
         set
         {
             _volume = Math.Clamp(value, 0f, 1f);
-            if (_active != null)
-                _active.Volume = _volume;
+            _active?.Volume = _volume;
         }
     }
 

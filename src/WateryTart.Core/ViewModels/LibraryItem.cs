@@ -26,7 +26,7 @@ public class LibraryItem : ReactiveObject
     public IconPacks.Avalonia.Material.PackIconMaterialKind Icon { get; set; }
     public int Count
     {
-        get => field;
+        get;
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 }

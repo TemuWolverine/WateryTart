@@ -1,7 +1,7 @@
 ﻿using System;
-using Sendspin.Platform.Linux.Audio;
 using Sendspin.SDK.Audio;
 using WateryTart.Core.Playback;
+using WateryTart.Platform.Linux.Playback;
 
 namespace WateryTart.Platform.Linux;
 
@@ -11,7 +11,7 @@ public class LinuxAudioPlayerFactory : IPlayerFactory
     {
         get
         {
-            IAudioPlayer PlayerFactory() => new OpenALAudioPlayer();
+            static IAudioPlayer PlayerFactory() => new OpenALAudioPlayer();
             return PlayerFactory;
         }
     }

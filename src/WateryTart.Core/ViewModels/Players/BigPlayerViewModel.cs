@@ -17,7 +17,7 @@ using System.Windows.Input;
 using WateryTart.Core.Services;
 using WateryTart.Core.ViewModels.Menus;
 using WateryTart.Core.ViewModels.Popups;
-using WateryTart.MusicAssistant.Models;
+using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models.Enums;
 using Xaml.Behaviors.SourceGenerators;
 
@@ -49,13 +49,13 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
 
     public double CachedImageHeight
     {
-        get => field;
+        get;
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public double CachedImageWidth
     {
-        get => field;
+        get;
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
@@ -78,12 +78,10 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
     public RelayCommand<double> SeekCommand { get; }
 
     public ICommand ShowTrackInfo { get; set; }
-    public bool ShowBackButton => false;
-    public ICommand ToggleFavoriteCommand { get; set; }
-
-    public ICommand ToggleShuffleCommand { get; set; }
-
-    public ICommand CycleRepeatCommand { get; set; }
+    public static bool ShowBackButton => false;
+    [Reactive] public partial ICommand ToggleFavoriteCommand { get; set; }
+    [Reactive] public partial ICommand ToggleShuffleCommand { get; set; }
+    [Reactive] public partial ICommand CycleRepeatCommand { get; set; }
 
     public BigPlayerViewModel(PlayersService playersService, IScreen screen, ColourService colourService, ILoggerFactory loggerFactory) : base(loggerFactory)
     {
@@ -319,7 +317,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
         }
     }
 
-    private bool IsContentTypeLossless(string contentType)
+    private static bool IsContentTypeLossless(string contentType)
     {
         return _losslessContentTypes.Contains(contentType);
     }

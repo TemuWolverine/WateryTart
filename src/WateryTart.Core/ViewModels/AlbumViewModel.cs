@@ -29,8 +29,8 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadableVi
     [Reactive] public partial string InputProviderIcon { get; set; } = App.BlankSvg;
     public AsyncRelayCommand PlayAlbumCommand { get; }
     public RelayCommand PlayAlbumShuffleCommand { get; }
-    public ICommand ArtistViewCommand { get; set; }
-    public ICommand AlbumAltCommand { get; set; }
+    [Reactive] public partial ICommand ArtistViewCommand { get; set; }
+    [Reactive] public partial ICommand AlbumAltCommand { get; set; }
     [Reactive] public partial ProviderManifest? Provider { get; set; }
     [Reactive] public partial ObservableCollection<TrackViewModel> Tracks { get; set; }
     public AsyncRelayCommand<Item?> TrackTappedCommand { get; }
@@ -182,7 +182,7 @@ public partial class AlbumViewModel : ViewModelBase<AlbumViewModel>, ILoadableVi
         }
         finally
         {
-            IsLoading = false; 
+            IsLoading = false;
         }
 
 
