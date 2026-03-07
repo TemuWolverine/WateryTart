@@ -605,9 +605,6 @@
           "Xaml.Behaviors.Interactivity": "11.3.9.5"
         }
       },
-      "fleck": {
-        "type": "Project"
-      },
       "waterytart.core": {
         "type": "Project",
         "dependencies": {

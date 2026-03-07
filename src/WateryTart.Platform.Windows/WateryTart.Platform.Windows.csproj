@@ -79,7 +79,6 @@
 		<TrimmerRootAssembly Include="WateryTart.Core" />
 		<TrimmerRootAssembly Include="Concentus" />
 		<TrimmerRootAssembly Include="Sendspin.SDK" />
-		<TrimmerRootAssembly Include="Fleck" />
 		<TrimmerRootAssembly Include="SoundFlow" />
 	</ItemGroup>
 	<ItemGroup>
