@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/TemuWolverine/WateryTart/compare/v1.6.0...v1.6.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* exclude debug files from being packaged ([fea6db9](https://github.com/TemuWolverine/WateryTart/commit/fea6db982ad96a29a50bf912a9509475b108bd19))
+
 ## [1.6.0](https://github.com/TemuWolverine/WateryTart/compare/v1.5.0...v1.6.0) (2026-03-07)
 
 
