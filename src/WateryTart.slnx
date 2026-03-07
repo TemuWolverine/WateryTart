@@ -14,7 +14,8 @@
   </Folder>
   <Folder Name="/Solution Items/Build/">
     <File Path="../.github/workflows/build-and-publish.yml" />
-    <File Path="../build/linux_deb_builder.sh" />
+    <File Path="../.github/workflows/gh-pages.yml" />
+    <File Path="../.github/workflows/release-please.yml" />
   </Folder>
   <Folder Name="/Submodules/">
     <Project Path="WateryTart.MusicAssistant/src/WateryTart.MusicAssistant.Generators.Attributes/WateryTart.MusicAssistant.Generators.Attributes.csproj">

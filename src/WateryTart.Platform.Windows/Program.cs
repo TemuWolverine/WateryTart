@@ -7,8 +7,6 @@ using Velopack;
 using WateryTart.Core;
 using WateryTart.Core.Playback;
 using WateryTart.Core.Services;
-using WateryTart.Core.Settings;
-using WateryTart.Platform.Windows.Playback;
 using WateryTart.Platform.Windows.ViewModels;
 using WateryTart.Platform.Windows.Views;
 
@@ -31,15 +29,8 @@ sealed class Program
 
             var x = new App(
             [
-                /*new InstancePlatformSpecificRegistration<Playback.SwitchableAudioPlayer>(new Playback.SwitchableAudioPlayer(
-                    () => new SimpleWasapiPlayer(),
-                    () => new SoundflowPlayer(),
-                    Playback.SwitchableAudioPlayer.PlayerBackend.SimpleWasapi
-                )),*/
-                
                 new LambdaRegistration<IPlayerFactory>(c => new WindowsAudioPlayerFactory(App.Container.Resolve<ILoggerFactory>())),
                 new LambdaRegistration<IVolumeService>(c => new WindowsVolumeService(c.Resolve<PlayersService>())),
-                /*new LambdaRegistration<IHaveSettings>(c => new PlaybackSettingsViewModel(c.Resolve<ISettings>(), c.Resolve<Playback.SwitchableAudioPlayer>(), c.Resolve<ILoggerFactory>())),*/
             ]);
             return x;
         })
@@ -47,7 +38,7 @@ sealed class Program
             .WithInterFont()
             .UseReactiveUI(rxui =>
             {
-                // Optional: add custom registration here via rxui.WithRegistration(...)
+
             })
             .LogToTrace();
 }
