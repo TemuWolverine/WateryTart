@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.6.0](https://github.com/TemuWolverine/WateryTart/compare/v1.5.0...v1.6.0) (2026-03-07)
+
+
+### Features
+
+* added a now playing animation ([80e2583](https://github.com/TemuWolverine/WateryTart/commit/80e2583ec92b5910dd175d68639b0666593c5937))
+* Search no longer uses 'searchresultsviewmodel', everything in contained in the singular view. Now records last 10 searched terms for easy recall, adds clear text button, tweaked timing, improved appearance ([5202297](https://github.com/TemuWolverine/WateryTart/commit/5202297809a498245ced27fbd9ec06341ea4c118))
+* **Sorting:** very basics of sorting on library views implermented. ([c088dc3](https://github.com/TemuWolverine/WateryTart/commit/c088dc393dbae1d1efa9f8f627441518777c3836))
+
+
+### Bug Fixes
+
+* "HeroSearchModel" now has colour, can grab the first result to show as an icon ([761dae1](https://github.com/TemuWolverine/WateryTart/commit/761dae1489a97988027ad81bd80308056a4dbbc3))
+* added descriptions to the ordering enum ([9dd02c8](https://github.com/TemuWolverine/WateryTart/commit/9dd02c8afabdc9f21c34f0f56fb279c357d61406))
+* Artists in list form now use artistMediumReusableTemplate ([d5a35c5](https://github.com/TemuWolverine/WateryTart/commit/d5a35c5a9db786d50f9d2a94e06636c5b5fc7e97))
+* changed how WateryTart reports client name via sendspin, putting machine name at the start. ([f5c56e7](https://github.com/TemuWolverine/WateryTart/commit/f5c56e79883ce178194140e24f978500f24481be))
+* display issue with playlists cover image ([dd94b65](https://github.com/TemuWolverine/WateryTart/commit/dd94b653e8ea5473a6b6c7ee9f3cc00f49cb4ad6))
+* Home2 can now expand on recently played, discover artists and discover albums ([bd795a1](https://github.com/TemuWolverine/WateryTart/commit/bd795a1a1d109bbcd43ee2849d2f3aaef3c8fd34))
+* lottie animation for now playing replacing the 'horn' in all spots, fallback image on artist brushes now ([c86a996](https://github.com/TemuWolverine/WateryTart/commit/c86a9960cf5319d9e22355ad3ac771ef55d18c0f))
+* minor loading bug fix ([529f7b5](https://github.com/TemuWolverine/WateryTart/commit/529f7b509766640c3b6971160fa0944f16018b83))
+* more tooltips, some null checking ([13268c3](https://github.com/TemuWolverine/WateryTart/commit/13268c3ac0d7d0f72686afa33490be297133a77b))
+* new semi-standardised way of loading data into the musical viewmodels (track, album, artist, playlist), reducing code repetition. ([1cd05f2](https://github.com/TemuWolverine/WateryTart/commit/1cd05f29085d502db5faf9f142a032b10aff2c27))
+* playlists now load tracks ([da2fa15](https://github.com/TemuWolverine/WateryTart/commit/da2fa15aa2650372b385da86bbc2e2379563a8bc))
+* removed the "list" view/viewmodels that have now been replaced by LoadMoreListView. Made it more generic for less code repetition. ([523cca3](https://github.com/TemuWolverine/WateryTart/commit/523cca38226c3788720e36cd8690fb041d47b1f7))
+* reusable "Load More List View/Model", a list view that takes a generic type (TrackViewModel, PlaylistViewModel, AlbumViewModel, etc) and produces a list that loads more as it gets to the end. Filtering and sorting will be added in ([4aa0c74](https://github.com/TemuWolverine/WateryTart/commit/4aa0c74bcbeb9aaee9d9e5da660133deb8b57928))
+* **search:** only show result categories when there are results of that category ([020ab93](https://github.com/TemuWolverine/WateryTart/commit/020ab9398c6ef3d14639c4a8ba837e2e35c9d634))
+* similar tracks now displays better/more consistently ([962d22c](https://github.com/TemuWolverine/WateryTart/commit/962d22c0991fdab75cee0f95a93de7a321187975))
+* whoops, had the discover artists and albums navigation around the wrong way ([a01ee7e](https://github.com/TemuWolverine/WateryTart/commit/a01ee7e4e19cc6ee3133c9247df0fed8a520c81a))
+
 ## [1.5.0](https://github.com/TemuWolverine/WateryTart/compare/v1.4.0...v1.5.0) (2026-02-28)
 
 
