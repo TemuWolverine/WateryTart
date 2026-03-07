@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using WateryTart.MusicAssistant.Models.Auth;
 
 namespace WateryTart.Core.Settings;
@@ -10,6 +11,7 @@ public interface ISettings
     public string LastSelectedPlayerId { get; set; }
     public VolumeEventControl VolumeEventControl { get; set; }
     public string LastSearchTerm { get; set; }
+    public List<string> RecentSearchTerms { get; set; }
     public double WindowWidth { get; set; }
     public double WindowHeight { get; set; }
     public double WindowPosX { get; set; }

@@ -131,7 +131,6 @@ public partial class App : Application
         builder.RegisterType<BigPlayerViewModel>().AsSelf().SingleInstance();
         builder.RegisterType<Home2ViewModel>().SingleInstance();
         //builder.RegisterType<KeyboardVolumeKeyBindingsViewModel>().As<IHaveSettings>().SingleInstance();
-        builder.RegisterType<SearchResultsViewModel>().AsSelf().SingleInstance();
         builder.RegisterType<LoggerSettingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<SearchViewModel>().SingleInstance();
         builder.RegisterType<ProviderService>().SingleInstance();

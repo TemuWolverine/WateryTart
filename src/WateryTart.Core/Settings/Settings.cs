@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -64,6 +65,17 @@ public partial class Settings : INotifyPropertyChanged, ISettings
     public string LastSearchTerm
     {
         get => field ?? string.Empty;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public List<string> RecentSearchTerms
+    {
+        get => field ??= [];
         set
         {
             field = value;
@@ -190,6 +202,7 @@ public partial class Settings : INotifyPropertyChanged, ISettings
                     Credentials = loaded.Credentials ?? new MusicAssistantCredentials();
                     LastSelectedPlayerId = loaded.LastSelectedPlayerId ?? string.Empty;
                     LastSearchTerm = loaded.LastSearchTerm ?? string.Empty;
+                    RecentSearchTerms = loaded.RecentSearchTerms ?? [];
                     WindowWidth = loaded.WindowWidth;
                     WindowHeight = loaded.WindowHeight;
                     WindowPosX = loaded.WindowPosX;
