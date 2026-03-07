@@ -97,15 +97,15 @@
                                           TextWrapping="Wrap" />
 
                                 <LayoutTransformControl
-                                Height="100"
+                                          Height="100"
                                           Margin="-35"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"
                                           ZIndex="-1">
                                     <asyncImageLoader:AdvancedImage
-                                    Margin="0,20,0,0"
                                               Width="75"
                                               Height="75"
+                                              Margin="0,20,0,0"
                                               FallbackImage="{x:Static app:App.FallbackImage}"
                                               Loader="{x:Static app:App.ImageLoaderInstance}"
                                               Source="{Binding Path=Icon}" />
@@ -244,61 +244,24 @@
                     </StackPanel>
 
                 </TabItem>
-                <TabItem Header="Tracks">
+                <TabItem Header="Tracks" IsVisible="{Binding SearchItem.Count}">
                     <!--  Track Results  -->
-                    <StackPanel IsVisible="{Binding SearchItem.Count}">
-                        <Border BorderBrush="#66FFFFFF" BorderThickness="0,0,0,1">
-                            <Grid HorizontalAlignment="Stretch" Background="Transparent">
-                                <Interaction.Behaviors>
-                                    <EventTriggerBehavior EventName="Tapped">
-                                        <InvokeCommandAction Command="{Binding ExpandTracksResultsCommand}" />
-                                    </EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                                <TextBlock
-                                          FontSize="16"
-                                          FontWeight="Bold"
-                                          Text="Tracks" />
-                                <iconPacks:PackIconMaterial
-                                          Width="25"
-                                          Height="20"
-                                          HorizontalAlignment="Right"
-                                          Kind="ChevronRight" />
-                            </Grid>
-                        </Border>
-                        <ItemsControl
-                                  Margin="0,0,0,10"
-                                  Background="Transparent"
-                                  ItemTemplate="{StaticResource trackMediumReusableTemplate}"
-                                  ItemsSource="{Binding SearchFullTracks}">
-                            <ItemsControl.Styles>
-                                <Style Selector="ContentPresenter">
-                                    <Setter Property="Padding" Value="0,10,0,10" />
-                                </Style>
-                            </ItemsControl.Styles>
-                        </ItemsControl>
-                    </StackPanel>
+                    <ItemsControl
+                              Margin="0,0,0,10"
+                              Background="Transparent"
+                              ItemTemplate="{StaticResource trackMediumReusableTemplate}"
+                              ItemsSource="{Binding SearchFullTracks}">
+                        <ItemsControl.Styles>
+                            <Style Selector="ContentPresenter">
+                                <Setter Property="Padding" Value="0,10,0,10" />
+                            </Style>
+                        </ItemsControl.Styles>
+                    </ItemsControl>
                 </TabItem>
-                <TabItem Header="Artists">
+
+                <TabItem Header="Artists" IsVisible="{Binding SearchArtists.Count}">
                     <!--  Artist Results  -->
-                    <StackPanel IsVisible="{Binding SearchArtists.Count}">
-                        <Border BorderBrush="#66FFFFFF" BorderThickness="0,0,0,1">
-                            <Grid HorizontalAlignment="Stretch" Background="Transparent">
-                                <Interaction.Behaviors>
-                                    <EventTriggerBehavior EventName="Tapped">
-                                        <InvokeCommandAction Command="{Binding ExpandArtistsResultsCommand}" />
-                                    </EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                                <TextBlock
-                                          FontSize="16"
-                                          FontWeight="Bold"
-                                          Text="Artists" />
-                                <iconPacks:PackIconMaterial
-                                          Width="25"
-                                          Height="20"
-                                          HorizontalAlignment="Right"
-                                          Kind="ChevronRight" />
-                            </Grid>
-                        </Border>
+                    <StackPanel>
                         <ItemsControl
                                   Margin="0,0,0,10"
                                   Background="Transparent"
@@ -306,64 +269,23 @@
                                   ItemsSource="{Binding SearchFullArtists}" />
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="Albums">
+
+                <TabItem Header="Albums" IsVisible="{Binding SearchAlbums.Count}">
                     <!--  Album Results  -->
-                    <StackPanel IsVisible="{Binding SearchAlbums.Count}">
-                        <Border BorderBrush="#66FFFFFF" BorderThickness="0,0,0,1">
-                            <Grid HorizontalAlignment="Stretch" Background="Transparent">
-                                <Interaction.Behaviors>
-                                    <EventTriggerBehavior EventName="Tapped">
-                                        <InvokeCommandAction Command="{Binding ExpandAlbumResultsCommand}" />
-                                    </EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                                <TextBlock
-                                          FontSize="16"
-                                          FontWeight="Bold"
-                                          Text="Albums" />
-                                <iconPacks:PackIconMaterial
-                                          Width="25"
-                                          Height="20"
-                                          HorizontalAlignment="Right"
-                                          Kind="ChevronRight" />
-                            </Grid>
-                        </Border>
-                        <ItemsControl
-                                  Margin="0,0,0,10"
-                                  Background="Transparent"
-                                  ItemTemplate="{StaticResource albumSmallReusableTemplate}"
-                                  ItemsSource="{Binding SearchFullAlbums}" />
-                    </StackPanel>
+                    <ItemsControl
+                              Margin="0,0,0,10"
+                              Background="Transparent"
+                              ItemTemplate="{StaticResource albumSmallReusableTemplate}"
+                              ItemsSource="{Binding SearchFullAlbums}" />
                 </TabItem>
-                <TabItem Header="Playlists">
 
+                <TabItem Header="Playlists" IsVisible="{Binding SearchPlaylist.Count}">
                     <!--  Playlist Results  -->
-                    <StackPanel IsVisible="{Binding SearchPlaylist.Count}">
-                        <Border BorderBrush="#66FFFFFF" BorderThickness="0,0,0,1">
-                            <Grid HorizontalAlignment="Stretch" Background="Transparent">
-                                <Interaction.Behaviors>
-                                    <EventTriggerBehavior EventName="Tapped">
-                                        <InvokeCommandAction Command="{Binding ExpandPlaylistResultsCommand}" />
-                                    </EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                                <TextBlock
-                                          FontSize="16"
-                                          FontWeight="Bold"
-                                          Text="Playlists" />
-                                <iconPacks:PackIconMaterial
-                                          Width="25"
-                                          Height="20"
-                                          HorizontalAlignment="Right"
-                                          Kind="ChevronRight" />
-                            </Grid>
-                        </Border>
-                        <ItemsControl
-                                  Background="Transparent"
-                                  ItemTemplate="{StaticResource playlistSmallReusableTemplate}"
-                                  ItemsSource="{Binding SearchFullPlaylists}" />
-                    </StackPanel>
+                    <ItemsControl
+                              Background="Transparent"
+                              ItemTemplate="{StaticResource playlistSmallReusableTemplate}"
+                              ItemsSource="{Binding SearchFullPlaylists}" />
                 </TabItem>
-
-
             </TabControl>
         </StackPanel>
     </StackPanel>
