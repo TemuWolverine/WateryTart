@@ -216,9 +216,9 @@ jobs:
       - name: Create Velopack Release
         working-directory: ${{ github.workspace }}
         run: |    
-          vpk [win] pack --packId WateryTart --runtime win-x64 --channel win-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/win-x64 --mainExe WateryTartDesktop.exe --icon Assets/logo_square.ico --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
-          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [win] pack --packId WateryTart --runtime win-x64 --channel win-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/win-x64 --exclude '(.dbg|.pdb)$' --mainExe WateryTartDesktop.exe --icon Assets/logo_square.ico --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-x64 --channel linux-x64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-x64 --exclude '(.dbg|.pdb)$' --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion ${{ needs.generate-version.outputs.version }} --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --exclude '(.dbg|.pdb)$' --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
       
      # - name: Download macOS artifact
      #   uses: actions/download-artifact@v4
