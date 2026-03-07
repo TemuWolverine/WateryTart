@@ -65,7 +65,7 @@ jobs:
       - name: Create Velopack Release
         working-directory: ${{ github.workspace }}
         run: |    
-          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion 99.99.99 --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --exclude '^(*.\dbg|.*\.pdb)$' --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
+          vpk [linux] pack --packId WateryTart --runtime linux-arm64 --channel linux-arm64 --packVersion 99.99.99 --packDir /home/runner/work/WateryTart/WateryTart/linux-arm64 --exclude '(.dbg|.pdb)$' --mainExe WateryTartLinux --icon Assets/logo_square.png --outputDir ./releases
       
       - name: Upload Linux arm64 artifacts
         uses: actions/upload-artifact@v4
