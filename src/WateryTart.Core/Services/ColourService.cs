@@ -75,7 +75,7 @@ public partial class ColourService : ReactiveObject
         }
     }
 
-    private static Color FromHex(string hex)
+    public static Color FromHex(string hex)
     {
         if (string.IsNullOrWhiteSpace(hex))
             throw new ArgumentException("Hex string cannot be null or empty", nameof(hex));

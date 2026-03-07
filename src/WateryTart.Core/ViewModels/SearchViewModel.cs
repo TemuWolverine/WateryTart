@@ -7,12 +7,14 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using WateryTart.Core.Converters;
 using WateryTart.Core.Services;
 using WateryTart.Core.Settings;
 using WateryTart.MusicAssistant;
@@ -59,6 +61,36 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
     [Reactive] public partial int SelectedTabIndex { get; set; }
     [Reactive] public override partial string Title { get; set; } = "Search";
 
+    private async Task<string> GetMostPlayedIcon()
+    {
+        var mostPlayedAlbum = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 1, order: MusicAssistant.Models.Enums.OrderBy.play_count_desc);
+
+        var item = mostPlayedAlbum.Result?.FirstOrDefault();
+        //If it is an item, but has a "image" field set, use that
+        if (item.Image != null && !string.IsNullOrEmpty(item.Image.Path))
+            //If the image field starts with http, use that
+            if (item.Image.Provider != null)
+                return item.Image.Path.StartsWith(("http"))
+                    ? item.Image.Path
+                    : ImagePathHelper.ProxyString(item.Image.Path, item.Image.Provider);
+
+        //If there is no image field set, use metadata, make sure its not null
+        if (item.Metadata?.Images == null)
+            return null;
+
+        //Try a locally accessible source first
+        var result = item.Metadata.Images.FirstOrDefault(i => !i.RemotelyAccessible);
+        result ??= item.Metadata.Images.FirstOrDefault(i => i.RemotelyAccessible);
+
+        if (result?.Provider != null)
+            if (result.Path != null)
+                return result.Path != null && result.Path.StartsWith("http")
+                    ? result.Path
+                    : ImagePathHelper.ProxyString(result.Path!, result.Provider);
+
+        return string.Empty;
+    }
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public SearchViewModel(MusicAssistantClient massclient, ISettings settings, PlayersService playersService, IScreen screen, ILoggerFactory loggerFactory)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -72,29 +104,47 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
         // Load recent search terms from settings
         RecentSearchTerms = new ObservableCollection<string>(_settings.RecentSearchTerms ?? []);
 
-        HeroSearchItems =
-        [
-            new HeroSearchModel
-            {
-                Title = "Most Played Albums",
-                Command = new RelayCommand(HeroSearchMostPlayedAlbums),
-                BackgroundColor = new SolidColorBrush(Colors.Red),
-            },
+
+        var mostPlayedAlbums = new HeroSearchModel
+        {
+            Title = "Most Played Albums",
+            Command = new RelayCommand(HeroSearchMostPlayedAlbums),
+            BackgroundColor = new SolidColorBrush(ColourService.FromHex("EA580C")),
+            Icon = string.Empty // Will be set asynchronously
+        };
+        _ = Task.Run(async () =>
+        {
+            mostPlayedAlbums.Icon = await GetMostPlayedIcon();
+        });
+
+
+        HeroSearchItems = [
+            mostPlayedAlbums,
             new HeroSearchModel
             {
                 Title = "Most Played Artists",
                 Command = new RelayCommand(HeroSearchMostPlayedArtists),
-                BackgroundColor = new SolidColorBrush(Colors.Orange),
-            }
-            ,
+                BackgroundColor = new SolidColorBrush(ColourService.FromHex("B91C1C")),
+            },
             new HeroSearchModel
             {
-                Title = "Most Played Artists",
+                Title = "Most Played Albums",
                 Command = new RelayCommand(HeroSearchMostPlayedAlbums),
-                BackgroundColor = new SolidColorBrush(Colors.Orange),
-            }
+                BackgroundColor = new SolidColorBrush(ColourService.FromHex("2563EB")),
+            },
+            //new HeroSearchModel
+            //{
+            //    Title = "Most Played Artists",
+            //    Command = new RelayCommand(HeroSearchMostPlayedArtists),
+            //    BackgroundColor = new SolidColorBrush(ColourService.FromHex("7E22CE")),
+            //},
+            //new HeroSearchModel
+            //{
+            //    Title = "Most Played Artists",
+            //    Command = new RelayCommand(HeroSearchMostPlayedArtists),
+            //    BackgroundColor = new SolidColorBrush(ColourService.FromHex("059669")),
+            //}
         ];
-
         /* Switch tabs to show full results */
         ExpandArtistsResultsCommand = new RelayCommand(() => { SelectedTabIndex = 2; });
         ExpandAlbumResultsCommand = new RelayCommand(() => { SelectedTabIndex = 3; });
@@ -225,7 +275,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
 
     private void HeroSearchMostPlayedArtists()
     {
-        var mostPlayedArtists = new LoadMoreListViewModel<ArtistViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Most Played Albums", true);
+        var mostPlayedArtists = new LoadMoreListViewModel<ArtistViewModel>(_client, HostScreen, _playersService!, _loggerFactory, "Most Played Artists", true);
         mostPlayedArtists.SetCustomDataSource<Artist, ArtistsResponse>(
             async () =>
             {
