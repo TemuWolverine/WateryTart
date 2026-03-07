@@ -26,7 +26,7 @@ jobs:
             echo "version=0.0.1" >> $GITHUB_OUTPUT
           fi
 
-  windowsbuild: # this is required to use NativeAOT compilation, cannot cross-compile from linux to windows
+  windowsbuild:
     needs:
       - generate-version
     runs-on: windows-latest
@@ -53,6 +53,36 @@ jobs:
           name: win-x64-build
           path: ./output/win-x64
 
+  linuxbuildarm64:
+    needs:
+      - generate-version
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        dotnet-version: [ '10.0.x' ]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Setup .NET 10.x
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.x'
+          cache: true
+          cache-dependency-path: './src/WateryTart.Platform.Linux/packages.lock.json'
+      - name: Install dependencies
+        run: dotnet restore src/WateryTart.Platform.Linux
+      - run: |
+          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-arm64
+      - name: Set permissions
+        run: |
+          chmod +x ./output/linux-arm64/WateryTartLinux
+      - name: Upload Linux arm64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-arm64-build
+          path: ./output/linux-arm64
+
   linuxbuild:
     needs:
       - generate-version
@@ -73,36 +103,20 @@ jobs:
       - name: Install dependencies
         run: dotnet restore src/WateryTart.Platform.Linux
       - run: |
-          dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=LinuxArm /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-arm64
           dotnet publish src/WateryTart.Platform.Linux -p:PublishProfile=Linux-x64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/linux-x64
-          #dotnet publish src/WateryTart.Platform.Windows -p:PublishProfile=Winx64 /p:Version=${{ needs.generate-version.outputs.version }} -o ./output/win-x64
       - name: Set permissions
         run: |
           chmod +x ./output/linux-x64/WateryTartLinux
-          chmod +x ./output/linux-arm64/WateryTartLinux
-      - name: Upload Linux arm64 artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-arm64-build
-          path: ./output/linux-arm64
-
       - name: Upload Linux x64 artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64-build
           path: ./output/linux-x64
 
-      #- name: Upload Windows artifacts
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: win-x64-build
-      #    path: ./output/win-x64
-
   #this doesn't use Velopack just yet because I have no way of testing it, or even knowing what it creates
  # macosbuild:
  #   needs:
  #     - generate-version
- #     - linuxbuild # to make it sequential due to file space issues
  #   runs-on: macos-latest
  #   steps:
  #     - uses: actions/checkout@v6
@@ -159,6 +173,7 @@ jobs:
     needs:
       - generate-version
       - linuxbuild
+      - linuxbuildarm64
       - windowsbuild
       #- macosbuild
     runs-on: ubuntu-latest
