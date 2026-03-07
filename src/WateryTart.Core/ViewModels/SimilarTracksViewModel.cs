@@ -1,12 +1,9 @@
 ﻿using Autofac;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using WateryTart.Core.Extensions;
 using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.WsExtensions;
 
 namespace WateryTart.Core.ViewModels;
@@ -16,7 +13,7 @@ public partial class SimilarTracksViewModel(IScreen screen, MusicAssistantClient
     private readonly MusicAssistantClient _client = client;
     public string? UrlPathSegment { get; } = "SimilarTracks/ID";
     public IScreen HostScreen { get; } = screen;
-    public string Title { get; } = string.Empty;
+    public string Title { get; } = "Similar tracks...";
     public bool ShowMiniPlayer { get; } = true;
     public bool ShowNavigation { get; } = true;
     [Reactive] public partial bool IsLoading { get; set; }
