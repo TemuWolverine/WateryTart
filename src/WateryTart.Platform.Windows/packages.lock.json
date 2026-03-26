@@ -45,9 +45,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.3, )",
-        "resolved": "10.0.3",
-        "contentHash": "0B6nZyCHWXnvmlB559oduOspVdNOnpNXPjhpWVMovLPAsDVG7A4jJR9rzECf67JUzxP8/ee/wA8clwIzJcWNFA=="
+        "requested": "[10.0.4, )",
+        "resolved": "10.0.4",
+        "contentHash": "CCx8ojW3mOL150/LnP0DK7qpMrJEt6xxNCmJFKoX89v1h0FwpsEHqennowGPYDxp6zIkIO4f9PxynjOeLF+1zw=="
       },
       "ReactiveUI.SourceGenerators": {
         "type": "Direct",
@@ -623,7 +623,7 @@
           "Karambolo.Extensions.Logging.File": "[4.1.0, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.3, )",
           "ReactiveUI.Avalonia": "[11.4.7, )",
-          "Sendspin.SDK": "[7.1.0, )",
+          "Sendspin.SDK": "[7.3.0, )",
           "SharpHook": "[7.1.1, )",
           "SkiaSharp": "[2.88.9, )",
           "Svg.Controls.Skia.Avalonia": "[11.3.9.2, )",
@@ -828,9 +828,9 @@
       },
       "Sendspin.SDK": {
         "type": "CentralTransitive",
-        "requested": "[7.1.0, )",
-        "resolved": "7.1.0",
-        "contentHash": "J9RTw5vyiXz9a4kqenvbnpqsCPO1gXfCmYD0NYjVBV3DAti3VsQvTyCn4LUZS3qau/fIX65PlSF48Fw9V7wqHQ==",
+        "requested": "[7.3.0, )",
+        "resolved": "7.3.0",
+        "contentHash": "Wp0fRPtKGAPFhPutu+QHk2BmySYE5+r1HzngZHZGuE5JJ08uhi0E85un1vS/wCLXlAyxEKjcIdQtd7/c0HBSRg==",
         "dependencies": {
           "Concentus": "2.2.2",
           "Makaretu.Dns.Multicast": "0.27.0",
