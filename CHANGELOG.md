@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/TemuWolverine/WateryTart/compare/v1.6.1...v1.6.2) (2026-03-27)
+
+
+### Bug Fixes
+
+* reconfigured how the sendspin connection is established so it doesn't produce garbage at the start ([12b2891](https://github.com/TemuWolverine/WateryTart/commit/12b28912b8859d360c3970e54cdaeac439a834fb))
+
 ## [1.6.1](https://github.com/TemuWolverine/WateryTart/compare/v1.6.0...v1.6.1) (2026-03-07)
 
 
