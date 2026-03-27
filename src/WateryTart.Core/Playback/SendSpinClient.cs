@@ -51,13 +51,25 @@ public class SendSpinClient : IDisposable, IReaper
             loggerFactory ??= LoggerFactory.Create(b =>
             {
                 b.AddConsole();
-                b.SetMinimumLevel(LogLevel.Information);
+                b.SetMinimumLevel(LogLevel.Debug);
             });
 
             _logger = loggerFactory.CreateLogger<SendSpinClient>();
 
             var connection = new SendspinConnection(loggerFactory.CreateLogger<SendspinConnection>());
-            var clockSync = new KalmanClockSynchronizer(loggerFactory.CreateLogger<KalmanClockSynchronizer>());
+
+            var forgetFactor = 1.001;
+            var adaptiveCutoff = 0.75;
+            var minSamplesForForgetting = 100;
+
+            var clockSync = new KalmanClockSynchronizer(
+                loggerFactory.CreateLogger<KalmanClockSynchronizer>(),
+                forgetFactor: forgetFactor,
+                adaptiveCutoff: adaptiveCutoff,
+                minSamplesForForgetting: minSamplesForForgetting);
+
+            clockSync.StaticDelayMs = 0;
+
             var decoderFactory = new AudioDecoderFactory();
 
             ITimedAudioBuffer bufferFactory(AudioFormat format, IClockSynchronizer sync)
@@ -75,20 +87,22 @@ public class SendSpinClient : IDisposable, IReaper
             }
 
             IAudioSampleSource sourceFactory(ITimedAudioBuffer buffer, Func<long> getTime) => new BufferedAudioSampleSource(buffer, getTime);
-
             _audioPipeline = new AudioPipeline(
                 loggerFactory.CreateLogger<AudioPipeline>(),
                 decoderFactory,
                 clockSync,
-bufferFactory,
-                player.CreatePlayer,
-                sourceFactory,
+                bufferFactory: (format, sync) =>
+                {
+                    var buffer = new TimedAudioBuffer(format, sync, 120000, syncOptions: null, loggerFactory.CreateLogger<TimedAudioBuffer>());
+                    buffer.TargetBufferMilliseconds = 250;
+                    return buffer;
+                },
+                playerFactory: player.CreatePlayer,
+                sourceFactory: (buffer, timeFunc) => new BufferedAudioSampleSource(buffer, timeFunc),
                 precisionTimer: null,
                 waitForConvergence: true,
-                convergenceTimeoutMs: 5000,
-                useMonotonicTimer: false);
+                convergenceTimeoutMs: 5000);
 
-            
             var capabilities = new ClientCapabilities
             {
                 ClientName = $"{Environment.MachineName} (WateryTart)",
