@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/TemuWolverine/WateryTart/compare/v1.6.2...v1.6.3) (2026-04-07)
+
+
+### Bug Fixes
+
+* sendspin client setup needed tweaking to allow flac/higher bitrate playback ([a3e7985](https://github.com/TemuWolverine/WateryTart/commit/a3e79851a392f55f786b5c99ea3fba6030ff2922))
+
 ## [1.6.2](https://github.com/TemuWolverine/WateryTart/compare/v1.6.1...v1.6.2) (2026-03-27)
 
 
