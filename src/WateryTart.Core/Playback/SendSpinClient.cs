@@ -5,6 +5,7 @@ using Sendspin.SDK.Client;
 using Sendspin.SDK.Connection;
 using Sendspin.SDK.Models;
 using Sendspin.SDK.Synchronization;
+using SendspinClient.Configuration;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -72,21 +73,6 @@ public class SendSpinClient : IDisposable, IReaper
 
             var decoderFactory = new AudioDecoderFactory();
 
-            ITimedAudioBuffer bufferFactory(AudioFormat format, IClockSynchronizer sync)
-            {
-                var buffer = new TimedAudioBuffer(
-                    format,
-                    sync,
-                    bufferCapacityMs: 8000,
-                    syncOptions: SyncCorrectionOptions.Default,
-                    logger: loggerFactory.CreateLogger<TimedAudioBuffer>())
-                {
-                    TargetBufferMilliseconds = 250
-                };
-                return buffer;
-            }
-
-            IAudioSampleSource sourceFactory(ITimedAudioBuffer buffer, Func<long> getTime) => new BufferedAudioSampleSource(buffer, getTime);
             _audioPipeline = new AudioPipeline(
                 loggerFactory.CreateLogger<AudioPipeline>(),
                 decoderFactory,
@@ -110,7 +96,14 @@ public class SendSpinClient : IDisposable, IReaper
                 Manufacturer = "TemuWolverine",
                 SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString(), 
                 InitialVolume = 100,
-                InitialMuted = false
+                InitialMuted = false,
+                AudioFormats = AudioFormatBuilder.BuildFormats(
+                    new AudioDeviceCapabilities
+                    {
+                        NativeSampleRate = 48000,
+                        NativeBitDepth = 32,
+                    },
+                    preferredCodec: "flac")
             };
 
             _sendspinClient = new SendspinClientService(
