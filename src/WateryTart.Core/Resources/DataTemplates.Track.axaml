@@ -1,0 +1,183 @@
+<ResourceDictionary
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:WateryTart.Core"
+          xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+          xmlns:converters="using:WateryTart.Core.Converters"
+          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:lottie="using:Avalonia.Labs.Lottie"
+          xmlns:menus="using:WateryTart.Core.Views.Menus"
+          xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
+          xmlns:views="using:WateryTart.Core"
+          xmlns:vm1="using:WateryTart.Core.ViewModels.Menus">
+    <DataTemplate x:Key="trackSmallReusableTemplate" x:DataType="viewModels:TrackViewModel">
+        <Grid Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                      Grid.Column="0"
+                      Margin="-10,0,0,0"
+                      ClipToBounds="True"
+                      CornerRadius="5">
+                <asyncImageLoader:AdvancedImage
+                          Width="50"
+                          Height="50"
+                          FallbackImage="{x:Static app:App.FallbackImage}"
+                          Loader="{x:Static app:App.ImageLoaderInstance}"
+                          Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="Tapped">
+                            <InvokeCommandAction Command="{Binding TrackFullViewCommand}" />
+                        </EventTriggerBehavior>
+                        <EventTriggerBehavior EventName="DoubleTapped">
+                            <InvokeCommandAction Command="{Binding TrackDoubleTappedCommand}" />
+                        </EventTriggerBehavior>
+
+                    </Interaction.Behaviors>
+                </asyncImageLoader:AdvancedImage>
+            </Border>
+            <Grid
+                      Grid.Column="1"
+                      Margin="0,0,0,0"
+                      ColumnDefinitions="Auto,*">
+                <iconPacks:PackIconMaterial
+                          Grid.Column="0"
+                          Width="20"
+                          Height="20"
+                          Margin="5,0,0,0"
+                          VerticalAlignment="Top"
+                          IsVisible="{Binding IsNowPlaying}"
+                          Kind="VolumeHigh" />
+
+                <TextBlock
+                          Grid.Column="1"
+                          Margin="10,0,0,0"
+                          Text="{Binding Track.Name}"
+                          TextTrimming="CharacterEllipsis" />
+
+                <TextBlock
+                          Grid.Column="1"
+                          Margin="10,20,0,0"
+                          FontSize="14"
+                          Foreground="{StaticResource FadedTextColourBrush}"
+                          Text="{Binding Track.Artists[0].Name}"
+                          TextTrimming="CharacterEllipsis" />
+            </Grid>
+
+
+            <Button
+                      Grid.Column="2"
+                      VerticalAlignment="Top"
+                      Classes="iconButton navButton"
+                      Command="{Binding TrackAltMenuCommand}">
+                <iconPacks:PackIconMaterial
+                          Width="{StaticResource AltMenuSize}"
+                          Height="{StaticResource AltMenuSize}"
+                          Kind="DotsVertical" />
+            </Button>
+        </Grid>
+
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="trackMediumReusableTemplate" x:DataType="viewModels:TrackViewModel">
+        <Grid>
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="DoubleTapped">
+                    <InvokeCommandAction Command="{Binding TrackDoubleTappedCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Album Art  -->
+            <Border
+                      Grid.Column="0"
+                      ClipToBounds="True"
+                      CornerRadius="5">
+                <asyncImageLoader:AdvancedImage
+                          Width="50"
+                          Height="50"
+                          FallbackImage="{x:Static app:App.FallbackImage}"
+                          Loader="{x:Static app:App.ImageLoaderInstance}"
+                          Source="{Binding Path=Track, Converter={StaticResource MetadataImageConverter}}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="DoubleTapped">
+                            <InvokeCommandAction Command="{Binding TrackDoubleTappedCommand}" />
+                        </EventTriggerBehavior>
+                        <EventTriggerBehavior EventName="Tapped">
+                            <InvokeCommandAction Command="{Binding TrackFullViewCommand}" />
+                        </EventTriggerBehavior>
+
+                    </Interaction.Behaviors>
+                </asyncImageLoader:AdvancedImage>
+            </Border>
+
+            <!--  Track Info  -->
+            <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
+                <!--                <iconPacks:PackIconMaterial
+                          Grid.Column="0"
+                          Width="20"
+                          Height="20"
+                          Margin="5,0,0,0"
+                          VerticalAlignment="Top"
+                          IsVisible="{Binding IsNowPlaying}"
+                          Kind="VolumeHigh" />-->
+
+                <TextBlock
+                          Grid.Column="1"
+                          Margin="10,0,0,0"
+                          Text="{Binding Track.Name}"
+                          TextTrimming="CharacterEllipsis" />
+
+                <TextBlock
+                          Grid.Column="1"
+                          Margin="10,20,0,0"
+                          FontSize="{StaticResource SmallFontSize}"
+                          Foreground="{StaticResource FadedTextColourBrush}"
+                          Text="{Binding Track.Artists[0].Name}"
+                          TextTrimming="CharacterEllipsis" />
+            </Grid>
+
+            <TextBlock
+                      Grid.Column="2"
+                      Foreground="{StaticResource FadedTextColourBrush}"
+                      IsVisible="{Binding !IsNowPlaying}"
+                      Text="{Binding Track.Duration, Converter={StaticResource SecondsToMinutesConverter}}" />
+
+            <Viewbox
+                      Grid.Column="2"
+                      Width="24"
+                      Height="24"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      IsVisible="{Binding IsNowPlaying}"
+                      Stretch="Uniform">
+                <lottie:Lottie
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Path="/Assets/nowplaying.json" />
+            </Viewbox>
+
+            <Button
+                      Grid.Column="3"
+                      VerticalAlignment="Top"
+                      Classes="iconButton navButton"
+                      Command="{Binding TrackAltMenuCommand}">
+                <iconPacks:PackIconMaterial
+                          Width="{StaticResource AltMenuSize}"
+                          Height="{StaticResource AltMenuSize}"
+                          Kind="DotsVertical" />
+            </Button>
+        </Grid>
+
+    </DataTemplate>
+</ResourceDictionary>

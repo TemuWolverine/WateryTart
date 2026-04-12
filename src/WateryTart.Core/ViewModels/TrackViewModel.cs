@@ -35,6 +35,8 @@ public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable
     public RelayCommand TrackAltMenuCommand { get; }
     public RelayCommand TrackFullViewCommand { get; }
 
+    public RelayCommand TrackDoubleTappedCommand { get; }
+
     public TrackViewModel(MusicAssistantClient massClient, PlayersService playersService, Item? t = null)
         : base(client: massClient, playersService: playersService)  
     {
@@ -62,6 +64,14 @@ public partial class TrackViewModel : ViewModelBase<TrackViewModel>, IDisposable
         {
             if (Track != null)
                 MessageBus.Current.SendMessage< IPopupViewModel>(MenuHelper.BuildStandardPopup(_playersService!, Track));
+        });
+
+        TrackDoubleTappedCommand = new RelayCommand(() =>
+        {
+            if (_playersService?.SelectedPlayer != null)
+                _playersService.PlayItem(Track, mode: PlayMode.Play);
+            else if (Track != null)
+                MessageBus.Current.SendMessage<IPopupViewModel>(MenuHelper.BuildStandardPopup(_playersService!, Track));
         });
     }
 

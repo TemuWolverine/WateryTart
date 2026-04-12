@@ -19,8 +19,11 @@
           mc:Ignorable="d">
     <StackPanel Margin="10,0,0,0">
         <StackPanel HorizontalAlignment="Center" Spacing="20">
-            <Border Margin="0,10,0,0" BoxShadow="0 0 20 0 Black" Width="240"
-                          Height="240">
+            <Border
+                      Width="240"
+                      Height="240"
+                      Margin="0,10,0,0"
+                      BoxShadow="0 0 20 0 Black">
                 <Border
                           Width="240"
                           Height="240"
@@ -143,8 +146,9 @@
                     <Grid Background="Transparent">
                         <Interaction.Behaviors>
                             <EventTriggerBehavior EventName="DoubleTapped">
-                                <InvokeCommandAction Command="{Binding TrackFullViewCommand}" />
+                                <InvokeCommandAction Command="{Binding TrackDoubleTappedCommand}" />
                             </EventTriggerBehavior>
+
                         </Interaction.Behaviors>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40" />
