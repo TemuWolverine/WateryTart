@@ -70,7 +70,19 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             })
         };
 
-        //var genres = new LibraryItem { Title = "Genres" };
+        var genres = new LibraryItem 
+        { 
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Fuse, 
+            Title = "Genres" ,
+            ClickedCommand = new RelayCommand(() =>
+            {
+                var vm = new LoadMoreListViewModel<GenreViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Genres", true);
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+
+
+
         var podcasts = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Podcast, Title = "Podcasts" };
         var radios = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.RadioTower, Title = "Radios" };
         var audiobooks = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Book, Title = "Audiobooks" };
@@ -81,7 +93,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
            albums,
            tracks,
            playlists,
-          // genres,
+           genres,
            //podcasts,
            //radios,
            //audiobooks
@@ -89,7 +101,7 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
 
         // Load counts asynchronously in the background
 #pragma warning disable CS4014 // Fire-and-forget intentional - loads data asynchronously
-        _ = LoadLibraryCountsAsync(artists, albums, tracks, playlists, null, podcasts, radios, audiobooks);
+        _ = LoadLibraryCountsAsync(artists, albums, tracks, playlists, genres, podcasts, radios, audiobooks);
         _ = LoadRecentlyAdded();
 #pragma warning restore CS4014
     }
@@ -121,8 +133,8 @@ public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
             tracks.Count = trackCountResponse.Result;
 
             //Currently the API  docs has this call but it does not return a result
-            //var genreCountResponse = await _client.GenreCountAsync();
-            //genres.Count = genreCountResponse.Result;
+            var genreCountResponse = await _client.WithWs().GetGenreCountAsync();
+            genres.Count = genreCountResponse.Result;
 
             var podcastCountResponse = await _client.WithWs().GetPodcastCountAsync();
             podcasts.Count = podcastCountResponse.Result;

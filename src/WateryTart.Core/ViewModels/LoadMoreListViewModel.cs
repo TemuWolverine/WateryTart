@@ -118,6 +118,10 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
                     await LoadPlaylistsAsync();
                     break;
 
+                case var _ when t == typeof(GenreViewModel):
+                    await LoadGenresAsync();
+                    break;
+
                 // These are the likely candidates for future expansion, but not implemented yet:
                 // genres, (relying on MA implementation?)
                 // podcasts,
@@ -201,6 +205,11 @@ public partial class LoadMoreListViewModel<T> : ViewModelBase<LoadMoreListViewMo
     {
         await LoadAsync();
     }
+
+    private async Task LoadGenresAsync() =>
+    await LoadItemsAsync<Genre, GenresResponse>(
+        () => _client.WithWs().GetGenresLibraryItemsAsync(limit: PageSize, offset: CurrentOffset, orderby: SelectedSortingOption),
+        genre => new GenreViewModel(_client, HostScreen, _playersService!, genre));
 
     private async Task LoadPlaylistsAsync() =>
         await LoadItemsAsync<Playlist, PlaylistsResponse>(

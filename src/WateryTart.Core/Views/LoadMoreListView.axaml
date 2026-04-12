@@ -76,6 +76,11 @@
             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource trackMediumReusableTemplate}" />
         </DataTemplate>
 
+        <DataTemplate x:DataType="vm:GenreViewModel">
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource trackMediumReusableTemplate}" />
+        </DataTemplate>
+
+
     </UserControl.DataTemplates>
     <UserControl.Resources>
         <ItemsPanelTemplate x:Key="WrapPanelTemplate">

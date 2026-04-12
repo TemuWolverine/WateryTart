@@ -61,6 +61,7 @@
             </ItemsControl.Styles>
         </ItemsControl>
 
+        <!-- "Special" playlists -->
 
         <!--  Discover Artists  -->
         <Grid Margin="0,40,10,0" Background="Transparent">
