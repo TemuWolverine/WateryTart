@@ -195,6 +195,7 @@ public partial class App : Application
 
     private static void ObtainLock()
     {
+        return;
         // Try to acquire a filesystem lock to ensure single instance
         try
         {

@@ -42,7 +42,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncImageLoader.Avalonia" />
 		<PackageReference Include="Autofac" />
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Labs.Lottie" />
@@ -67,7 +66,6 @@
 		</PackageReference>
 		<PackageReference Include="Sendspin.SDK" />
 		<PackageReference Include="SharpHook" />
-		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="Svg.Controls.Skia.Avalonia" />
 		<PackageReference Include="System.Device.Gpio" />
 		<PackageReference Include="Velopack" />
@@ -86,17 +84,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="IconPacks.Avalonia.Core">
-	    <HintPath>..\binaries\IconPacks.Avalonia.Core.dll</HintPath>
+	  <Reference Include="AsyncImageLoader.Avalonia">
+	    <HintPath>..\..\..\AsyncImageLoader.Avalonia\AsyncImageLoader.Avalonia\bin\Debug\net8.0\AsyncImageLoader.Avalonia.dll</HintPath>
 	  </Reference>
-	  <Reference Include="IconPacks.Avalonia.ForkAwesome">
-	    <HintPath>..\binaries\IconPacks.Avalonia.ForkAwesome.dll</HintPath>
+	  <Reference Include="IconPacks.Avalonia.Core">
+	    <HintPath>..\..\..\IconPacks.Avalonia\src\IconPacks.Avalonia.MaterialDesign\bin\Debug\net10.0\IconPacks.Avalonia.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="IconPacks.Avalonia.Material">
 	    <HintPath>..\binaries\IconPacks.Avalonia.Material.dll</HintPath>
 	  </Reference>
 	  <Reference Include="IconPacks.Avalonia.MaterialDesign">
-	    <HintPath>..\binaries\IconPacks.Avalonia.MaterialDesign.dll</HintPath>
+	    <HintPath>..\..\..\IconPacks.Avalonia\src\IconPacks.Avalonia.MaterialDesign\bin\Debug\net10.0\IconPacks.Avalonia.MaterialDesign.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 

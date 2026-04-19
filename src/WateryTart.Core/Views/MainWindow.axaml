@@ -12,9 +12,13 @@
           Height="480"
           MinWidth="439"
           Padding="0"
-          ExtendClientAreaChromeHints="NoChrome"
+          WindowDecorations="Full"
           ExtendClientAreaToDecorationsHint="True"
+          
           Icon="avares://WateryTart.Core/Assets/logo_square.png">
-
+    <!--
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+    -->
     <WateryTart:MainView x:Name="Host" />
 </Window>
