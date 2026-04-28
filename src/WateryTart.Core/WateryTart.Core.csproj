@@ -42,16 +42,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AsyncImageLoader.Avalonia" />
 		<PackageReference Include="Autofac" />
 		<PackageReference Include="Avalonia" />
 		<PackageReference Include="Avalonia.Labs.Lottie" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
 		<PackageReference Include="Avalonia.Fonts.Inter" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Include="Avalonia.Diagnostics">
-			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-		</PackageReference>
 		<PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Concentus" />
@@ -84,9 +81,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="AsyncImageLoader.Avalonia">
-	    <HintPath>..\..\..\AsyncImageLoader.Avalonia\AsyncImageLoader.Avalonia\bin\Debug\net8.0\AsyncImageLoader.Avalonia.dll</HintPath>
-	  </Reference>
 	  <Reference Include="IconPacks.Avalonia.Core">
 	    <HintPath>..\..\..\IconPacks.Avalonia\src\IconPacks.Avalonia.MaterialDesign\bin\Debug\net10.0\IconPacks.Avalonia.Core.dll</HintPath>
 	  </Reference>

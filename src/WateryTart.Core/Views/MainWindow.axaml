@@ -12,10 +12,12 @@
           Height="480"
           MinWidth="439"
           Padding="0"
-          WindowDecorations="Full"
           ExtendClientAreaToDecorationsHint="True"
-          
-          Icon="avares://WateryTart.Core/Assets/logo_square.png">
+          Icon="avares://WateryTart.Core/Assets/logo_square.png"
+          WindowDecorations="Full">
+    <Window.Resources>
+
+    </Window.Resources>
     <!--
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaToDecorationsHint="True"
