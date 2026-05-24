@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.Material;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,9 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
     private CancellationTokenSource? _volumeCts;
     private bool _suppressVolumeUpdate;
     private double _volume; // backing for exposed Volume property
+
+    private readonly LyricsViewModel _lyrics = new();
+    public LyricsViewModel Lyrics => _lyrics;
 
     private static readonly HashSet<string> _losslessContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -105,7 +109,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                     {
                         _suppressVolumeUpdate = true;
                         if (serverVol != null)
-                        Volume = (int)serverVol;
+                            Volume = (int)serverVol;
                     }
                     finally
                     {
@@ -113,9 +117,65 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                     }
                 });
 
+        // Clear lyrics when a new song starts
+        this.WhenAnyValue(x => x.PlayersService.SelectedQueue.CurrentItem)
+            .ObserveOn(AvaloniaScheduler.Instance)
+            .Subscribe(_ =>
+            {
+                try
+                {
+                    Lyrics.Clear();
+                }
+                catch { }
+            });
+
+        // Update lyrics when metadata/lyrics arrive
+        this.WhenAnyValue(x => x.PlayersService.SelectedQueue.CurrentItem.MediaItem.Metadata)
+            .ObserveOn(AvaloniaScheduler.Instance)
+            .Subscribe(metadata =>
+            {
+
+                _ = Task.Run(async () =>
+                {
+                    if (metadata?.LrcLyrics == null)
+                    {
+                        metadata?.LrcLyrics = await _playersService.FetchLyrics(PlayersService.SelectedQueue.CurrentItem.MediaItem);
+                        Lyrics.LoadFromLrc(metadata.LrcLyrics);
+                    
+                    }
+                    if (metadata?.LrcLyrics != null)
+                    {
+                        Lyrics.LoadFromLrc(metadata.LrcLyrics);
+                    }
+                    else if (metadata?.Lyrics != null)
+                    {
+                        // plain lyrics - put each line without timestamps
+                        var content = string.Join("\n", metadata.Lyrics.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+                        // create pseudo-timestamps by leaving Time at zero so they appear at top
+                        Lyrics.LoadFromLrc(content);
+                    }
+                });
+            });
+
+        // Subscribe to player position updates to highlight the current line
+        this.WhenAnyValue(x => x.PlayersService.SelectedQueue.CurrentItem.MediaItem.ElapsedTime)
+            .Where(t => t != null)
+            .ObserveOn(AvaloniaScheduler.Instance)
+            .Subscribe(elapsed =>
+            {
+                try
+                {
+                    var pos = TimeSpan.FromSeconds(elapsed);
+                    Lyrics.UpdateActiveLine(pos);
+                }
+                catch { }
+            });
+
         ShowTrackInfo = new RelayCommand(
             () =>
             {
+                /*_playersService.FetchLyrics(PlayersService.SelectedQueue.CurrentItem.MediaItem);
+                return;*/
                 if (PlayersService != null &&
                     PlayersService.SelectedQueue != null &&
                     PlayersService.SelectedQueue.CurrentItem != null &&
@@ -235,8 +295,8 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
                         new MenuItemViewModel("Similar tracks", PackIconMaterialKind.MusicClefTreble, GoToSimilarTracks),
                         new MenuItemViewModel("Repeat Mode", PackIconMaterialKind.Repeat, null),
                         new MenuItemViewModel("Repeat Off", PackIconMaterialKind.RepeatOff, PlayerRepeatOff, true),
-                        new MenuItemViewModel("Repeat Entire Queue",PackIconMaterialKind.RepeatVariant, PlayerRepeatQueue, true), 
-                        new MenuItemViewModel("Repeat Single Track", PackIconMaterialKind.Repeat, PlayerRepeatTrack, true), 
+                        new MenuItemViewModel("Repeat Entire Queue",PackIconMaterialKind.RepeatVariant, PlayerRepeatQueue, true),
+                        new MenuItemViewModel("Repeat Single Track", PackIconMaterialKind.Repeat, PlayerRepeatTrack, true),
                     ]);
 
                 if (PlayersService?.SelectedQueue?.CurrentItem != null)
@@ -255,7 +315,7 @@ public partial class BigPlayerViewModel : ViewModelBase<BigPlayerViewModel>
 #pragma warning disable CS8602
         // Ensure Quality property updates when the selected queue item or player changes
         this.WhenAnyValue(x => x.PlayersService.SelectedQueue.CurrentItem)
-            .ObserveOn( AvaloniaScheduler.Instance)
+            .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(Quality)));
 
         // Also update Quality when inner stream details change (bit depth, sample rate or content type)

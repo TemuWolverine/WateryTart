@@ -4,6 +4,7 @@
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           xmlns:app="clr-namespace:WateryTart.Core"
           xmlns:asyncImageLoader="using:AsyncImageLoader"
+          xmlns:behaviors="clr-namespace:WateryTart.Core.Behaviors"
           xmlns:controls="clr-namespace:WateryTart.Core.Controls"
           xmlns:converters="using:WateryTart.Core.Converters"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -295,7 +296,27 @@
                             </ItemsControl.Styles>
                         </ItemsControl>
                     </TabItem>
-                    <TabItem Header="Lyrics" />
+                    <TabItem Header="Lyrics">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Lyrics.Lines}">
+                                <Interaction.Behaviors>
+                                    <behaviors:ScrollIntoViewBehavior />
+                                </Interaction.Behaviors>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                                  Padding="6"
+                                                  HorizontalAlignment="Center"
+                                                  FontSize="16"
+                                                  FontWeight="{Binding IsActive, Converter={StaticResource IsActiveToFontWeightConverter}}"
+                                                  Foreground="{Binding IsActive, Converter={StaticResource IsActiveToBrushConverter}}"
+                                                  Text="{Binding Text}"
+                                                  TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
                 </TabControl>
             </controls:ResponsiveColumnPanel.SecondColumn>
         </controls:ResponsiveColumnPanel>

@@ -9,6 +9,8 @@
     <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
     <converters:FriendlyTimeConverter x:Key="FriendlyTimeConverter" />
     <converters:HomeExtraToStringConverter x:Key="HomeExtraToStringConverter" />
+    <converters:IsActiveToBrushConverter x:Key="IsActiveToBrushConverter" />
+    <converters:IsActiveToFontWeightConverter x:Key="IsActiveToFontWeightConverter" />
     <converters:MassImageImageConverter x:Key="MassImageImageConverter" />
     <converters:MetadataImageConverter x:Key="MetadataImageConverter" />
     <converters:PlaybackStateToVisibilityConverter x:Key="PlaybackStateToVisibilityConverter" />

@@ -677,10 +677,11 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
         }
     }
 
-    /*
-    public async Task FetchLyrics(Item t)
+
+    public async Task<string> FetchLyrics(Item t)
     {
         var lyricsResponse = await _massClient.WithWs().GetLyricsAsync(t);
         var lyrics = lyricsResponse.Result;
-    }*/
+        return lyrics[1];
     }
+}
