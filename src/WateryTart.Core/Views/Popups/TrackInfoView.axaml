@@ -170,10 +170,10 @@
                   Text="Output Effects" />
 
         <!--  output device  -->
-        <Svg
+<!--        <Svg
                   Grid.Row="6"
                   Grid.Column="1"
-                  Source="{Binding OutputProviderIcon}" />
+                  Source="{Binding OutputProviderIcon}" />-->
         <TextBlock
                   Grid.Row="6"
                   Grid.Column="2"
