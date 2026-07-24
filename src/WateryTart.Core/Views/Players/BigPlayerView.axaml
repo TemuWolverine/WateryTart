@@ -55,7 +55,7 @@
                                     <asyncImageLoader:AdvancedImage
                                               Name="imgAlbumArt"
                                               Loader="{x:Static app:App.ImageLoaderInstance}"
-                                              Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}"
+                                              Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MetadataImageConverter}}"
                                               Stretch="Uniform" />
                                 </Grid>
                             </Panel>
@@ -343,7 +343,7 @@
                                   MaxWidth="350"
                                   MaxHeight="350"
                                   Loader="{x:Static app:App.ImageLoaderInstance}"
-                                  Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MassImageImageConverter}}"
+                                  Source="{Binding Path=PlayersService.SelectedQueue.CurrentItem.Image, Converter={StaticResource MetadataImageConverter}}"
                                   Stretch="Uniform" />
                     </Panel>
                 </Border>

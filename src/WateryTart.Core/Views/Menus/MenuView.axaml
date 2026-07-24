@@ -90,7 +90,7 @@
                                 <ColumnDefinition Width="50" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <asyncImageLoader:AdvancedImage Opacity="0.7" Source="{Binding Path=Image, Converter={StaticResource MassImageImageConverter}}" />
+                            <asyncImageLoader:AdvancedImage Opacity="0.7" Source="{Binding Path=Image, Converter={StaticResource MetadataImageConverter}}" />
                             <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                 <TextBlock Text="{Binding MediaItem.Name}" />
                                 <TextBlock Opacity="0.7" Text="{Binding MediaItem.Album.Name}" />

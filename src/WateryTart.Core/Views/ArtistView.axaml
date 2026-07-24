@@ -21,7 +21,7 @@
                 <Ellipse.Fill>
                     <ImageBrush 
                     asyncImageLoader:ImageBrushLoader.FallbackImage="{x:Static app:App.FallbackImage}"
-                    asyncImageLoader:ImageBrushLoader.Source="{Binding Path=ArtistThumb, Converter={StaticResource MassImageImageConverter}}" />
+                    asyncImageLoader:ImageBrushLoader.Source="{Binding Path=ArtistThumb, Converter={StaticResource MetadataImageConverter}}" />
                 </Ellipse.Fill>
             </Ellipse>
 
