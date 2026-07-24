@@ -7,19 +7,19 @@
     <!-- Avalonia packages -->
     <!-- Important: keep version in sync! -->
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.8.0" />
-    <PackageVersion Include="Autofac" Version="9.1.0" />
-    <PackageVersion Include="Avalonia" Version="12.0.1" />
+    <PackageVersion Include="Autofac" Version="9.3.1" />
+    <PackageVersion Include="Avalonia" Version="12.1.0" />
     <PackageVersion Include="Avalonia.Labs.CommandManager" Version="11.3.1" />
     <PackageVersion Include="Avalonia.Labs.Lottie" Version="12.0.2" />
-    <PackageVersion Include="Avalonia.LinuxFramebuffer" Version="12.0.1" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.1" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.1" />
+    <PackageVersion Include="Avalonia.LinuxFramebuffer" Version="12.1.0" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.0" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.0" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.14" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.1" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.0" />
     <PackageVersion Include="Avalonia.iOS" Version="11.3.11" />
     <PackageVersion Include="Avalonia.Browser" Version="11.3.11" />
     <PackageVersion Include="Avalonia.Android" Version="11.3.12" />
-    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="Concentus" Version="2.2.2" />
     <PackageVersion Include="Config.Net" Version="5.2.1" />
@@ -31,7 +31,7 @@
     <PackageVersion Include="IconPacks.Avalonia.Material" Version="1.3.1" />
     <PackageVersion Include="IconPacks.Avalonia.MaterialDesign" Version="1.3.1" />
     <PackageVersion Include="Iot.Device.Bindings" Version="4.2.0" />
-    <PackageVersion Include="Karambolo.Extensions.Logging.File" Version="4.1.0" />
+    <PackageVersion Include="Karambolo.Extensions.Logging.File" Version="4.1.1" />
     <PackageVersion Include="Makaretu.Dns.Multicast" Version="0.27.0" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="2.4.1" />
     <PackageVersion Include="Metalama.Framework.Redist" Version="2026.0.16" />
@@ -42,27 +42,27 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.10" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="ReactiveUI" Version="22.3.1" />
     <PackageVersion Include="ReactiveUI.AndroidSupport" Version="19.6.12" />
     <PackageVersion Include="ReactiveUI.AndroidX" Version="22.3.1" />
-    <PackageVersion Include="ReactiveUI.Avalonia" Version="12.0.1" />
-    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.6.30" />
-    <PackageVersion Include="Sendspin.SDK" Version="7.4.0" />
-    <PackageVersion Include="SharpHook" Version="7.1.1" />
+    <PackageVersion Include="ReactiveUI.Avalonia" Version="12.0.3" />
+    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="3.1.0" />
+    <PackageVersion Include="Sendspin.SDK" Version="9.1.0" />
+    <PackageVersion Include="SharpHook" Version="7.1.3" />
     <PackageVersion Include="SharpHook.R3" Version="7.1.1" />
     <PackageVersion Include="SharpHook.Reactive" Version="7.1.1" />
     <PackageVersion Include="Silk.NET.OpenAL" Version="2.23.0" />
     <PackageVersion Include="Silk.NET.OpenAL.Soft.Native" Version="1.23.1" />
     <PackageVersion Include="SkiaSharp" Version="3.116.0" />
-    <PackageVersion Include="SoundFlow" Version="1.4.0" />
+    <PackageVersion Include="SoundFlow" Version="1.4.1" />
     <PackageVersion Include="Splat.Autofac" Version="19.2.1" />
     <PackageVersion Include="Splat.Avalonia.Autofac" Version="15.5.3" />
-    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.5" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
     <PackageVersion Include="System.Device.Gpio" Version="4.2.0" />
     <PackageVersion Include="System.Reactive" Version="6.1.0" />
-    <PackageVersion Include="Velopack" Version="0.0.1298" />
+    <PackageVersion Include="Velopack" Version="1.2.0" />
     <PackageVersion Include="WateryTart.MusicAssistant" Version="4.1.0" />
     <PackageVersion Include="Websocket.Client" Version="5.3.0" />
     <PackageVersion Include="Xaml.Behaviors.Interactions" Version="11.3.9.4" />
@@ -70,9 +70,9 @@
     <PackageVersion Include="XVolume" Version="0.1.1" />
     <PackageVersion Include="Zeroconf" Version="3.7.16" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.1" />
-    <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="12.0.0" />
-    <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="12.0.0" />
-    <PackageVersion Include="Xaml.Behaviors.SourceGenerators" Version="12.0.0" />
+    <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="12.0.5" />
+    <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="12.0.5" />
+    <PackageVersion Include="Xaml.Behaviors.SourceGenerators" Version="12.0.5" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
