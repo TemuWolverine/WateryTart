@@ -21,6 +21,7 @@ using WateryTart.MusicAssistant;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Responses;
 using WateryTart.MusicAssistant.WsExtensions;
+using static WateryTart.Core.Converters.MetadataImageConverter;
 
 namespace WateryTart.Core.ViewModels;
 

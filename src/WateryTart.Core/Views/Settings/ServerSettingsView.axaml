@@ -184,8 +184,8 @@
             <TextBox
                       Height="36"
                       IsEnabled="{Binding !IsLoading}"
-                      Text="{Binding Server}"
-                      Watermark="192.168.1.100:8095" />
+                      PlaceholderText="192.168.1.100:8095"
+                      Text="{Binding Server}" />
             <TextBlock
                       FontSize="11"
                       Foreground="Gray"
@@ -198,8 +198,8 @@
             <TextBox
                       Height="36"
                       IsEnabled="{Binding !IsLoading}"
-                      Text="{Binding Username}"
-                      Watermark="Username" />
+                      PlaceholderText="Username"
+                      Text="{Binding Username}" />
         </StackPanel>
 
         <!--  Password  -->
@@ -209,8 +209,8 @@
                       Height="36"
                       IsEnabled="{Binding !IsLoading}"
                       PasswordChar="*"
-                      Text="{Binding Password}"
-                      Watermark="Password" />
+                      PlaceholderText="Password"
+                      Text="{Binding Password}" />
         </StackPanel>
 
         <!--  Save Button  -->

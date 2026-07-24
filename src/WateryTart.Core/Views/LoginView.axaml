@@ -133,7 +133,7 @@
                           IsEnabled="{Binding !IsLoading}"
                           Text="{Binding Server}"
                           TextWrapping="Wrap"
-                          Watermark="192.168.1.100:8095" />
+                          PlaceholderText="192.168.1.100:8095" />
                 <TextBlock
                           FontSize="11"
                           Foreground="Gray"
@@ -148,7 +148,7 @@
                           IsEnabled="{Binding !IsLoading}"
                           Text="{Binding Username}"
                           TextWrapping="Wrap"
-                          Watermark="Home Assistant username" />
+                          PlaceholderText="Home Assistant username" />
             </StackPanel>
 
             <!--  Password Input  -->
@@ -160,7 +160,7 @@
                           PasswordChar="*"
                           Text="{Binding Password}"
                           TextWrapping="Wrap"
-                          Watermark="Home Assistant password" />
+                          PlaceholderText="Home Assistant password" />
             </StackPanel>
 
             <!--  Sign In Button  -->

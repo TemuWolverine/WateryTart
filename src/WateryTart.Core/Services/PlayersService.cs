@@ -25,6 +25,7 @@ using WateryTart.MusicAssistant.Events;
 using WateryTart.MusicAssistant.Models;
 using WateryTart.MusicAssistant.Models.Enums;
 using WateryTart.MusicAssistant.WsExtensions;
+using static WateryTart.Core.Converters.MetadataImageConverter;
 
 namespace WateryTart.Core.Services;
 
