@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.0](https://github.com/TemuWolverine/WateryTart/compare/v1.6.2...v1.7.0) (2026-08-21)
+
+
+### Features
+
+* **Genres:** stubbed out genre support ([218d539](https://github.com/TemuWolverine/WateryTart/commit/218d539b226125317c8de10122c92a91923c4ba1))
+* Initial Avalonia12 support. Lots of little breaking changes that theoretically will have big performance improvements ([9e2b16c](https://github.com/TemuWolverine/WateryTart/commit/9e2b16ca0d06ebaa573b8926d4d4b6eae7ec270f))
+* **lyrics:** initial support on track lyrics ([42c9736](https://github.com/TemuWolverine/WateryTart/commit/42c9736c2e4a0448ec89e0fae2b8a309f82c60e4))
+
+
+### Bug Fixes
+
+* double click on a track will now play it if a player has been selected, else a menu will appear ([254b839](https://github.com/TemuWolverine/WateryTart/commit/254b83967b484f59d744ab1db5a153362a805499))
+* more genre fixes ([6b732c1](https://github.com/TemuWolverine/WateryTart/commit/6b732c1f03d4a4008d4f40a22de203035b8f88a2))
+* old converter change was missed ([b5f0de4](https://github.com/TemuWolverine/WateryTart/commit/b5f0de475aee8c2c5b2a1726006f337133fb09bb))
+* removed redundant imageconverter, switched to using the new proxyid. Changed to new placeholdertext from watermark (obsolete) ([e57331a](https://github.com/TemuWolverine/WateryTart/commit/e57331a8e4f1e8825ff35e551ada9ec8eec2e46a))
+* sendspin client setup needed tweaking to allow flac/higher bitrate playback ([a3e7985](https://github.com/TemuWolverine/WateryTart/commit/a3e79851a392f55f786b5c99ea3fba6030ff2922))
+* stops genre views from crashing ([c5ed204](https://github.com/TemuWolverine/WateryTart/commit/c5ed20429ef5d3cc1c01fcc1ce6839db1eaa378f))
+* svg crash ([8ab0ca7](https://github.com/TemuWolverine/WateryTart/commit/8ab0ca79d3cfece71b012931b9b0aca5d0e3a341))
+* updated packages to work with avalonia 12, some changes pushed upstream (asyncimageloader). fixed window chrome for Avalonia12 ([18fba0f](https://github.com/TemuWolverine/WateryTart/commit/18fba0f009888f82fd2f3a58320bcad529ce1461))
+
 ## [1.6.2](https://github.com/TemuWolverine/WateryTart/compare/v1.6.1...v1.6.2) (2026-03-27)
 
 
