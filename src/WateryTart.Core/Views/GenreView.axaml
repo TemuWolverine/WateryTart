@@ -1,0 +1,65 @@
+<UserControl
+          x:Class="WateryTart.Core.GenreView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:models="using:WateryTart.MusicAssistant.Models"
+          xmlns:viewmodels="using:WateryTart.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="viewmodels:GenreViewModel"
+          mc:Ignorable="d">
+    <UserControl.Resources />
+
+    <StackPanel Spacing="10">
+        <TextBlock
+                  HorizontalAlignment="Center"
+                  FontSize="28"
+                  FontWeight="Bold"
+                  Text="{Binding Genre.Name}" />
+        <StackPanel
+                  HorizontalAlignment="Center"
+                  Orientation="Horizontal"
+                  Spacing="20" />
+
+        <TabControl ItemsSource="{Binding GenreOverview}" SelectedItem="{Binding SelectedTab}">
+            <TabControl.Styles>
+                <Style Selector="TabControl">
+                    <Setter Property="ItemsPanel">
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="{Binding $parent[TabControl].Items.Count}" />
+                        </ItemsPanelTemplate>
+                    </Setter>
+                </Style>
+                <Style Selector="TabItem">
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+
+                <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+                    <Setter Property="Background" Value="White" />
+                </Style>
+
+                <Style Selector="TabItem:not(:selected) /template/ Border#PART_SelectedPipe">
+                    <Setter Property="Background" Value="#70FFFFFF" />
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+            </TabControl.Styles>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock
+                              FontSize="16"
+                              FontWeight="Bold"
+                              Text="{Binding Name}"
+                              TextAlignment="Center" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate x:DataType="models:GenreOverview">
+                    <ItemsControl ItemsSource="{Binding Items}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </StackPanel>
+</UserControl>

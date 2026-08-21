@@ -23,6 +23,7 @@
                 <ResourceInclude Source="avares://WateryTart.Core/Resources/Converters.axaml" />
                 <ResourceInclude Source="avares://WateryTart.Core/Resources/DataTemplates.axaml" />
                 <ResourceInclude Source="avares://WateryTart.Core/Resources/DataTemplates.Track.axaml" />
+                <ResourceInclude Source="avares://WateryTart.Core/Resources/DataTemplates.Genre.axaml" />
                 <ResourceInclude Source="avares://WateryTart.Core/Resources/GlobalResourceStyles.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -65,4 +66,7 @@
 
         <StyleInclude Source="/Resources/Styles.axaml" />
     </Application.Styles>
+
+
+    
 </Application>

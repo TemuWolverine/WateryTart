@@ -40,5 +40,6 @@ sealed class Program
             {
 
             })
+        .UseHarfBuzz()
             .LogToTrace();
 }

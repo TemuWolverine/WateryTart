@@ -265,7 +265,7 @@ public partial class App : Application
             hostView.Host.DataContext = vm;
             singleViewPlatform.MainView = hostView;
         }
-
+        this.AttachDeveloperTools();
         base.OnFrameworkInitializationCompleted();
     }
 

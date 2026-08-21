@@ -2,6 +2,9 @@
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using WateryTart.Core.Services;
 using WateryTart.MusicAssistant;
@@ -14,48 +17,50 @@ namespace WateryTart.Core.ViewModels
     {
 
         [Reactive] public partial Genre Genre { get; set; }
-
+        [Reactive] public partial ObservableCollection<GenreOverview> GenreOverview { get; set; }
         public GenreViewModel(MusicAssistantClient massClient, IScreen screen, PlayersService playersService, Genre? genre = null)
             : base(client: massClient, playersService: playersService)
         {
             HostScreen = screen;
             Genre = genre ?? new Genre();
+            GenreOverview = new ObservableCollection<GenreOverview>();
         }
+
+        public GenreOverview? SelectedTab { get; set; }
 
         public async Task LoadAsync()
         {
             if (Genre == null || Genre.ItemId == null || Genre.Provider == null)
                 return;
 
-            //Tracks = [];
             IsLoading = true;
             try
             {
-                var playlistResponse = await _client.WithWs().GetGenreAsync(Genre.ItemId, Genre.Provider);
-                if (playlistResponse?.Result != null)
+                var genreResponse = await _client.WithWs().GetGenreAsync(Genre.ItemId, Genre.Provider);
+                if (genreResponse?.Result != null)
                 {
-                    Genre = playlistResponse.Result;
-                    Title = playlistResponse.Result.Name;
+                    Genre = genreResponse.Result;
+                    Title = genreResponse.Result.Name;
+                }
+
+                var genreOverviewResponse = await _client.WithWs().GetGenreOverviewAsync(Genre.ItemId);
+                if (genreOverviewResponse?.Result != null)
+                {
+                    GenreOverview.Clear();
+                    foreach (var overview in genreOverviewResponse.Result)
+                    {
+                        GenreOverview.Add(overview);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                App.Logger?.LogError(ex, $"Error loading playlists");
+                App.Logger?.LogError(ex, $"Error loading genre");
             }
 
             try
             {
-                /*
-                var tracksResponse = await _client.WithWs().GetPlaylistTracksAsync(Playlist.ItemId, Playlist.Provider);
-                if (tracksResponse?.Result != null)
-                {
-                    foreach (var t in tracksResponse.Result)
-                        Tracks?.Add(new TrackViewModel(_client, _playersService!, t));
-                }
 
-                var totalSeconds = Tracks?.Sum(t => t.Track?.Duration ?? 0) ?? 0;
-                var ts = TimeSpan.FromSeconds((int)totalSeconds);
-                RunningTime = $"{(int)ts.TotalHours}h {ts.Minutes}m";*/
             }
             catch (Exception ex)
             {

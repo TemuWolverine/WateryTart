@@ -77,7 +77,21 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="vm:GenreViewModel">
-            <TextBlock Text="{Binding Genre.Name}" />
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource genreMediumReusableTemplate}" />
+            <!--
+            <StackPanel>
+            -->
+            <!--                                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Genre, Converter={StaticResource MetadataImageConverter}}"
+                                  Stretch="UniformToFill" />-->
+            <!--
+
+                <TextBlock Text="{Binding Genre.Name}" />
+            </StackPanel>-->
         </DataTemplate>
 
 
@@ -117,28 +131,28 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <!--<Menu>
-                <MenuItem Header="Filters">
-            -->
+			<MenuItem Header="Filters">
+			-->
             <!--  Global filters  -->
             <!--
-                    <MenuItem Header="Favourite Only" ToggleType="CheckBox" />
-                    <Separator />
+			<MenuItem Header="Favourite Only" ToggleType="CheckBox" />
+			<Separator />
 
-            -->
+			-->
             <!--  Options should load in based on the type  -->
             <!--
-                    <MenuItem
-                              Header="Album"
-                              IsChecked="True"
-                              ToggleType="CheckBox" />
-                    <MenuItem Header="Single" ToggleType="CheckBox" />
-                    <MenuItem Header="EP" ToggleType="CheckBox" />
-                    <MenuItem Header="Compilation" ToggleType="CheckBox" />
-                    <MenuItem Header="Live" ToggleType="CheckBox" />
-                    <MenuItem Header="Soundtrack" ToggleType="CheckBox" />
-                    <Separator />
-                </MenuItem>
-            </Menu>-->
+			<MenuItem
+			Header="Album"
+			IsChecked="True"
+			ToggleType="CheckBox" />
+			<MenuItem Header="Single" ToggleType="CheckBox" />
+			<MenuItem Header="EP" ToggleType="CheckBox" />
+			<MenuItem Header="Compilation" ToggleType="CheckBox" />
+			<MenuItem Header="Live" ToggleType="CheckBox" />
+			<MenuItem Header="Soundtrack" ToggleType="CheckBox" />
+			<Separator />
+			</MenuItem>
+			</Menu>-->
         </StackPanel>
 
         <!--  Items List  -->
