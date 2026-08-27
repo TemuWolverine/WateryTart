@@ -12,12 +12,12 @@ public class WindowsVolumeService : IVolumeService, IReaper
     public WindowsVolumeService(PlayersService playerService)
     {
         UioHookProvider.Instance.KeyTypedEnabled = false;
-        _hook = new EventLoopGlobalHook(SharpHook.Data.GlobalHookType.Keyboard);
+        _hook = new EventLoopGlobalHook();
         _hook.HookEnabled += OnHookEnabled;
         _hook.HookDisabled += OnHookDisabled;
         _hook.KeyReleased += OnKeyReleased;
 
-        _hook.RunAsync();
+        _hook.RunAsync(SharpHook.Data.GlobalHookType.Keyboard);
         _playerService = playerService;
     }
 
