@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/TemuWolverine/WateryTart/compare/v1.7.0...v1.7.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* updated icon paths to correct build issues ([4183194](https://github.com/TemuWolverine/WateryTart/commit/4183194da07e504b8baacbce23831a098ee28132))
+
 ## [1.7.0](https://github.com/TemuWolverine/WateryTart/compare/v1.6.2...v1.7.0) (2026-08-21)
 
 
