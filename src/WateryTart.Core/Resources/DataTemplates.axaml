@@ -4,7 +4,7 @@
           xmlns:app="clr-namespace:WateryTart.Core"
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:converters="using:WateryTart.Core.Converters"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:lottie="using:Avalonia.Labs.Lottie"
           xmlns:menus="using:WateryTart.Core.Views.Menus"
           xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
@@ -70,7 +70,7 @@
                       Grid.Column="2"
                       Classes="iconButton navButton"
                       Command="{Binding AlbumAltMenuCommand}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="{StaticResource AltMenuSize}"
                           Height="{StaticResource AltMenuSize}"
                           Kind="DotsVertical" />
@@ -121,7 +121,7 @@
                       Grid.Column="2"
                       Classes="iconButton navButton"
                       Command="{Binding PlaylistAltMenuCommand}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="{StaticResource AltMenuSize}"
                           Height="{StaticResource AltMenuSize}"
                           Kind="DotsVertical" />
@@ -191,7 +191,7 @@
                       Grid.Column="2"
                       Classes="iconButton navButton"
                       Command="{Binding AltMenuCommand}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="{StaticResource AltMenuSize}"
                           Height="{StaticResource AltMenuSize}"
                           Kind="DotsVertical" />

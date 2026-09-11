@@ -8,7 +8,7 @@
           xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
           xmlns:converters="clr-namespace:WateryTart.Core.Converters"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:lottie="using:Avalonia.Labs.Lottie"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:vm="clr-namespace:WateryTart.Core.ViewModels"
@@ -71,7 +71,7 @@
                               Command="{Binding ToggleFavoriteCommand}"
                               ToolTip.Tip="(Un)mark Favourite Album">
 
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   Kind="{Binding Album.Favorite, Converter={StaticResource BoolToIconKindConverter}, ConverterParameter='HeartOutline,Heart'}" />
@@ -100,7 +100,7 @@
                           VerticalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Play" />
@@ -120,7 +120,7 @@
                           VerticalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Shuffle" />
@@ -188,7 +188,7 @@
                                   Grid.Column="2"
                                   Classes="iconButton navButton"
                                   Command="{Binding TrackAltMenuCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="DotsVertical" />
@@ -255,7 +255,7 @@
                           HorizontalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Play" />
@@ -268,7 +268,7 @@
                           HorizontalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Shuffle" />
@@ -282,7 +282,7 @@
                       Command="{Binding ToggleFavoriteCommand}"
                       ToolTip.Tip="(Un)mark Favourite Album">
 
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="20"
                           Height="20"
                           Kind="{Binding Album.Favorite, Converter={StaticResource BoolToIconKindConverter}, ConverterParameter='HeartOutline,Heart'}" />
@@ -331,7 +331,7 @@
     -->
     <!--  Now Playing Indicator  -->
     <!--
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="24"
                                       Height="24"
                                       Margin="5,0,5,0"
@@ -353,7 +353,7 @@
                                   Grid.Column="2"
                                   Classes="iconButton navButton"
                                   Command="{Binding TrackAltMenuCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="DotsVertical" />

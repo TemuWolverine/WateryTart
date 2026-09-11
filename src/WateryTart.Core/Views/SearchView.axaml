@@ -6,7 +6,7 @@
           xmlns:asyncImageLoader="using:AsyncImageLoader"
           xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:vm="clr-namespace:WateryTart.Core.ViewModels"
           d:DesignHeight="450"
@@ -144,7 +144,7 @@
                                               FontSize="16"
                                               FontWeight="Bold"
                                               Text="Tracks" />
-                                    <iconPacks:PackIconMaterial
+                                    <ic:PackIconMaterial
                                               Width="25"
                                               Height="20"
                                               HorizontalAlignment="Right"
@@ -176,7 +176,7 @@
                                               FontSize="16"
                                               FontWeight="Bold"
                                               Text="Artists" />
-                                    <iconPacks:PackIconMaterial
+                                    <ic:PackIconMaterial
                                               Width="25"
                                               Height="20"
                                               HorizontalAlignment="Right"
@@ -202,7 +202,7 @@
                                               FontSize="16"
                                               FontWeight="Bold"
                                               Text="Albums" />
-                                    <iconPacks:PackIconMaterial
+                                    <ic:PackIconMaterial
                                               Width="25"
                                               Height="20"
                                               HorizontalAlignment="Right"
@@ -229,7 +229,7 @@
                                               FontSize="16"
                                               FontWeight="Bold"
                                               Text="Playlists" />
-                                    <iconPacks:PackIconMaterial
+                                    <ic:PackIconMaterial
                                               Width="25"
                                               Height="20"
                                               HorizontalAlignment="Right"

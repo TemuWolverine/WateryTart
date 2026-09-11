@@ -5,7 +5,7 @@
           xmlns:app="clr-namespace:WateryTart.Core"
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:viewmodels="using:WateryTart.Core.ViewModels"
           d:DesignHeight="450"
@@ -43,7 +43,7 @@
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             <TextBlock Classes="H1" Text="Recently Played" />
-            <iconPacks:PackIconMaterial
+            <ic:PackIconMaterial
                       HorizontalAlignment="Right"
                       Classes="H1"
                       Kind="History" />
@@ -71,7 +71,7 @@
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             <TextBlock Classes="H1" Text="Discover Artists" />
-            <iconPacks:PackIconMaterial
+            <ic:PackIconMaterial
                       HorizontalAlignment="Right"
                       Classes="H1"
                       Kind="ChevronRight" />
@@ -97,7 +97,7 @@
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             <TextBlock Classes="H1" Text="Discover Albums" />
-            <iconPacks:PackIconMaterial
+            <ic:PackIconMaterial
                       HorizontalAlignment="Right"
                       Classes="H1"
                       Kind="ChevronRight" />

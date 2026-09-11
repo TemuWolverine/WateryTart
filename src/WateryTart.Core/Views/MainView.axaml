@@ -5,7 +5,7 @@
           xmlns:converters="using:WateryTart.Core.Converters"
           xmlns:core="clr-namespace:WateryTart.Core"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:menus="using:WateryTart.Core.Views.Menus"
           xmlns:players1="using:WateryTart.Core.Views.Players"
@@ -91,7 +91,7 @@
                       Padding="0"
                       Classes="iconButton"
                       Command="{Binding GoBack}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="20"
                           Height="20"
                           Kind="ChevronLeft" />
@@ -144,7 +144,7 @@
                               Classes="iconButton navButton"
                               Command="{Binding GoHome}"
                               ToolTip.Tip="Home">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   HorizontalAlignment="Center"
@@ -157,7 +157,7 @@
                               Classes="iconButton navButton"
                               Command="{Binding GoMusic}"
                               ToolTip.Tip="Library">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   HorizontalAlignment="Center"
@@ -170,7 +170,7 @@
                               Classes="iconButton navButton"
                               Command="{Binding GoSearch}"
                               ToolTip.Tip="Search">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   HorizontalAlignment="Center"
@@ -183,7 +183,7 @@
                               Classes="iconButton navButton"
                               Command="{Binding GoPlayers}"
                               ToolTip.Tip="Players">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   HorizontalAlignment="Center"
@@ -196,7 +196,7 @@
                               Classes="iconButton navButton"
                               Command="{Binding GoSettings}"
                               ToolTip.Tip="Settings">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="20"
                                   Height="20"
                                   HorizontalAlignment="Center"

@@ -5,7 +5,7 @@
           xmlns:app="clr-namespace:WateryTart.Core"
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:converters="using:WateryTart.Core.Converters"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:menus="using:WateryTart.Core.Views.Menus"
           xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
           xmlns:views="using:WateryTart.Core"

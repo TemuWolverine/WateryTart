@@ -4,7 +4,7 @@
           xmlns:app="clr-namespace:WateryTart.Core"
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:converters="using:WateryTart.Core.Converters"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:lottie="using:Avalonia.Labs.Lottie"
           xmlns:menus="using:WateryTart.Core.Views.Menus"
           xmlns:viewModels="clr-namespace:WateryTart.Core.ViewModels"
@@ -44,7 +44,7 @@
                       Grid.Column="1"
                       Margin="0,0,0,0"
                       ColumnDefinitions="Auto,*">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Grid.Column="0"
                           Width="20"
                           Height="20"
@@ -74,7 +74,7 @@
                       VerticalAlignment="Top"
                       Classes="iconButton navButton"
                       Command="{Binding TrackAltMenuCommand}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="{StaticResource AltMenuSize}"
                           Height="{StaticResource AltMenuSize}"
                           Kind="DotsVertical" />
@@ -123,7 +123,7 @@
 
             <!--  Track Info  -->
             <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
-                <!--                <iconPacks:PackIconMaterial
+                <!--                <ic:PackIconMaterial
                           Grid.Column="0"
                           Width="20"
                           Height="20"
@@ -172,7 +172,7 @@
                       VerticalAlignment="Top"
                       Classes="iconButton navButton"
                       Command="{Binding TrackAltMenuCommand}">
-                <iconPacks:PackIconMaterial
+                <ic:PackIconMaterial
                           Width="{StaticResource AltMenuSize}"
                           Height="{StaticResource AltMenuSize}"
                           Kind="DotsVertical" />

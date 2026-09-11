@@ -8,7 +8,7 @@
           xmlns:controls="clr-namespace:WateryTart.Core.Controls"
           xmlns:converters="using:WateryTart.Core.Converters"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:loc="using:WateryTart.Core.Views.Players"
           xmlns:materialIcons="using:Material.Icons.Avalonia"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -138,7 +138,7 @@
 
                         <!--  shuffle  -->
                         <Button Classes="iconButton navButton" Command="{Binding ToggleShuffleCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="{Binding PlayersService.SelectedQueue.ShuffleEnabled, Converter={StaticResource BoolToIconKindConverter}, ConverterParameter='ShuffleDisabled,ShuffleVariant'}" />
@@ -146,7 +146,7 @@
 
                         <!--  previous  -->
                         <Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="SkipPrevious" />
@@ -162,7 +162,7 @@
                                   Classes="iconButton navButton"
                                   Command="{Binding PlayerPlayPauseCommand}"
                                   CornerRadius="25">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="25"
                                       Height="25"
                                       HorizontalAlignment="Center"
@@ -173,7 +173,7 @@
 
                         <!--  next  -->
                         <Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="SkipNext" />
@@ -181,7 +181,7 @@
 
                         <!--  cycle repeat mode  -->
                         <Button Classes="iconButton navButton" Command="{Binding CycleRepeatCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="{Binding PlayersService.SelectedQueue.RepeatMode, Converter={StaticResource RepeatModeToIconKindConverter}}" />
@@ -202,13 +202,13 @@
                                   HorizontalAlignment="Left"
                                   Classes="iconButton navButton"
                                   Command="{Binding ToggleFavoriteCommand}">
-                            <iconPacks:PackIconMaterial
+                            <ic:PackIconMaterial
                                       Width="20"
                                       Height="20"
                                       Kind="{Binding PlayersService.SelectedQueue.CurrentItem.MediaItem.Favorite, Converter={StaticResource BoolToIconKindConverter}, ConverterParameter='HeartOutline,Heart'}" />
                         </Button>
 
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Name="VolumeIcon"
                                   Grid.Column="1"
                                   Width="20"
@@ -414,19 +414,19 @@
                           Orientation="Horizontal"
                           Spacing="10">
                     <Button Classes="iconButton navButton" Command="{Binding PlayPreviousCommand}">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="45"
                                   Height="45"
                                   Kind="SkipPrevious" />
                     </Button>
                     <Button Classes="iconButton navButton" Command="{Binding PlayerPlayPauseCommand}">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="45"
                                   Height="45"
                                   Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}}" />
                     </Button>
                     <Button Classes="iconButton navButton" Command="{Binding PlayerNextCommand}">
-                        <iconPacks:PackIconMaterial
+                        <ic:PackIconMaterial
                                   Width="45"
                                   Height="45"
                                   Kind="SkipNext" />
@@ -442,7 +442,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Grid.Column="0"
                               Width="20"
                               Height="22"

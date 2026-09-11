@@ -6,7 +6,7 @@
           xmlns:asyncImageLoader="using:AsyncImageLoader"
           xmlns:behaviors="using:WateryTart.Core.Behaviors"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:reactiveui="using:ReactiveUI"
           xmlns:vm="using:WateryTart.Core.ViewModels"
@@ -114,7 +114,7 @@
                   Orientation="Horizontal"
                   Spacing="10">
 
-            <iconPacks:PackIconMaterial
+            <ic:PackIconMaterial
                       Width="18"
                       Height="18"
                       VerticalAlignment="Center"

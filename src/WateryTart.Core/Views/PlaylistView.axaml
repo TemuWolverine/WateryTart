@@ -6,7 +6,7 @@
           xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
           xmlns:converters="clr-namespace:WateryTart.Core.Converters"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:vm="clr-namespace:WateryTart.Core.ViewModels"
           d:DesignHeight="450"
@@ -68,7 +68,7 @@
                           VerticalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Play" />
@@ -88,7 +88,7 @@
                           VerticalAlignment="Center"
                           Orientation="Horizontal"
                           Spacing="10">
-                    <iconPacks:PackIconMaterial
+                    <ic:PackIconMaterial
                               Width="15"
                               Height="15"
                               Kind="Shuffle" />
