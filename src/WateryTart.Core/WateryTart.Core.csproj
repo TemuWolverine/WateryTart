@@ -82,13 +82,13 @@
 
 	<ItemGroup>
 	  <Reference Include="IconPacks.Avalonia.Core">
-	    <HintPath>..\..\..\IconPacks.Avalonia\src\IconPacks.Avalonia.MaterialDesign\bin\Debug\net10.0\IconPacks.Avalonia.Core.dll</HintPath>
+	    <HintPath>..\binaries\IconPacks.Avalonia.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="IconPacks.Avalonia.Material">
-	    <HintPath>..\binaries\IconPacks.Avalonia.Material.dll</HintPath>
+		  <HintPath>..\binaries\IconPacks.Avalonia.Material.dll</HintPath>
 	  </Reference>
 	  <Reference Include="IconPacks.Avalonia.MaterialDesign">
-	    <HintPath>..\..\..\IconPacks.Avalonia\src\IconPacks.Avalonia.MaterialDesign\bin\Debug\net10.0\IconPacks.Avalonia.MaterialDesign.dll</HintPath>
+	    <HintPath>..\binaries\IconPacks.Avalonia.MaterialDesign.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 
