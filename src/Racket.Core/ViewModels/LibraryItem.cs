@@ -1,0 +1,32 @@
+using Avalonia.Xaml.Interactivity;
+using ReactiveUI;
+using System.Reactive;
+using System.Windows.Input;
+using Xaml.Behaviors.SourceGenerators;
+
+
+namespace Racket.Core.ViewModels;
+
+[GenerateTypedInvokeCommandAction]
+public partial class ClickAction : StyledElementAction
+{
+    [ActionCommand]
+    private ICommand? _command;
+
+    [ActionParameter]
+    private string? _commandParameter;
+}
+
+public class LibraryItem : ReactiveObject
+{
+    public string Title { get; set; } = string.Empty;
+    public ICommand? ClickedCommand { get; set; }
+    public string LowerTitle => Title.ToLowerInvariant();
+
+    public IconPacks.Avalonia.Material.PackIconMaterialKind Icon { get; set; }
+    public int Count
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+}

@@ -1,0 +1,112 @@
+﻿<UserControl
+          x:Class="Racket.Core.Views.PlaylistView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:Racket.Core"
+          xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+          xmlns:converters="clr-namespace:Racket.Core.Converters"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:vm="clr-namespace:Racket.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="vm:PlaylistViewModel"
+          mc:Ignorable="d">
+
+    <StackPanel Margin="10,0,0,0">
+        <StackPanel HorizontalAlignment="Center" Spacing="20">
+            <Border
+                      Width="240"
+                      Height="240"
+                      Margin="0,10,0,0"
+                      BoxShadow="0 0 20 0 Black">
+                <Border
+                          Width="240"
+                          Height="240"
+                          ClipToBounds="True"
+                          CornerRadius="8">
+                    <asyncImageLoader:AdvancedImage
+                              Width="240"
+                              Height="240"
+                              FallbackImage="{x:Static app:App.FallbackImage}"
+                              Loader="{x:Static app:App.ImageLoaderInstance}"
+                              Source="{Binding Playlist, Converter={StaticResource MetadataImageConverter}}"
+                              Stretch="UniformToFill" />
+                </Border>
+            </Border>
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock
+                          HorizontalAlignment="Center"
+                          Classes="H1"
+                          Text="{Binding Playlist.Name}" />
+                <StackPanel
+                          HorizontalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="5">
+                    <TextBlock FontWeight="SemiBold" Text="{Binding Tracks.Count}" />
+                    <TextBlock Text="Tracks • " />
+
+                    <TextBlock FontWeight="SemiBold" Text="{Binding RunningTime}" />
+                </StackPanel>
+
+            </StackPanel>
+        </StackPanel>
+
+        <!--  Action Buttons  -->
+        <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*, *">
+            <Button
+                      Grid.Column="0"
+                      Height="50"
+                      Margin="0,10,10,10"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Center"
+                      Command="{Binding PlayCommand}"
+                      CornerRadius="10">
+                <StackPanel
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="10">
+                    <ic:PackIconMaterial
+                              Width="15"
+                              Height="15"
+                              Kind="Play" />
+                    <TextBlock FontWeight="Bold" Text="Play" />
+                </StackPanel>
+            </Button>
+            <Button
+                      Grid.Column="1"
+                      Height="50"
+                      Margin="10,10,10,10"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Center"
+                      Command="{Binding PlayShuffleCommand}"
+                      CornerRadius="10">
+                <StackPanel
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="10">
+                    <ic:PackIconMaterial
+                              Width="15"
+                              Height="15"
+                              Kind="Shuffle" />
+                    <TextBlock FontWeight="Bold" Text="Shuffle" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!--  Tracks  -->
+        <ItemsControl
+                  Background="Transparent"
+                  ItemTemplate="{StaticResource trackMediumReusableTemplate}"
+                  ItemsSource="{Binding Tracks}">
+            <ItemsControl.Styles>
+                <Style Selector="ContentPresenter">
+                    <Setter Property="Padding" Value="0,10,0,10" />
+                </Style>
+            </ItemsControl.Styles>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

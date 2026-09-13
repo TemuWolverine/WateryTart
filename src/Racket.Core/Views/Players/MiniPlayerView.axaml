@@ -1,0 +1,82 @@
+﻿<UserControl
+          x:Class="Racket.Core.Views.Players.MiniPlayerView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:Racket.Core"
+          xmlns:asyncImageLoader="using:AsyncImageLoader"
+          xmlns:converters="using:Racket.Core.Converters"
+          xmlns:core="clr-namespace:Racket.Core"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:players="using:Racket.Core.ViewModels.Players"
+          xmlns:vm="clr-namespace:Racket.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="vm:Players.MiniPlayerViewModel"
+          mc:Ignorable="d">
+
+    <StackPanel>
+        <ProgressBar
+                  Foreground="{Binding ColourService.ColourAccent}"
+                  Maximum="100"
+                  Minimum="0"
+                  Value="{Binding PlayersService.Progress}" />
+        <Grid x:Name="grdPlayer" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <asyncImageLoader:AdvancedImage
+                      Grid.Column="0"
+                      Width="50"
+                      Height="50"
+                      Loader="{x:Static core:App.ImageLoaderInstance}"
+                      Source="{Binding Path=PlayersService.SelectedPlayer.CurrentMedia.ImageUrl}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="Tapped">
+                        <InvokeCommandAction Command="{Binding ClickedCommand}" />
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </asyncImageLoader:AdvancedImage>
+
+            <StackPanel Grid.Column="1" Margin="15,5,5,5">
+                <TextBlock FontSize="14" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.Artist}" />
+                <TextBlock FontWeight="Bold" Text="{Binding PlayersService.SelectedPlayer.CurrentMedia.Title}" />
+                <TextBlock FontSize="12" Text="{Binding PlayersService.SelectedPlayer.Name}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button
+                          Margin="3,0,3,0"
+                          Classes="iconButton navButton"
+                          Command="{Binding PlayPreviousCommand}">
+                    <ic:PackIconMaterial
+                              Width="25"
+                              Height="22"
+                              Kind="SkipPrevious" />
+                </Button>
+                <Button
+                          Margin="3,0,3,0"
+                          Classes="iconButton navButton"
+                          Command="{Binding PlayerPlayPauseCommand}">
+                    <ic:PackIconMaterial
+                              Width="25"
+                              Height="22"
+                              Kind="{Binding PlayersService.SelectedPlayer.PlaybackState, Converter={StaticResource PlaybackStateToIconConverter}, FallbackValue={x:Static ic:PackIconMaterialKind.Play}}" />
+                </Button>
+                <Button
+                          Margin="3,0,20,0"
+                          Classes="iconButton navButton"
+                          Command="{Binding PlayerNextCommand}">
+                    <ic:PackIconMaterial
+                              Width="25"
+                              Height="22"
+                              Kind="SkipNext" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

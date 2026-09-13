@@ -1,0 +1,72 @@
+﻿<Application
+          x:Class="Racket.Core.App"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:Racket.Core"
+          xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+          xmlns:converters="using:Racket.Core.Converters"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
+          xmlns:menus="using:Racket.Core.Views.Menus"
+          xmlns:viewModels="clr-namespace:Racket.Core.ViewModels"
+          xmlns:views="using:Racket.Core"
+          xmlns:vm1="using:Racket.Core.ViewModels.Menus"
+          Name="Racket"
+          RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--  Controls  -->
+                <ResourceInclude Source="avares://Racket.Core/Controls/ResponsiveColumnPanel.axaml" />
+                <ResourceInclude Source="avares://Racket.Core/Controls/BindableCommandSlider.axaml" />
+
+                <!--  Resource Dictionaries  -->
+                <ResourceInclude Source="avares://Racket.Core/Resources/Converters.axaml" />
+                <ResourceInclude Source="avares://Racket.Core/Resources/DataTemplates.axaml" />
+                <ResourceInclude Source="avares://Racket.Core/Resources/DataTemplates.Track.axaml" />
+                <ResourceInclude Source="avares://Racket.Core/Resources/DataTemplates.Genre.axaml" />
+                <ResourceInclude Source="avares://Racket.Core/Resources/GlobalResourceStyles.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.DataTemplates>
+        <app:ViewLocator />
+
+        <!--  "Keyless"/data-type-only data templates must go here  -->
+        <DataTemplate DataType="vm1:MenuViewModel">
+            <menus:MenuView DataContext="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="viewModels:Popups.TrackInfoViewModel">
+            <views:TrackInfoView DataContext="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="viewModels:Popups.PopupViewModel">
+            <Border
+                      Padding="20"
+                      Background="Black"
+                      CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                              Margin="0,0,0,10"
+                              FontSize="18"
+                              FontWeight="Bold"
+                              Text="{Binding Title}" />
+                    <TextBlock Text="{Binding Message}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
+        <StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
+        <!--<StyleInclude Source="avares://IconPacks.Avalonia.FontAwesome/FontAwesome.axaml" />-->
+
+        <StyleInclude Source="/Resources/Styles.axaml" />
+    </Application.Styles>
+
+
+    
+</Application>

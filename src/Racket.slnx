@@ -1,0 +1,52 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="ARMRELEASE" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="X64Debug" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../.gitignore" />
+    <File Path="../README.md" />
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/Solution Items/Build/">
+    <File Path="../.github/workflows/build-and-publish.yml" />
+    <File Path="../.github/workflows/gh-pages.yml" />
+    <File Path="../.github/workflows/release-please.yml" />
+  </Folder>
+  <Folder Name="/Submodules/">
+    <Project Path="WateryTart.MusicAssistant/src/WateryTart.MusicAssistant.Generators.Attributes/WateryTart.MusicAssistant.Generators.Attributes.csproj">
+      <BuildType Solution="ARMRELEASE|*" Project="Release" />
+      <BuildType Solution="X64Debug|*" Project="Release" />
+    </Project>
+    <Project Path="WateryTart.MusicAssistant/src/WateryTart.MusicAssistant.Generators/WateryTart.MusicAssistant.Generators.csproj">
+      <BuildType Solution="ARMRELEASE|*" Project="Release" />
+      <BuildType Solution="X64Debug|*" Project="Release" />
+    </Project>
+    <Project Path="WateryTart.MusicAssistant/src/WateryTart.MusicAssistant/WateryTart.MusicAssistant.csproj">
+      <BuildType Solution="ARMRELEASE|*" Project="Release" />
+      <BuildType Solution="X64Debug|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Project Path="Racket.Core/Racket.Core.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
+  </Project>
+  <Project Path="Racket.Platform.Linux/Racket.Platform.Linux.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
+  </Project>
+  <Project Path="Racket.Platform.Windows/Racket.Platform.Windows.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="ARMRELEASE|x64" Project="ARM64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+    <Platform Solution="Release|x64" Project="x64" />
+  </Project>
+</Solution>

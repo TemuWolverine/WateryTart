@@ -1,0 +1,156 @@
+using Autofac;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Racket.Core.Services;
+using WateryTart.MusicAssistant;
+using WateryTart.MusicAssistant.WsExtensions;
+namespace Racket.Core.ViewModels;
+
+public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>
+{
+    [Reactive] public partial ObservableCollection<LibraryItem> Items { get; set; }
+    [Reactive] public override partial bool IsLoading { get; set; }
+
+    [Reactive] public partial ObservableCollection<TrackViewModel> RecentlyAdded { get; set; }
+    public LibraryViewModel(
+        MusicAssistantClient massClient,
+        IScreen screen,
+        ILoggerFactory loggerFactory,
+        PlayersService playersService) : base(loggerFactory, massClient, playersService)
+    {
+        RecentlyAdded = [];
+        HostScreen = screen;
+        Title = "Library";
+        var artists = new LibraryItem()
+        {
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Account,
+            Title = "Artists",
+            ClickedCommand = new RelayCommand(() =>
+            {
+               var vm = new LoadMoreListViewModel<ArtistViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Artists", true);
+               screen.Router.Navigate.Execute(vm);
+            })
+        };
+
+        var albums = new LibraryItem()
+        {
+            Title = "Albums",
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Album,
+            ClickedCommand = new RelayCommand(() =>
+            {
+                //var vm = App.Container.Resolve<AlbumsListViewModel>();
+                var vm = new LoadMoreListViewModel<AlbumViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Albums", true);
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+
+        var tracks = new LibraryItem()
+        {
+            Title = "Tracks",
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.MusicNoteEighth,
+            ClickedCommand = new RelayCommand(() =>
+            {
+                var vm = new LoadMoreListViewModel<TrackViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Tracks", false);
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+        var playlists = new LibraryItem
+        {
+            Title = "Playlists",
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.PlaylistMusic,
+            ClickedCommand = new RelayCommand(() =>
+            {
+                var vm = new LoadMoreListViewModel<PlaylistViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Playlists", true);
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+
+        var genres = new LibraryItem 
+        { 
+            Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Fuse, 
+            Title = "Genres" ,
+            ClickedCommand = new RelayCommand(() =>
+            {
+                var vm = new LoadMoreListViewModel<GenreViewModel>(_client, screen, _playersService!, App.Container.Resolve<ILoggerFactory>(), "Genres", true);
+                screen.Router.Navigate.Execute(vm);
+            })
+        };
+
+
+
+        var podcasts = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Podcast, Title = "Podcasts" };
+        var radios = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.RadioTower, Title = "Radios" };
+        var audiobooks = new LibraryItem { Icon = IconPacks.Avalonia.Material.PackIconMaterialKind.Book, Title = "Audiobooks" };
+
+        Items =
+       [
+           artists,
+           albums,
+           tracks,
+           playlists,
+           genres,
+           //podcasts,
+           //radios,
+           //audiobooks
+       ];
+
+        // Load counts asynchronously in the background
+#pragma warning disable CS4014 // Fire-and-forget intentional - loads data asynchronously
+        _ = LoadLibraryCountsAsync(artists, albums, tracks, playlists, genres, podcasts, radios, audiobooks);
+        _ = LoadRecentlyAdded();
+#pragma warning restore CS4014
+    }
+
+    private async Task LoadRecentlyAdded()
+    {
+        RecentlyAdded = [];
+        var response = await _client.WithWs().GetRecentlyAddedTracksAsync();
+
+        foreach (var r in response.Result!)
+        {
+            var vm = App.Container.Resolve<TrackViewModel>();
+            vm.Track = r;
+            RecentlyAdded.Add(vm);
+        }
+
+    }
+    private async Task LoadLibraryCountsAsync(LibraryItem artists, LibraryItem albums, LibraryItem tracks, LibraryItem playlists, LibraryItem genres, LibraryItem podcasts, LibraryItem radios, LibraryItem audiobooks)
+    {
+        try
+        {
+            var artistCountResponse = await _client.WithWs().GetArtistCountAsync();
+            artists.Count = artistCountResponse.Result;
+
+            var albumCountResponse = await _client.WithWs().GetAlbumsCountAsync();
+            albums.Count = albumCountResponse.Result;
+
+            var trackCountResponse = await _client.WithWs().GetTrackCountAsync();
+            tracks.Count = trackCountResponse.Result;
+
+            //Currently the API  docs has this call but it does not return a result
+            var genreCountResponse = await _client.WithWs().GetGenreCountAsync();
+            genres.Count = genreCountResponse.Result;
+
+            var podcastCountResponse = await _client.WithWs().GetPodcastCountAsync();
+            podcasts.Count = podcastCountResponse.Result;
+
+            var radiosCountResponse = await _client.WithWs().GetRadiosCountAsync();
+            radios.Count = radiosCountResponse.Result;
+
+            var audiobookCountResponse = await _client.WithWs().GetAudiobookCountAsync();
+            audiobooks.Count = audiobookCountResponse.Result;
+
+            var playlistsCountResponse = await _client.WithWs().GetPlaylistsCountAsync();
+            playlists.Count = playlistsCountResponse.Result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error loading counts");
+        }
+    }
+}
