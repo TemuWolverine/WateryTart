@@ -31,7 +31,7 @@ public partial class MainWindow : Window
 
         this.Activated += (s, e) =>
         {
-            vm = Host.DataContext as MainWindowViewModel;
+          //  vm = Host.DataContext as MainWindowViewModel;
             if (vm == null)
                 return;
 

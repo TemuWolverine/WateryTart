@@ -96,6 +96,9 @@
 		<Compile Update="Controls\ResponsiveColumnPanel.axaml.cs">
 			<DependentUpon>ResponsiveColumnPanel.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\LargeView\HostView.axaml.cs">
+		  <DependentUpon>HostView.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Settings\KeyboardVolumeKeyBindingsView.axaml.cs">
 			<DependentUpon>KeyboardVolumeKeyBindingsView.axaml</DependentUpon>
 		</Compile>

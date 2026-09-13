@@ -5,9 +5,10 @@
           xmlns:WateryTart="using:Racket.Core.Views"
           xmlns:app="using:Racket"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:largeview="using:Racket.Core.Views.LargeView"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           x:Name="window"
-          Title="Watery Tart"
+          Title="Racket"
           Width="800"
           Height="480"
           MinWidth="439"
@@ -16,9 +17,6 @@
           Icon="avares://Racket.Core/Assets/logo_square.png"
           WindowDecorations="Full">
     <Window.Resources />
-    <!--
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaToDecorationsHint="True"
-    -->
-    <WateryTart:MainView x:Name="Host" />
+    <!--<WateryTart:MainView x:Name="Host" />-->
+    <largeview:HostView x:Name="Host" />
 </Window>
