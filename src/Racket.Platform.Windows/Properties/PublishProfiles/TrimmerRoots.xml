@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<linker>
-	<assembly fullname="Racket.Platform.Windows">
-		<type fullname="Racket.Core.ViewModels.ViewModels*" preserve="all"/>
-	</assembly>
-</linker>

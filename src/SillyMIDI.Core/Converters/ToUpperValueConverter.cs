@@ -1,0 +1,19 @@
+﻿using Avalonia.Data.Converters;
+using System;
+using System.Globalization;
+
+namespace SillyMIDI.Core.Converters;
+
+public class ToUpperValueConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var str = value as string;
+        return string.IsNullOrEmpty(str) ? string.Empty : str.ToUpper();
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return value;
+    }
+}

@@ -1,0 +1,169 @@
+<UserControl
+          x:Class="SillyMIDI.Core.Views.Home2View"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="clr-namespace:SillyMIDI.Core"
+          xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:viewmodels="using:SillyMIDI.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="viewmodels:Home2ViewModel"
+          mc:Ignorable="d">
+
+    <UserControl.Styles>
+        <!--  This cascades to all children  -->
+        <Style Selector="#lbRecommendations ContentPresenter#PART_ContentPresenter:pointerover">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <!--  this 'undoes' the cascading  -->
+        <Style Selector="ListBox.hoverable ContentPresenter#PART_ContentPresenter:pointerover">
+            <Setter Property="Background" Value="#11FFFFFF" />
+        </Style>
+
+
+    </UserControl.Styles>
+    <StackPanel Margin="10">
+
+        <!--  Recently played tracks  -->
+        <Grid
+                  Margin="0,10,10,0"
+                  Background="Transparent"
+                  ToolTip.Tip="Click to view more recently played">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="Tapped">
+                    <InvokeCommandAction Command="{Binding RecentlyPlayedTracksCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <TextBlock Classes="H1" Text="Recently Played" />
+            <ic:PackIconMaterial
+                      HorizontalAlignment="Right"
+                      Classes="H1"
+                      Kind="History" />
+        </Grid>
+
+        <ItemsControl
+                  Padding="0"
+                  Background="Transparent"
+                  ItemTemplate="{StaticResource trackMediumReusableTemplate}"
+                  ItemsSource="{Binding RecentTracks}">
+            <ItemsControl.Styles>
+                <Style Selector="ContentPresenter">
+                    <Setter Property="Padding" Value="0,10,0,10" />
+                </Style>
+            </ItemsControl.Styles>
+        </ItemsControl>
+
+        <!-- "Special" playlists -->
+
+        <!--  Discover Artists  -->
+        <Grid Margin="0,40,10,0" Background="Transparent">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="Tapped">
+                    <InvokeCommandAction Command="{Binding DiscoverArtistsCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <TextBlock Classes="H1" Text="Discover Artists" />
+            <ic:PackIconMaterial
+                      HorizontalAlignment="Right"
+                      Classes="H1"
+                      Kind="ChevronRight" />
+        </Grid>
+
+        <ListBox
+                  Background="Transparent"
+                  ItemTemplate="{StaticResource artistMediumReusableTemplate}"
+                  ItemsSource="{Binding DiscoverArtists}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="15" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+        <!--  Discover Albums  -->
+        <Grid Margin="0,40,10,0" Background="Transparent">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="Tapped">
+                    <InvokeCommandAction Command="{Binding DiscoverAlbumsCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <TextBlock Classes="H1" Text="Discover Albums" />
+            <ic:PackIconMaterial
+                      HorizontalAlignment="Right"
+                      Classes="H1"
+                      Kind="ChevronRight" />
+        </Grid>
+
+        <ItemsControl
+                  Margin="0,0,0,20"
+                  Background="Transparent"
+                  ItemsSource="{Binding DiscoverAlbums}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemSpacing="15" ItemWidth="200" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+
+                    <!--  "Medium" Album Template  -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="200" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border
+                                  Grid.Row="0"
+                                  Width="180"
+                                  Height="180"
+                                  Margin="0,0,0,5"
+                                  HorizontalAlignment="Center"
+                                  BoxShadow="0 0 20 0 #A5000000">
+                            <Border ClipToBounds="True" CornerRadius="10">
+                                <asyncImageLoader:AdvancedImage
+                                          Width="180"
+                                          Height="180"
+                                          FallbackImage="{x:Static app:App.FallbackImage}"
+                                          Loader="{x:Static app:App.ImageLoaderInstance}"
+                                          Source="{Binding Path=Album, Converter={StaticResource MetadataImageConverter}}">
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="Tapped">
+                                            <InvokeCommandAction Command="{Binding AlbumFullViewCommand}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
+                                </asyncImageLoader:AdvancedImage>
+                            </Border>
+                        </Border>
+
+                        <StackPanel Grid.Row="1">
+                            <TextBlock
+                                      Margin="0,5,0,0"
+                                      HorizontalAlignment="Left"
+                                      FontSize="14"
+                                      FontWeight="Bold"
+                                      Text="{Binding Album.Name}"
+                                      TextWrapping="WrapWithOverflow" />
+                            <TextBlock FontSize="14" Text="{Binding Album.Artists[0].Name}" />
+
+                            <!--                        <TextBlock
+                                  FontSize="14"
+                                  Foreground="{StaticResource FadedTextColourBrush}"
+                                  Text="{Binding Album.Year}" />-->
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+
+    </StackPanel>
+</UserControl>

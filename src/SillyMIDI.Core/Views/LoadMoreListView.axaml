@@ -1,0 +1,177 @@
+<UserControl
+          x:Class="SillyMIDI.Core.Views.LoadMoreListView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:app="using:SillyMIDI.Core"
+          xmlns:asyncImageLoader="using:AsyncImageLoader"
+          xmlns:behaviors="using:SillyMIDI.Core.Behaviors"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:ic="using:IconPacks.Avalonia.Material"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:reactiveui="using:ReactiveUI"
+          xmlns:vm="using:SillyMIDI.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="{x:Type vm:ILoadMoreListViewModel}"
+          mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="vm:AlbumViewModel">
+            <StackPanel>
+                <Border
+                          Width="195"
+                          Height="195"
+                          Margin="0,0,0,5"
+                          BoxShadow="0 0 10 0 Black">
+                    <Border ClipToBounds="True" CornerRadius="5">
+                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Album, Converter={StaticResource MetadataImageConverter}}" />
+                    </Border>
+                </Border>
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          Text="{Binding Album.Name}"
+                          TextTrimming="CharacterEllipsis" />
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          Opacity="0.7"
+                          Text="{Binding Album.Artists, Converter={StaticResource ArtistsToStringConverter}}"
+                          TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:PlaylistViewModel">
+            <StackPanel>
+                <Border
+                          Width="195"
+                          Height="195"
+                          Margin="0,0,0,5"
+                          BoxShadow="0 0 10 0 Black">
+                    <Border ClipToBounds="True" CornerRadius="5">
+                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Playlist, Converter={StaticResource MetadataImageConverter}}"
+                                  Stretch="UniformToFill" />
+                    </Border>
+                </Border>
+                <TextBlock
+                          Margin="-10,0,0,0"
+                          FontWeight="SemiBold"
+                          Text="{Binding Playlist.Name}"
+                          TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:ArtistViewModel">
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource artistMediumReusableTemplate}" />
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:TrackViewModel">
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource trackMediumReusableTemplate}" />
+        </DataTemplate>
+
+        <DataTemplate x:DataType="vm:GenreViewModel">
+            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource genreMediumReusableTemplate}" />
+            <!--
+            <StackPanel>
+            -->
+            <!--                                        <asyncImageLoader:AdvancedImage
+                                  Width="195"
+                                  Height="195"
+                                  FallbackImage="{x:Static app:App.FallbackImage}"
+                                  Loader="{x:Static app:App.ImageLoaderInstance}"
+                                  Source="{Binding Path=Genre, Converter={StaticResource MetadataImageConverter}}"
+                                  Stretch="UniformToFill" />-->
+            <!--
+
+                <TextBlock Text="{Binding Genre.Name}" />
+            </StackPanel>-->
+        </DataTemplate>
+
+
+    </UserControl.DataTemplates>
+    <UserControl.Resources>
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel ItemSpacing="15" ItemWidth="200" />
+        </ItemsPanelTemplate>
+
+        <ItemsPanelTemplate x:Key="StackPanelTemplate">
+            <StackPanel />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+
+    <StackPanel>
+
+        <!--  Sorting and Filtering Options  -->
+        <StackPanel
+                  Margin="0,0,0,10"
+                  Orientation="Horizontal"
+                  Spacing="10">
+
+            <ic:PackIconMaterial
+                      Width="18"
+                      Height="18"
+                      VerticalAlignment="Center"
+                      Kind="Sort" />
+
+            <ComboBox
+                      ItemsSource="{Binding SortingOptions}"
+                      SelectedIndex="0"
+                      SelectedItem="{Binding SelectedSortingOption}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <!--<Menu>
+			<MenuItem Header="Filters">
+			-->
+            <!--  Global filters  -->
+            <!--
+			<MenuItem Header="Favourite Only" ToggleType="CheckBox" />
+			<Separator />
+
+			-->
+            <!--  Options should load in based on the type  -->
+            <!--
+			<MenuItem
+			Header="Album"
+			IsChecked="True"
+			ToggleType="CheckBox" />
+			<MenuItem Header="Single" ToggleType="CheckBox" />
+			<MenuItem Header="EP" ToggleType="CheckBox" />
+			<MenuItem Header="Compilation" ToggleType="CheckBox" />
+			<MenuItem Header="Live" ToggleType="CheckBox" />
+			<MenuItem Header="Soundtrack" ToggleType="CheckBox" />
+			<Separator />
+			</MenuItem>
+			</Menu>-->
+        </StackPanel>
+
+        <!--  Items List  -->
+        <ListBox
+                  Name="ItemsListBox"
+                  Background="Transparent"
+                  ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem}">
+
+            <Interaction.Behaviors>
+                <behaviors:GridScrollBehavior
+                          HasMoreItems="{Binding HasMoreItems}"
+                          IsLoading="{Binding IsLoading}"
+                          LoadMoreCommand="{Binding LoadMoreCommand}" />
+                <EventTriggerBehavior EventName="SelectionChanged" SourceObject="ItemsListBox">
+                    <InvokeCommandAction Command="{Binding GoToItem}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+        </ListBox>
+
+    </StackPanel>
+</UserControl>

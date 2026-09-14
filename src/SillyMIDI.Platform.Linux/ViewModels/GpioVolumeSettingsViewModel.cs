@@ -1,0 +1,89 @@
+﻿using IconPacks.Avalonia.Material;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
+using SillyMIDI.Core.Extensions;
+using SillyMIDI.Core.Settings;
+using SillyMIDI.Core.ViewModels;
+
+namespace SillyMIDI.Platform.Linux.ViewModels;
+
+public partial class GpioVolumeSettingsViewModel : ReactiveObject, IViewModelBase, IHaveSettings
+{
+    private bool _isEnabled;
+    private int _pinA = 17;
+    private int _pinB = 27;
+    private int _pulsesPerTurn = 20;
+    private readonly ISettings _settings;
+    public IScreen HostScreen { get; }
+    public PackIconMaterialKind Icon => PackIconMaterialKind.DeveloperBoard;
+
+    public bool IsEnabled
+    {
+        get => _isEnabled;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _isEnabled, value);
+            _settings.Save();
+            _gpioVolumeService.SetEnable(value);
+        }
+    }
+
+    [Reactive] public partial bool IsLoading { get; set; } = false;
+
+    public int PinA
+    {
+        get => _pinA;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _pinA, value);
+            _settings.Save();
+        }
+    }
+
+    public int PinB
+    {
+        get => _pinB;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _pinB, value);
+            _settings.Save();
+        }
+    }
+
+    public int PulsesPerTurn
+    {
+        get => _pulsesPerTurn;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _pulsesPerTurn, value);
+            _settings.Save();
+        }
+    }
+
+    public bool ShowMiniPlayer => false;
+    public bool ShowNavigation => true;
+    public string Title => "GPIO Settings";
+    public string? UrlPathSegment => null;
+
+    public string Description => "GPIO pin settings for rotary encoders for volume control";
+
+    private readonly GpioVolumeService _gpioVolumeService;
+    public GpioVolumeSettingsViewModel(ISettings settings, IScreen hostScreen, GpioVolumeService gpioVolumeService)
+    {
+        _gpioVolumeService = gpioVolumeService;
+        _settings = settings;
+        HostScreen = hostScreen;
+        IsEnabled = settings.CustomSettings.ContainsKey("GpioEnable") &&
+            settings.CustomSettings["GpioEnable"] is bool enabled &&
+            enabled;
+
+        var gpioA = settings.CustomSettings.TryGet<int>("GpioPinA");
+        PinA = gpioA != null ? (int)gpioA : 17;
+
+        var gpioB = settings.CustomSettings.TryGet<int>("GpioPinB");
+        PinB = gpioB != null ? (int)gpioB : 27;
+
+        var GpioPulsesPerTurn = settings.CustomSettings.TryGet<int>("GpioPulsesPerTurn");
+        PulsesPerTurn = GpioPulsesPerTurn != null ? (int)GpioPulsesPerTurn : 20;
+    }
+}
