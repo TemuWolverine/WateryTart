@@ -14,9 +14,9 @@
           MinWidth="439"
           Padding="0"
           ExtendClientAreaToDecorationsHint="True"
-          Icon="avares://SillyMIDI.Core/Assets/logo_square.png"
+          Icon="avares://SillyMIDI.Core/Assets/logo.png"
           WindowDecorations="Full">
-    
+
     <!--<WateryTart:MainView x:Name="Host" />-->
     <largeview:HostView x:Name="Host" />
 </Window>

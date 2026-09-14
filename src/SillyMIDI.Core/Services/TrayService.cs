@@ -32,7 +32,7 @@ public class TrayService(ISettings settings) : ITrayService
 
         try
         {
-            var uri = new Uri("avares://SillyMIDI.Core/Assets/logo_square.ico");
+            var uri = new Uri("avares://SillyMIDI.Core/Assets/logo.ico");
             using var stream = AssetLoader.Open(uri);
             icon = new WindowIcon(stream);
 

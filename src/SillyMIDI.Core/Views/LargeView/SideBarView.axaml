@@ -12,14 +12,14 @@
           mc:Ignorable="d">
     <Grid Margin="5,5,5,0">
         <Image
-                  Width="30"
-                  Height="30"
-                  Margin="20"
+                  Width="70"
+                  Height="70"
+                  Margin="13,20,20,20"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top"
-                  Source="avares://SillyMIDI.Core/Assets/logo.png" />
+                  Source="avares://SillyMIDI.Core/Assets/logo-128.png" />
         <ListBox
-                  Margin="0,50,0,0"
+                  Margin="0,90,0,0"
                   Background="{x:Null}"
                   ItemsSource="{Binding Items}" />
     </Grid>

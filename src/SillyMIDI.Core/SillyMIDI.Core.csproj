@@ -10,7 +10,7 @@
 		<!--<PublishAot>true</PublishAot>
 		<IsAotCompatible>true</IsAotCompatible>-->
 		<EnableXamlBehaviorsSourceGenerator>true</EnableXamlBehaviorsSourceGenerator>
-		<ApplicationIcon>logo_square.ico</ApplicationIcon>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
 		<PackageIcon>logo-128.png</PackageIcon>
 	</PropertyGroup>
 
@@ -22,18 +22,11 @@
 	  <AvaloniaResource Include="..\..\Assets\logo-128.png" Link="Assets\logo-128.png" />
 	  <AvaloniaResource Include="..\..\Assets\logo.ico" Link="Assets\logo.ico" />
 	  <AvaloniaResource Include="..\..\Assets\logo.png" Link="Assets\logo.png" />
-	  <AvaloniaResource Include="..\..\Assets\logo_square.ico" Link="Assets\logo_square.ico" />
-	  <AvaloniaResource Include="..\..\Assets\logo_square.png" Link="Assets\logo_square.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <AvaloniaResource Include="..\..\Assets\logo.svg" Link="Assets\logo.svg" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="logo_square.ico" />
-	</ItemGroup>
-
 	<ItemGroup>
 	  <None Include="..\..\Assets\logo-128.png">
 	    <Pack>True</Pack>

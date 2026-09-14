@@ -14,7 +14,7 @@
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<EnableXamlCompilation>true</EnableXamlCompilation>
-		<ApplicationIcon>..\..\Assets\logo_square.ico</ApplicationIcon>
+		<ApplicationIcon>..\..\Assets\logo.ico</ApplicationIcon>
 
 
 	</PropertyGroup>
@@ -22,7 +22,7 @@
 	  <Content Remove="C:\Users\paul\.nuget\packages\soundflow\1.4.0\contentFiles\any\net8.0\STATEMENT.md" />
 	</ItemGroup>
 	<ItemGroup>
-		<Resource Include="..\..Assets\logo_square.ico" />
+		<Resource Include="..\..Assets\logo.ico" />
 	</ItemGroup>
 	<PropertyGroup>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
