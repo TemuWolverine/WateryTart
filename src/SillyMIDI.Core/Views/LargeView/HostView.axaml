@@ -39,11 +39,9 @@
         <local:BottomPlayerView
                   Grid.Row="1"
                   Grid.ColumnSpan="2"
-                  Padding="0,10,0,0"
                   HorizontalAlignment="Stretch"
-                  Background="#FF2B2B2B"
-                  DataContext="{Binding MiniPlayer}" />
-
+                  DataContext="{Binding MiniPlayer}"
+                  ZIndex="5" />
 
         <!--  Search box  -->
         <StackPanel
@@ -61,6 +59,7 @@
         <ScrollViewer
                   x:Name="sv"
                   Grid.Row="0"
+                  Grid.RowSpan="2"
                   Grid.Column="1"
                   Margin="10,30,10,10"
                   Padding="0,50,0,0"
