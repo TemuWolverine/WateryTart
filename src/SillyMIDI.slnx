@@ -12,6 +12,13 @@
     <File Path="../README.md" />
     <File Path=".editorconfig" />
   </Folder>
+  <Folder Name="/Solution Items/assets/">
+    <File Path="../Assets/logo-128.png" />
+    <File Path="../Assets/logo.af" />
+    <File Path="../Assets/logo.ico" />
+    <File Path="../Assets/logo.png" />
+    <File Path="../Assets/logo.svg" />
+  </Folder>
   <Folder Name="/Solution Items/Build/">
     <File Path="../.github/workflows/build-and-publish.yml" />
     <File Path="../.github/workflows/gh-pages.yml" />
