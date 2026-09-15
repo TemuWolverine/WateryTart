@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.ViewModels.Menus;
 using SillyMIDI.Core.ViewModels.Popups;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.WsExtensions;
 
 namespace SillyMIDI.Core.ViewModels
 {

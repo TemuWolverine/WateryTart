@@ -3,7 +3,7 @@ using ReactiveUI;
 using System.ComponentModel;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.Settings;
-using WateryTart.MusicAssistant;
+using SillyMIDI.MusicAssistant;
 
 namespace SillyMIDI.Core.ViewModels
 {

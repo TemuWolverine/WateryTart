@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using WateryTart.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant.Models.Enums;
 
 namespace SillyMIDI.Core.ViewModels;
 

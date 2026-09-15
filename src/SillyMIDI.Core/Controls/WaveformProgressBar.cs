@@ -9,15 +9,21 @@ namespace SillyMIDI.Core.Controls
     public class WaveformProgressBar : Control
     {
         public static readonly StyledProperty<IReadOnlyList<double>?> PeaksProperty = AvaloniaProperty.Register<WaveformProgressBar, IReadOnlyList<double>?>(nameof(Peaks));
+        public static readonly StyledProperty<IBrush?> PlayedBrushProperty = AvaloniaProperty.Register<WaveformProgressBar, IBrush?>(nameof(PlayedBrush));
         public static readonly StyledProperty<double> ProgressProperty = AvaloniaProperty.Register<WaveformProgressBar, double>(nameof(Progress), defaultValue: 0.0);
         public static readonly StyledProperty<int> ResolutionProperty = AvaloniaProperty.Register<WaveformProgressBar, int>(nameof(Resolution), defaultValue: 0);
-        public static readonly StyledProperty<IBrush?> PlayedBrushProperty = AvaloniaProperty.Register<WaveformProgressBar, IBrush?>(nameof(PlayedBrush));
         public static readonly StyledProperty<IBrush?> UnplayedBrushProperty = AvaloniaProperty.Register<WaveformProgressBar, IBrush?>(nameof(UnplayedBrush));
 
         public IReadOnlyList<double>? Peaks
         {
             get => GetValue(PeaksProperty);
             set => SetValue(PeaksProperty, value);
+        }
+
+        public IBrush? PlayedBrush
+        {
+            get => GetValue(PlayedBrushProperty);
+            set => SetValue(PlayedBrushProperty, value);
         }
 
         /// <summary>
@@ -42,12 +48,6 @@ namespace SillyMIDI.Core.Controls
         {
             get => GetValue(ResolutionProperty);
             set => SetValue(ResolutionProperty, value);
-        }
-
-        public IBrush? PlayedBrush
-        {
-            get => GetValue(PlayedBrushProperty);
-            set => SetValue(PlayedBrushProperty, value);
         }
 
         public IBrush? UnplayedBrush
@@ -76,7 +76,7 @@ namespace SillyMIDI.Core.Controls
 
             double centreY = height / 2.0;
 
-            double progress = Math.Clamp(Progress, 0.0, 1.0);
+            double progress = Math.Clamp(Progress / 100, 0.0, 1.0);
             double progressX = width * progress;
 
             int resolution = Math.Max(0, Resolution);
@@ -110,7 +110,7 @@ namespace SillyMIDI.Core.Controls
                 // Boost quieter sections visually.
                 peak = Math.Sqrt(peak);
 
-                double barHeight = Math.Max(2.0,peak * height);
+                double barHeight = Math.Max(2.0, peak * height);
                 double x = bar * barWidth;
                 double y = centreY - (barHeight / 2.0);
 

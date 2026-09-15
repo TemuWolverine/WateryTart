@@ -21,7 +21,7 @@ using SillyMIDI.Core.Utilities;
 using SillyMIDI.Core.ViewModels;
 using SillyMIDI.Core.ViewModels.Players;
 using SillyMIDI.Core.Views;
-using WateryTart.MusicAssistant;
+using SillyMIDI.MusicAssistant;
 using ColourService = SillyMIDI.Core.Services.ColourService;
 using PlayersService = SillyMIDI.Core.Services.PlayersService;
 
@@ -176,7 +176,7 @@ public partial class App : Application
                     logBuilder.AddFile(o =>
                     {
                         o.RootPath = logPath;
-                        // o.BasePath = "WateryTart.Logs";
+                        // o.BasePath = "SillyMIDI.Logs";
                         o.MaxFileSize = 10_000_000;
                         o.FileAccessMode = Karambolo.Extensions.Logging.File.LogFileAccessMode.KeepOpenAndAutoFlush;
                         o.Files =

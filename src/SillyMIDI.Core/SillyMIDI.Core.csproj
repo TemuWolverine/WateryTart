@@ -46,6 +46,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Concentus" />
 		<PackageReference Include="Deadpikle.AvaloniaProgressRing" />
+		<PackageReference Include="Fluid.Avalonia.Acrylic" />
 		<PackageReference Include="Iot.Device.Bindings" />
 		<PackageReference Include="Karambolo.Extensions.Logging.File" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
@@ -70,7 +71,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\WateryTart.MusicAssistant\src\WateryTart.MusicAssistant\WateryTart.MusicAssistant.csproj" />
+	  <ProjectReference Include="..\SillyMIDI.MusicAssistant\src\SillyMIDI.MusicAssistant\SillyMIDI.MusicAssistant.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

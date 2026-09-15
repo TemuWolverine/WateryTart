@@ -10,7 +10,7 @@ using SillyMIDI.Core.Playback;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.Settings;
 using SillyMIDI.Core.ViewModels.Players;
-using WateryTart.MusicAssistant;
+using SillyMIDI.MusicAssistant;
 using Xaml.Behaviors.SourceGenerators;
 using SillyMIDI.Core.ViewModels.Popups;
 using Autofac;

@@ -1,7 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
-using WateryTart.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant.Models.Enums;
 
 namespace SillyMIDI.Core.Converters;
 

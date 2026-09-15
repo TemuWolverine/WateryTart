@@ -65,7 +65,7 @@
 	<ItemGroup>
 		<TrimmerRootAssembly Include="Avalonia.Controls" />
 		<TrimmerRootAssembly Include="ReactiveUI" />
-		<TrimmerRootAssembly Include="WateryTart.Core" />
+		<TrimmerRootAssembly Include="SillyMIDI.Core" />
 		<TrimmerRootAssembly Include="Concentus" />
 		<TrimmerRootAssembly Include="Sendspin.SDK" />
 		<!--<TrimmerRootAssembly Include="SoundFlow" />-->

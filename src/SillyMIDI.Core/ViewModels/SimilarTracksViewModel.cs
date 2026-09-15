@@ -3,8 +3,8 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.WsExtensions;
 
 namespace SillyMIDI.Core.ViewModels;
 

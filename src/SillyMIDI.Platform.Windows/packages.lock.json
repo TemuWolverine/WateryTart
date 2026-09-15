@@ -635,7 +635,7 @@
           "Xaml.Behaviors.Interactivity": "12.0.7"
         }
       },
-      "SillyMIDI.core": {
+      "sillymidi.core": {
         "type": "Project",
         "dependencies": {
           "AsyncImageLoader.Avalonia": "[3.8.0, )",
@@ -648,6 +648,7 @@
           "CommunityToolkit.Mvvm": "[8.4.0, )",
           "Concentus": "[2.2.2, )",
           "Deadpikle.AvaloniaProgressRing": "[0.11.0, )",
+          "Fluid.Avalonia.Acrylic": "[1.4.0, )",
           "Iot.Device.Bindings": "[4.2.0, )",
           "Karambolo.Extensions.Logging.File": "[4.1.1, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.12, )",
@@ -657,23 +658,23 @@
           "Svg.Controls.Skia.Avalonia": "[12.0.0.17, )",
           "System.Device.Gpio": "[4.2.0, )",
           "Velopack": "[1.2.0, )",
-          "WateryTart.MusicAssistant": "[1.0.0, )",
+          "SillyMIDI.MusicAssistant": "[1.0.0, )",
           "XVolume": "[0.1.1, )",
           "Xaml.Behaviors.Avalonia": "[12.0.7, )",
           "Xaml.Behaviors.Interactivity": "[12.0.7, )",
           "Zeroconf": "[3.7.16, )"
         }
       },
-      "waterytart.musicassistant": {
+      "SillyMIDI.musicassistant": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging": "[10.0.12, )",
           "Microsoft.Extensions.Logging.Console": "[10.0.12, )",
-          "WateryTart.MusicAssistant.Generators.Attributes": "[1.0.0, )",
+          "SillyMIDI.MusicAssistant.Generators.Attributes": "[1.0.0, )",
           "Websocket.Client": "[5.5.0, )"
         }
       },
-      "waterytart.musicassistant.generators.attributes": {
+      "SillyMIDI.musicassistant.generators.attributes": {
         "type": "Project"
       },
       "AsyncImageLoader.Avalonia": {
@@ -751,6 +752,16 @@
         "contentHash": "y1kuj/VzYvKclj7IM1cNJi9/vnWyzYRhnbRW1EWEJE5zWYS+dDtJv9SQAkq+r3qj/YP6YkCFXzjIh8nyLUU+eA==",
         "dependencies": {
           "Avalonia": "12.0.0"
+        }
+      },
+      "Fluid.Avalonia.Acrylic": {
+        "type": "CentralTransitive",
+        "requested": "[1.4.0, )",
+        "resolved": "1.4.0",
+        "contentHash": "shXHRRDA6iE9qyxA2jmfaqLyKRUBB8y5rT6P/isG8Wb00CvTZ7iNmI5NAixvO3sgmz6EXPkEdDNT9zwuiwKhkw==",
+        "dependencies": {
+          "Avalonia": "12.1.2",
+          "Avalonia.Skia": "12.1.2"
         }
       },
       "Iot.Device.Bindings": {

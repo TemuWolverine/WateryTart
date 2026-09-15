@@ -8,8 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using SillyMIDI.Core.Services.Discovery;
 using SillyMIDI.Core.Settings;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models.Auth;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models.Auth;
 
 namespace SillyMIDI.Core.ViewModels;
 

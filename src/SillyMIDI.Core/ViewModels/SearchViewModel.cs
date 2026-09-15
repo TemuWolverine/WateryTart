@@ -17,10 +17,10 @@ using System.Threading.Tasks;
 using SillyMIDI.Core.Converters;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.Settings;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.Responses;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Responses;
+using SillyMIDI.MusicAssistant.WsExtensions;
 using static SillyMIDI.Core.Converters.MetadataImageConverter;
 
 namespace SillyMIDI.Core.ViewModels;
@@ -64,7 +64,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
 
     private async Task<string> GetMostPlayedIcon()
     {
-        var mostPlayedAlbum = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 1, order: WateryTart.MusicAssistant.Models.Enums.OrderBy.play_count_desc);
+        var mostPlayedAlbum = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 1, order: SillyMIDI.MusicAssistant.Models.Enums.OrderBy.play_count_desc);
 
         var item = mostPlayedAlbum.Result?.FirstOrDefault();
         //If it is an item, but has a "image" field set, use that
@@ -261,7 +261,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
         mostplayedAlbums.SetCustomDataSource<Album, AlbumsResponse>(
             async () =>
             {
-                var albums = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 50, order: WateryTart.MusicAssistant.Models.Enums.OrderBy.play_count_desc, offset: mostplayedAlbums.CurrentOffset);
+                var albums = await _client.WithWs().GetMusicAlbumsLibraryItemsAsync(limit: 50, order: SillyMIDI.MusicAssistant.Models.Enums.OrderBy.play_count_desc, offset: mostplayedAlbums.CurrentOffset);
                 return albums;
             },
             a =>
@@ -280,7 +280,7 @@ public partial class SearchViewModel : ViewModelBase<SearchViewModel>
         mostPlayedArtists.SetCustomDataSource<Artist, ArtistsResponse>(
             async () =>
             {
-                var artist = await _client.WithWs().GetArtistsAsync(limit: 50, order: WateryTart.MusicAssistant.Models.Enums.OrderBy.play_count_desc, offset: mostPlayedArtists.CurrentOffset);
+                var artist = await _client.WithWs().GetArtistsAsync(limit: 50, order: SillyMIDI.MusicAssistant.Models.Enums.OrderBy.play_count_desc, offset: mostPlayedArtists.CurrentOffset);
                 return artist;
             },
             a =>

@@ -20,11 +20,11 @@ using SillyMIDI.Core.Settings;
 using SillyMIDI.Core.ViewModels;
 using SillyMIDI.Core.ViewModels.Menus;
 using SillyMIDI.Core.ViewModels.Popups;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Events;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Events;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant.WsExtensions;
 using static SillyMIDI.Core.Converters.MetadataImageConverter;
 
 namespace SillyMIDI.Core.Services;

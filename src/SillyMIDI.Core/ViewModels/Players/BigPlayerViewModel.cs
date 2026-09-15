@@ -18,8 +18,8 @@ using System.Windows.Input;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.ViewModels.Menus;
 using SillyMIDI.Core.ViewModels.Popups;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models.Enums;
 using Xaml.Behaviors.SourceGenerators;
 
 namespace SillyMIDI.Core.ViewModels.Players;

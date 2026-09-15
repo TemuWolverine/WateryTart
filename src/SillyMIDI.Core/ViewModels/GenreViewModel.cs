@@ -7,9 +7,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.WsExtensions;
 
 namespace SillyMIDI.Core.ViewModels
 {

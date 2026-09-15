@@ -1,5 +1,5 @@
 ﻿using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models;
 
 namespace SillyMIDI.Core.Extensions
 {

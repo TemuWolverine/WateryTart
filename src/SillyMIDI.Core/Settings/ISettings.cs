@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using WateryTart.MusicAssistant.Models.Auth;
+using SillyMIDI.MusicAssistant.Models.Auth;
 
 namespace SillyMIDI.Core.Settings;
 

@@ -11,11 +11,11 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.Responses;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant.Responses;
+using SillyMIDI.MusicAssistant.WsExtensions;
 
 namespace SillyMIDI.Core.ViewModels;
 

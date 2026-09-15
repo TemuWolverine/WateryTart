@@ -36,10 +36,7 @@ sealed class Program
         })
             .UsePlatformDetect()
             .WithInterFont()
-            .UseReactiveUI(rxui =>
-            {
-
-            })
-        .UseHarfBuzz()
+            .UseReactiveUI(rxui => { })
+            .UseHarfBuzz()
             .LogToTrace();
 }

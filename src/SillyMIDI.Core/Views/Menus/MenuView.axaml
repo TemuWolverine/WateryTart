@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ic="using:IconPacks.Avalonia.Material"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:WateryTart.MusicAssistant.Models;assembly=WateryTart.MusicAssistant"
+    xmlns:models="clr-namespace:SillyMIDI.MusicAssistant.Models;assembly=SillyMIDI.MusicAssistant"
     xmlns:vm="using:SillyMIDI.Core.ViewModels.Menus"
     d:DesignHeight="450"
     d:DesignWidth="800"

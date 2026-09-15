@@ -10,7 +10,7 @@
           xmlns:ic="using:IconPacks.Avalonia.Material"
           xmlns:materialIcons="using:Material.Icons.Avalonia"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-          xmlns:models="using:WateryTart.MusicAssistant.Models"
+          xmlns:models="using:SillyMIDI.MusicAssistant.Models"
           xmlns:vm="clr-namespace:SillyMIDI.Core.ViewModels"
           d:DesignHeight="450"
           d:DesignWidth="800"

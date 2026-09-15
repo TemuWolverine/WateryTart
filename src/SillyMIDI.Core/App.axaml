@@ -62,11 +62,10 @@
         <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
         <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
-        <!--<StyleInclude Source="avares://IconPacks.Avalonia.FontAwesome/FontAwesome.axaml" />-->
 
         <StyleInclude Source="/Resources/Styles.axaml" />
     </Application.Styles>
 
 
-    
+
 </Application>

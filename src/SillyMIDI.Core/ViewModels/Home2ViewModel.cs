@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.Settings;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.Responses;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Responses;
+using SillyMIDI.MusicAssistant.WsExtensions;
 
 namespace SillyMIDI.Core.ViewModels;
 

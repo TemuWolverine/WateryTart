@@ -4,7 +4,7 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Linq;
 using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models;
 namespace SillyMIDI.Core.ViewModels.Popups
 {
     public partial class TrackInfoViewModel : ReactiveObject, IPopupViewModel

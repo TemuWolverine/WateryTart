@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models;
 
 namespace SillyMIDI.Core.ViewModels.Menus;
 

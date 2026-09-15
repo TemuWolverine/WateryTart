@@ -7,8 +7,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using SillyMIDI.Core.Services;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.WsExtensions;
 namespace SillyMIDI.Core.ViewModels;
 
 public partial class LibraryViewModel : ViewModelBase<LibraryViewModel>

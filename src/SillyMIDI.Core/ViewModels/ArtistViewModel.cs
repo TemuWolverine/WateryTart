@@ -11,10 +11,10 @@ using SillyMIDI.Core.Extensions;
 using SillyMIDI.Core.Services;
 using SillyMIDI.Core.ViewModels.Menus;
 using SillyMIDI.Core.ViewModels.Popups;
-using WateryTart.MusicAssistant;
-using WateryTart.MusicAssistant.Models;
-using WateryTart.MusicAssistant.Models.Enums;
-using WateryTart.MusicAssistant.WsExtensions;
+using SillyMIDI.MusicAssistant;
+using SillyMIDI.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models.Enums;
+using SillyMIDI.MusicAssistant.WsExtensions;
 using Xaml.Behaviors.SourceGenerators;
 
 namespace SillyMIDI.Core.ViewModels

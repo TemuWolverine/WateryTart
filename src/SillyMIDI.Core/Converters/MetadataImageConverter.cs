@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using WateryTart.MusicAssistant.Models;
+using SillyMIDI.MusicAssistant.Models;
 
 namespace SillyMIDI.Core.Converters;
 
