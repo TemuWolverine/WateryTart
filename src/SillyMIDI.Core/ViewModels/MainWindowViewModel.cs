@@ -48,7 +48,7 @@ public partial class MainWindowViewModel : ViewModelBase<MainWindowViewModel>, I
     //If not reactive, this causes issues with page titles
     [Reactive] public partial string Title { get; set; }
 
-    public SidebarViewModel SidebarViewModel { get; set; } = new SidebarViewModel();
+    [Reactive] public partial SidebarViewModel SidebarViewModel { get; set; }
     public MainWindowViewModel(MusicAssistantClient massClient, PlayersService playersService, ISettings settings, ColourService colourService, SendSpinClient sendSpinClient, ILoggerFactory loggerFactory, ProviderService providerService)
         :base(loggerFactory, massClient, playersService)
     {
@@ -58,7 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase<MainWindowViewModel>, I
         ColourService = colourService;
         ShowSlideupMenu = false;
         Activator = new ViewModelActivator();
-
+        
         // Create the commands first
         GoBack = new RelayCommand(() => Router.NavigateBack.Execute(Unit.Default), () => _canNavigateBack);
         GoHome = new RelayCommand(() => Router.Navigate.Execute(App.Container.Resolve<Home2ViewModel>()), () => _canNavigateToHome);
@@ -98,6 +98,8 @@ public partial class MainWindowViewModel : ViewModelBase<MainWindowViewModel>, I
                 CurrentViewModel = ivmb;
                 MiniPlayer = App.Container.Resolve<MiniPlayerViewModel>();
             }
+
+           
         });
 
         // Subscribe to changes in CurrentViewModel and SelectedPlayer to update IsMiniPlayerVisible
@@ -146,6 +148,7 @@ public partial class MainWindowViewModel : ViewModelBase<MainWindowViewModel>, I
 
     public async Task Connect()
     {
+        SidebarViewModel = App.Container.Resolve<SidebarViewModel>();
         if (string.IsNullOrEmpty(_settings.Credentials?.Token))
         {
             _logger.LogInformation("No credentials found, navigating to login");

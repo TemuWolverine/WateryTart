@@ -3,8 +3,10 @@
           xmlns="https://github.com/avaloniaui"
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
           xmlns:largeview="using:SillyMIDI.Core.ViewModels.LargeView"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:viewmodels="using:SillyMIDI.Core.ViewModels"
           d:DesignHeight="450"
           d:DesignWidth="800"
           x:DataType="largeview:SidebarViewModel"
@@ -17,10 +19,46 @@
                   Margin="13,20,20,20"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top"
-                  Source="avares://SillyMIDI.Core/Assets/logo-128.png" />
+                  Source="avares://SillyMIDI.Core/Assets/logo.png" />
         <ListBox
                   Margin="0,90,0,0"
                   Background="{x:Null}"
-                  ItemsSource="{Binding Items}" />
+                  ItemsSource="{Binding Items}">
+            <ListBox.DataTemplates>
+
+                <!--  Header Template (Triggers when IsHeader is True)  -->
+                <DataTemplate DataType="{x:Type largeview:SidebarHeaderModel}">
+                    <TextBlock
+                              Margin="5,15,5,5"
+                              FontSize="14"
+                              FontWeight="Bold"
+                              Foreground="Gray"
+                              IsHitTestVisible="False"
+                              Text="{Binding Name}" />
+                </DataTemplate>
+
+                <!--  Standard Item Template (Fallback for non-headers)  -->
+                <DataTemplate DataType="{x:Type largeview:SidebarModel}">
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="Tapped">
+                                <viewmodels:ClickAction Command="{Binding Action}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+
+                        <iconPacks:PackIconMaterial
+                                  Width="18"
+                                  Height="18"
+                                  Margin="0,0,10,0"
+                                  Kind="{Binding Icon}" />
+                        <TextBlock
+                                  FontSize="14"
+                                  Foreground="White"
+                                  Text="{Binding Name}" />
+                    </StackPanel>
+                </DataTemplate>
+
+            </ListBox.DataTemplates>
+        </ListBox>
     </Grid>
 </UserControl>

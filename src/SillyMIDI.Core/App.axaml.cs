@@ -24,6 +24,7 @@ using SillyMIDI.Core.Views;
 using SillyMIDI.MusicAssistant;
 using ColourService = SillyMIDI.Core.Services.ColourService;
 using PlayersService = SillyMIDI.Core.Services.PlayersService;
+using SillyMIDI.Core.ViewModels.LargeView;
 
 namespace SillyMIDI.Core;
 
@@ -130,6 +131,7 @@ public partial class App : Application
         builder.RegisterType<MiniPlayerViewModel>().AsSelf().SingleInstance();
         builder.RegisterType<BigPlayerViewModel>().AsSelf().SingleInstance();
         builder.RegisterType<Home2ViewModel>().SingleInstance();
+        builder.RegisterType<SidebarViewModel>().SingleInstance();
         //builder.RegisterType<KeyboardVolumeKeyBindingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<LoggerSettingsViewModel>().As<IHaveSettings>().SingleInstance();
         builder.RegisterType<SearchViewModel>().SingleInstance();
