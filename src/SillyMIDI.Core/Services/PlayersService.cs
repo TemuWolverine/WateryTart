@@ -39,6 +39,8 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
     private readonly ReadOnlyObservableCollection<TrackViewModel> playedQueue;
     private readonly CompositeDisposable _subscriptions = [];
     private readonly Dictionary<string, TrackViewModel> _trackViewModelCache = [];
+    private readonly Dictionary<string, PlayerViewModel> _playerViewModelCache = [];
+    public ObservableCollection<PlayerViewModel> PlayerViewModels { get; } = [];
     private bool _isFetchingQueueContents = false;
     private DispatcherTimer _timer;
 
@@ -51,6 +53,7 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
     [Reactive] public partial SourceCache<QueuedItem, string> QueuedItems { get; set; } = new SourceCache<QueuedItem, string>(x => x.QueueItemId!);
     [Reactive] public partial ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
     [Reactive] public partial ObservableCollection<PlayerQueue?> Queues { get; set; } = new ObservableCollection<PlayerQueue?>();
+    [Reactive] public partial PlayerViewModel? SelectedPlayerViewModel { get; private set; }
     [Reactive] public partial string SelectedPlayerQueueId { get; set; } = string.Empty;
     [Reactive] public partial PlayerQueue? SelectedQueue { get; set; } = new PlayerQueue();
     public ReadOnlyObservableCollection<TrackViewModel> CurrentQueue { get => currentQueue; }
@@ -66,22 +69,32 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
             if (value != null)
             {
                 _settings.LastSelectedPlayerId = value.PlayerId!;
-                _ = FetchPlayerQueueAsync(value.PlayerId!);
+                SelectedPlayerViewModel = GetOrCreatePlayerViewModel(value);
+                _ = FetchPlayerQueueAsync(SelectedPlayerViewModel);
+            }
+            else
+            {
+                SelectedPlayerViewModel = null;
             }
 
             this.RaiseAndSetIfChanged(ref field, value);
         }
     }
 
-    private async Task FetchPlayerQueueAsync(string id)
+    private async Task FetchPlayerQueueAsync(PlayerViewModel playerViewModel)
     {
-        var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(id);
+        var pq = await _massClient.WithWs().GetPlayerActiveQueueAsync(playerViewModel.Player.PlayerId!);
         if (pq?.Result == null)
             return;
 
-        SelectedPlayerQueueId = pq?.Result?.QueueId!;
-        SelectedQueue = pq!.Result;
-        await FetchQueueContentsAsync();
+        playerViewModel.Queue = pq.Result;
+
+        if (SelectedPlayerViewModel == playerViewModel)
+        {
+            SelectedPlayerQueueId = pq.Result.QueueId!;
+            SelectedQueue = pq.Result;
+            await FetchQueueContentsAsync();
+        }
     }
 
     private async Task FetchQueueContentsAsync()
@@ -238,16 +251,19 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
 
             case EventType.QueueTimeUpdated:
                 timeEvent = (PlayerQueueTimeUpdatedEventResponse)e;
-                if (SelectedQueue != null && e.ObjectId == SelectedQueue.QueueId)
-                {
-                    SelectedQueue.CurrentItem!.MediaItem!.ElapsedTime = timeEvent.Data;
-                }
+                var queueForTimeUpdate = _playerViewModelCache.Values
+                    .FirstOrDefault(vm => vm.Queue?.QueueId == e.ObjectId)?.Queue;
+                if (queueForTimeUpdate?.CurrentItem?.MediaItem != null)
+                    queueForTimeUpdate.CurrentItem.MediaItem.ElapsedTime = timeEvent.Data;
                 break;
 
             case EventType.PlayerAdded:
                 playerEvent = (PlayerEventResponse)e;
                 if (!Players.Contains((playerEvent.Data!)) && playerEvent.Data != null)
+                {
                     Players.Add(playerEvent.Data);
+                    _ = FetchPlayerQueueAsync(GetOrCreatePlayerViewModel(playerEvent.Data));
+                }
                 break;
 
             case EventType.PlayerUpdated:
@@ -256,8 +272,10 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
 
                 if (player != null)
                 {
+                    var playerViewModel = GetOrCreatePlayerViewModel(player);
                     player.PlaybackState = playerEvent.Data!.PlaybackState;
                     player.CurrentMedia = playerEvent.Data.CurrentMedia;
+                    playerViewModel.State = player.PlaybackState;
 
                     var serverVol = playerEvent.Data.VolumeLevel;
 
@@ -290,6 +308,14 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
             case EventType.PlayerRemoved:
                 playerEvent = (PlayerEventResponse)e;
                 Players.RemoveAll(p => p.PlayerId == playerEvent?.Data?.PlayerId);
+                if (playerEvent?.Data?.PlayerId is string removedPlayerId &&
+                    _playerViewModelCache.Remove(removedPlayerId, out var removedViewModel))
+                {
+                    PlayerViewModels.Remove(removedViewModel);
+                    if (SelectedPlayerViewModel == removedViewModel)
+                        SelectedPlayer = null;
+                    removedViewModel.Dispose();
+                }
                 break;
 
             case EventType.QueueAdded:
@@ -300,10 +326,20 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
                     Queues.Add(queueEvent.Data!);
                 else
                     Queues.ReplaceOrAdd(existing, queueEvent.Data);
+
+                if (queueEvent?.Data?.QueueId is string addedQueueId &&
+                    _playerViewModelCache.Values.FirstOrDefault(vm => vm.Player.ActiveSource == addedQueueId) is { } addedQueueViewModel)
+                    addedQueueViewModel.Queue = queueEvent.Data;
                 break;
 
             case EventType.QueueUpdated:
                 queueEvent = (PlayerQueueEventResponse)e;
+                if (queueEvent?.Data?.QueueId is string updatedQueueId &&
+                    _playerViewModelCache.Values.FirstOrDefault(vm => vm.Queue?.QueueId == updatedQueueId) is { } queueViewModel)
+                {
+                    queueViewModel.Queue = queueEvent.Data;
+                }
+
                 if (SelectedQueue != null && queueEvent?.Data?.QueueId == SelectedQueue.QueueId)
                 {
                     SelectedQueue.ShuffleEnabled = queueEvent!.Data!.ShuffleEnabled;
@@ -341,14 +377,25 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
                 foreach (var y in playersResponse.Result)
                 {
                     if (y != null)
+                    {
                         Players.Add(y);
+                        GetOrCreatePlayerViewModel(y);
+                    }
                 }
 
             var queuesResponse = await _massClient.WithWs().GetPlayerQueuesAllAsync();
             if (queuesResponse.Result != null)
                 foreach (var y in queuesResponse.Result)
                 {
+                    if (y == null)
+                        continue;
+
                     Queues.Add(y);
+                    if (_playerViewModelCache.Values
+                        .FirstOrDefault(vm => vm.Player.ActiveSource == y.QueueId) is { } playerViewModel)
+                    {
+                        playerViewModel.Queue = y;
+                    }
                 }
 
             if (!string.IsNullOrEmpty(_settings.LastSelectedPlayerId))
@@ -356,11 +403,38 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
                 SelectedPlayer =
                     Players.SingleOrDefault(player => player.PlayerId == _settings.LastSelectedPlayerId);
             }
+
+            foreach (var playerViewModel in _playerViewModelCache.Values)
+                _ = FetchPlayerQueueAsync(playerViewModel);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading players");
         }
+    }
+
+    private PlayerViewModel GetOrCreatePlayerViewModel(Player player)
+    {
+        if (string.IsNullOrEmpty(player.PlayerId))
+            throw new ArgumentException("Player must have a player ID.", nameof(player));
+
+        if (_playerViewModelCache.TryGetValue(player.PlayerId, out var playerViewModel))
+            return playerViewModel;
+
+        playerViewModel = new PlayerViewModel(player, _massClient, null, this, _colourService);
+        _playerViewModelCache[player.PlayerId] = playerViewModel;
+        PlayerViewModels.Add(playerViewModel);
+        return playerViewModel;
+    }
+
+    public PlayerViewModel? GetPlayerViewModel(string? playerId)
+    {
+        if (string.IsNullOrEmpty(playerId))
+            return null;
+
+        return _playerViewModelCache.TryGetValue(playerId, out var playerViewModel)
+            ? playerViewModel
+            : null;
     }
 
     public async Task PlayerChangeBy(int delta, Player? p = null)
@@ -557,6 +631,11 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
             vm.Dispose();
         }
         _trackViewModelCache.Clear();
+        foreach (var vm in _playerViewModelCache.Values)
+            vm.Dispose();
+        _playerViewModelCache.Clear();
+        PlayerViewModels.Clear();
+        SelectedPlayerViewModel = null;
 
         try
         {
@@ -581,6 +660,11 @@ public partial class PlayersService : ReactiveObject, IAsyncReaper
             vm.Dispose();
         }
         _trackViewModelCache.Clear();
+        foreach (var vm in _playerViewModelCache.Values)
+            vm.Dispose();
+        _playerViewModelCache.Clear();
+        PlayerViewModels.Clear();
+        SelectedPlayerViewModel = null;
 
         try
         {

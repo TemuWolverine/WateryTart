@@ -113,7 +113,7 @@
                     <local:WaveformProgressBar
                               Grid.Column="1"
                               Height="30"
-                              Peaks="{Binding Waveforms}"
+                              Peaks="{Binding PlayersService.SelectedPlayerViewModel.Waveforms}"
                               PlayedBrush="#FFFFFF"
                               Progress="{Binding PlayersService.Progress, Mode=TwoWay}"
                               Resolution="1"
