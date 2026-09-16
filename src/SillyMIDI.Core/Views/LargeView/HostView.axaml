@@ -1,0 +1,80 @@
+<UserControl
+          x:Class="SillyMIDI.Core.Views.LargeView.HostView"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:core="clr-namespace:SillyMIDI.Core"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:local="using:SillyMIDI.Core.Views.LargeView"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:players="using:SillyMIDI.Core.Views.Players"
+          xmlns:rx="using:ReactiveUI.Avalonia"
+          xmlns:viewModels="using:SillyMIDI.Core.ViewModels"
+          d:DesignHeight="450"
+          d:DesignWidth="800"
+          x:DataType="viewModels:MainWindowViewModel"
+          Loaded="HostView_Loaded"
+          mc:Ignorable="d">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <!--  sidebar  -->
+        <local:SideBarView Grid.Column="0" DataContext="{Binding SidebarViewModel}" />
+
+        <GridSplitter
+                  Grid.Row="0"
+                  Grid.Column="1"
+                  Width="2"
+                  HorizontalAlignment="Left"
+                  Background="#FF2B2B2B"
+                  ResizeDirection="Columns" />
+
+        <!--  bottom player  -->
+        <local:BottomPlayerView
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Stretch"
+                  DataContext="{Binding MiniPlayer}"
+                  ZIndex="5" />
+
+        <!--  Search box  -->
+        <StackPanel
+                  Grid.Row="0"
+                  Grid.Column="1"
+                  Margin="10"
+                  ZIndex="500">
+            <TextBox
+                      Width="200"
+                      HorizontalAlignment="Right"
+                      Text="Search... " />
+        </StackPanel>
+
+        <!--  main content host  -->
+        <ScrollViewer
+                  x:Name="sv"
+                  Grid.Row="0"
+                  Grid.RowSpan="2"
+                  Grid.Column="1"
+                  Margin="10,30,10,10"
+                  Padding="0,50,0,0"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Stretch">
+            <rx:RoutedViewHost
+                      x:Name="Router"
+                      Background="Transparent"
+                      Router="{Binding Router}">
+                <rx:RoutedViewHost.ViewLocator>
+                    <core:AppViewLocator />
+                </rx:RoutedViewHost.ViewLocator>
+            </rx:RoutedViewHost>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

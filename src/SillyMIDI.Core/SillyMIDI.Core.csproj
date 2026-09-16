@@ -1,0 +1,111 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<Configurations>Debug;Release;X64Debug;ARMRELEASE</Configurations>
+		<Platforms>AnyCPU;ARM64;x64</Platforms>
+		<EnableXamlCompilation>true</EnableXamlCompilation>
+		<!--<PublishAot>true</PublishAot>
+		<IsAotCompatible>true</IsAotCompatible>-->
+		<EnableXamlBehaviorsSourceGenerator>true</EnableXamlBehaviorsSourceGenerator>
+		<ApplicationIcon>..\..\Assets\logo.ico</ApplicationIcon>
+		<PackageIcon>logo-128.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Include="..\..\Assets\logo-128.png" Link="Assets\logo-128.png" />
+	  <AvaloniaResource Include="..\..\Assets\logo.png" Link="Assets\logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Include="..\..\Assets\logo.svg" Link="Assets\logo.svg" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\..\Assets\logo-128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AsyncImageLoader.Avalonia" />
+		<PackageReference Include="Autofac" />
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Labs.Lottie" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Fonts.Inter" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Concentus" />
+		<PackageReference Include="Deadpikle.AvaloniaProgressRing" />
+		<PackageReference Include="Fluid.Avalonia.Acrylic" />
+		<PackageReference Include="Iot.Device.Bindings" />
+		<PackageReference Include="Karambolo.Extensions.Logging.File" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="ReactiveUI.Avalonia" />
+		<PackageReference Include="ReactiveUI.SourceGenerators">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Sendspin.SDK" />
+		<PackageReference Include="SharpHook" />
+		<PackageReference Include="Svg.Controls.Skia.Avalonia" />
+		<PackageReference Include="System.Device.Gpio" />
+		<PackageReference Include="Velopack" />
+		<PackageReference Include="Xaml.Behaviors.Avalonia" />
+		<PackageReference Include="Xaml.Behaviors.Interactivity" />
+		<PackageReference Include="Xaml.Behaviors.SourceGenerators">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="XVolume" />
+		<PackageReference Include="Zeroconf" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SillyMIDI.MusicAssistant\src\SillyMIDI.MusicAssistant\SillyMIDI.MusicAssistant.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="IconPacks.Avalonia.Core">
+	    <HintPath>..\binaries\IconPacks.Avalonia.Core.dll</HintPath>
+	  </Reference>
+	  <Reference Include="IconPacks.Avalonia.Material">
+		  <HintPath>..\binaries\IconPacks.Avalonia.Material.dll</HintPath>
+	  </Reference>
+	  <Reference Include="IconPacks.Avalonia.MaterialDesign">
+	    <HintPath>..\binaries\IconPacks.Avalonia.MaterialDesign.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Controls\ResponsiveColumnPanel.axaml.cs">
+			<DependentUpon>ResponsiveColumnPanel.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\LargeView\BottomPlayerView.axaml.cs">
+		  <DependentUpon>BottomPlayerView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\LargeView\HostView.axaml.cs">
+		  <DependentUpon>HostView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Settings\KeyboardVolumeKeyBindingsView.axaml.cs">
+			<DependentUpon>KeyboardVolumeKeyBindingsView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Popups\TrackInfoView.axaml.cs">
+		  <DependentUpon>TrackInfoView.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>

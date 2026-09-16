@@ -396,14 +396,14 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/WateryTart.Platform.Linux/out
-/WateryTart.Platform.Linux/staging_folder
-WateryTart.Platform.Linux/WateryTart_Linux_amd64.deb
-WateryTart.Platform.Linux/WateryTart_Linux_arm64.deb
+/SillyMIDI.Platform.Linux/out
+/SillyMIDI.Platform.Linux/staging_folder
+SillyMIDI.Platform.Linux/WateryTart_Linux_amd64.deb
+SillyMIDI.Platform.Linux/WateryTart_Linux_arm64.deb
 *.deb
 *.parcel
 /.idea
-src/WateryTart.Platform.Linux/staging_folder/
-src/WateryTart.Platform.Linux/out/
+src/SillyMIDI.Platform.Linux/staging_folder/
+src/SillyMIDI.Platform.Linux/out/
 output/
 /src/.cr

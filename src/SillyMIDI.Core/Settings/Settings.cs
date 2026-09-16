@@ -1,0 +1,277 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using SillyMIDI.MusicAssistant.Models.Auth;
+
+namespace SillyMIDI.Core.Settings;
+
+public partial class Settings : INotifyPropertyChanged, ISettings
+{
+    [JsonConverter(typeof(MusicAssistantCredentialsConverter))]
+    public IMusicAssistantCredentials Credentials
+    {
+        get => field ?? new MusicAssistantCredentials();
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    private VolumeEventControl _volumeEventControl = VolumeEventControl.AppVolume;
+
+    public VolumeEventControl VolumeEventControl
+    {
+        get => _volumeEventControl;
+        set
+        {
+            if (_volumeEventControl != value)
+            {
+                _volumeEventControl = value;
+                NotifyPropertyChanged();
+                Save();
+            }
+        }
+    }
+
+    public bool TrayIcon
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public string LastSelectedPlayerId
+    {
+        get => field ?? string.Empty;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public string LastSearchTerm
+    {
+        get => field ?? string.Empty;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public List<string> RecentSearchTerms
+    {
+        get => field ??= [];
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public double WindowWidth
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public double WindowHeight
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public double WindowPosX
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public double WindowPosY
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    public LoggerSettings LoggerSettings
+    {
+        get;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+            Save();
+        }
+    }
+
+    [JsonIgnore]
+    public string Path
+    {
+        get => field ?? string.Empty;
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+        }
+    }
+
+    public Hashtable CustomSettings
+    {
+        get => field ??= [];
+        set
+        {
+            field = value;
+            NotifyPropertyChanged();
+        }
+    }
+
+    private PlaybackBackend _playbackBackend = PlaybackBackend.SoundFlow;
+
+    public PlaybackBackend PlaybackBackend
+    {
+        get => _playbackBackend;
+        set
+        {
+            if (_playbackBackend != value)
+            {
+                _playbackBackend = value;
+                NotifyPropertyChanged();
+                Save();
+            }
+        }
+    }
+    private bool _suppressSave = true;
+
+    public Settings(string path)
+    {
+        Credentials = new MusicAssistantCredentials();
+        Path = path;
+        if (!string.IsNullOrEmpty(path))
+            Load(path);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void Load(string path)
+    {
+        if (File.Exists(path))
+        {
+            try
+            {
+                var fileData = File.ReadAllText(path);
+
+                var loaded = JsonSerializer.Deserialize<Settings>(fileData, SettingsJsonContext.Default.Settings);
+
+                if (loaded != null)
+                {
+                    Credentials = loaded.Credentials ?? new MusicAssistantCredentials();
+                    LastSelectedPlayerId = loaded.LastSelectedPlayerId ?? string.Empty;
+                    LastSearchTerm = loaded.LastSearchTerm ?? string.Empty;
+                    RecentSearchTerms = loaded.RecentSearchTerms ?? [];
+                    WindowWidth = loaded.WindowWidth;
+                    WindowHeight = loaded.WindowHeight;
+                    WindowPosX = loaded.WindowPosX;
+                    WindowPosY = loaded.WindowPosY;
+                    LoggerSettings = loaded.LoggerSettings;
+                    VolumeEventControl = loaded.VolumeEventControl;
+                    LoggerSettings = loaded.LoggerSettings;
+                    CustomSettings = loaded.CustomSettings;
+                    TrayIcon = loaded.TrayIcon;
+                    PlaybackBackend = loaded.PlaybackBackend;
+                }
+
+                // Initialize if not loaded
+                LoggerSettings ??= new LoggerSettings();
+
+                if (string.IsNullOrEmpty(LoggerSettings.LogFilePath))
+                {
+                    LoggerSettings.LogFilePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "WateryTart");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading settings: {ex.Message}");
+            }
+
+
+        }
+        else
+        {
+            var fi = new FileInfo(path);
+            if (!fi.Directory?.Exists ?? false)
+                fi.Directory?.Create();
+        }
+
+        _suppressSave = false;
+    }
+
+    public void Save()
+    {
+        if (!_suppressSave && !string.IsNullOrEmpty(Path))
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(this, SettingsJsonContext.Default.Settings);
+                File.WriteAllText(Path, json);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error saving settings: {ex.Message}");
+            }
+        }
+    }
+
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+
+/// <summary>
+/// AOT-compatible JSON source generator context for Settings serialization.
+/// </summary>
+[JsonSourceGenerationOptions(
+    WriteIndented = true,
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
+[JsonSerializable(typeof(Settings))]
+[JsonSerializable(typeof(MusicAssistantCredentials))]
+[JsonSerializable(typeof(LoggerSettings))]
+internal partial class SettingsJsonContext : JsonSerializerContext
+{
+}

@@ -1,0 +1,88 @@
+﻿using IconPacks.Avalonia.Material;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Velopack;
+using Velopack.Sources;
+using SillyMIDI.Core.Services;
+using SillyMIDI.Core.Settings;
+
+namespace SillyMIDI.Core.ViewModels
+{
+    public partial class GeneralSettingsViewModel : ViewModelBase<GeneralSettingsViewModel>, IHaveSettings
+    {
+        private readonly ITrayService _trayService;
+        private readonly UpdateManager _um;
+        private UpdateInfo? _update = default!;
+        public PackIconMaterialKind Icon => PackIconMaterialKind.Cog;
+        [Reactive] public partial string InstalledVersion { get; set; }
+        [Reactive] public partial string LatestVersion { get; set; } = string.Empty;
+        public VolumeEventControl SelectedVolumeEvent
+        {
+            get => _settings!.VolumeEventControl;
+            set
+            {
+                if (_settings!.VolumeEventControl != value)
+                    _settings.VolumeEventControl = value;
+            }
+        }
+        public new string Title => "General Settings";
+        public string Description => "Tray, updates, and other general settings.";
+        [Reactive] public partial bool TrayIcon { get; set; } = false;
+        public ICommand TrayIconCommand { get; set; }
+        public IEnumerable<VolumeEventControl> VolumeEventOptions { get; } = Enum.GetValues<VolumeEventControl>();
+
+        public GeneralSettingsViewModel(ISettings settings, ILoggerFactory loggerFactory, ITrayService trayService): base(loggerFactory)
+        {
+            _trayService = trayService;
+            _settings = settings;
+            TrayIcon = _settings.TrayIcon;
+            _um = new UpdateManager(new GithubSource("https://github.com/TemuWolverine/WateryTart/", null, false));
+
+            TrayIconCommand = ReactiveCommand.Create(() =>
+            {
+                _settings.TrayIcon = TrayIcon;
+
+                if (_settings.TrayIcon)
+                    _trayService.CreateTrayIcon();
+                else
+                    _trayService.Dispose();                
+            });
+
+            try
+            {
+                _ = CheckForUpdates();
+
+                InstalledVersion = _um.IsInstalled ? _um.CurrentVersion!.ToString() : "(n/a - not installed)";
+            }
+            catch (Exception ex)
+            {
+                LatestVersion = $"Error checking for updates: {ex.Message}";
+                InstalledVersion = "(n/a - not installed)";
+                _logger.LogError(ex, "Failed to initialize UpdateManager");
+            }
+        }
+
+        public async Task CheckForUpdates()
+        {
+            try
+            {
+                if (_um.IsInstalled)
+                {
+                    _update = await _um.CheckForUpdatesAsync();
+                    LatestVersion = _update!.TargetFullRelease.Version.ToString();
+                }
+                else LatestVersion = "(n/a - not installed)";
+            }
+            catch (Exception ex)
+            {
+                LatestVersion = $"Error checking for updates: {ex.Message}";
+                _logger.LogError(ex, "Failed to initialize UpdateManager");
+            }
+        }
+    }
+}

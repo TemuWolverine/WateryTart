@@ -1,0 +1,21 @@
+﻿<Window
+          x:Class="SillyMIDI.Core.Views.MainWindow"
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:WateryTart="using:SillyMIDI.Core.Views"
+          xmlns:app="using:SillyMIDI"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:largeview="using:SillyMIDI.Core.Views.LargeView"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          x:Name="window"
+          Title="SillyMIDI"
+          Width="800"
+          Height="480"
+          MinWidth="439"
+          Padding="0"
+          ExtendClientAreaToDecorationsHint="True"
+          Icon="avares://SillyMIDI.Core/Assets/logo.png"
+          WindowDecorations="Full">
+    <!--<WateryTart:MainView x:Name="Host" />-->
+    <largeview:HostView x:Name="Host" />
+</Window>
