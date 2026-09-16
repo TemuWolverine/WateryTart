@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0](https://github.com/TemuWolverine/WateryTart/compare/v1.7.2...v2.0.0) (2026-09-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* A better name - SillyMIDI
+
+### Features
+
+* A better name - SillyMIDI ([e126dd4](https://github.com/TemuWolverine/WateryTart/commit/e126dd494475eed96ee7c77c696cc7efed7e5d3f))
+* Large view playbar now has 'acrylic' effects. ([fae150f](https://github.com/TemuWolverine/WateryTart/commit/fae150f1c27093f5fde5504e757b66f23a70e467))
+
+
+### Bug Fixes
+
+* Icons changed/fixed ([20e4bb1](https://github.com/TemuWolverine/WateryTart/commit/20e4bb10413d14e3aa47f558cc6666480bd8bc51))
+* release-please ([9aca4b4](https://github.com/TemuWolverine/WateryTart/commit/9aca4b48bed7f750ba47a03ba3068b97c8df863f))
+* sidebar can perform 'actions' (navigation) on click, added header capability too. ([8767d34](https://github.com/TemuWolverine/WateryTart/commit/8767d34c3705d73e5f2e5a26093f5bf553e4a9f5))
+
 ## [1.7.2](https://github.com/TemuWolverine/WateryTart/compare/v1.7.1...v1.7.2) (2026-09-11)
 
 
